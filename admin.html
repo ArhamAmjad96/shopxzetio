@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopXzetio Admin | Owner Dashboard & Receipt Verification</title>
+  <meta name="theme-color" content="#02070D">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/brand/LOGO.png">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Core Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Admin Specific Styles -->
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ==========================================================================
+       Passcode Lock Screen Gate
+       ========================================================================== -->
+  <div id="adminLockScreen" class="admin-lock-screen">
+    <div class="lock-card">
+      <div class="lock-avatar">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 class="lock-title">OWNER COMMAND PORTAL</h2>
+      <p class="lock-desc">Enter authorization PIN to access order management & payment screenshots.</p>
+
+      <form id="lockForm">
+        <input type="password" id="lockPin" class="lock-input" placeholder="••••••••" autofocus autocomplete="current-password">
+        <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%; height: 48px; font-size: 0.95rem; justify-content: center;">
+          <i class="fa-solid fa-unlock-keyhole"></i> AUTHENTICATE
+        </button>
+        <div id="lockError" class="lock-error">
+          <i class="fa-solid fa-triangle-exclamation"></i> Access Denied: Incorrect PIN
+        </div>
+      </form>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.75rem; color: var(--admin-text-dim);">
+        Default Passcode: <strong style="color: var(--admin-cyan);">xzetio2026</strong> or <strong style="color: var(--admin-cyan);">923348</strong>
+      </div>
+      <div style="margin-top: 12px;">
+        <a href="index.html" style="font-size: 0.8rem; color: var(--admin-text-dim); text-decoration: underline;">
+          &larr; Return to Customer Storefront
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Main Admin Dashboard (Visible after login)
+       ========================================================================== -->
+  <div id="adminMainDashboard" style="display: none;">
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="admin-nav">
+        <!-- Brand -->
+        <div class="admin-brand">
+          <img src="assets/brand/LOGO.png" alt="ShopXzetio Logo" class="admin-logo">
+          <div class="admin-title-group">
+            <span class="admin-title">SHOP<span>XZETIO</span> ADMIN</span>
+            <span class="admin-badge-status">Command Center Active</span>
+          </div>
+        </div>
+
+        <!-- Right Header Actions -->
+        <div class="admin-top-actions">
+          <a href="index.html" class="admin-btn admin-btn-secondary" title="Go to Storefront">
+            <i class="fa-solid fa-store"></i> Storefront
+          </a>
+          <button id="adminExportCsvBtn" class="admin-btn admin-btn-secondary" title="Export Orders as CSV">
+            <i class="fa-solid fa-file-excel"></i> Export CSV
+          </button>
+          <button id="adminLogoutBtn" class="admin-btn admin-btn-danger" title="Logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Lock
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="admin-container">
+      <!-- Stats / Key Metrics Grid -->
+      <section class="admin-stats-grid">
+        <!-- Stat 1: Total Revenue -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-title">GROSS SALES VOLUME</span>
+            <div class="stat-icon cyan">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+          </div>
+          <div id="statTotalRevenue" class="stat-value">Rs. 0</div>
+          <div class="stat-subtext">All submitted orders in pipeline</div>
+        </div>
+
+        <!-- Stat 2: Total Orders -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-title">TOTAL ORDERS</span>
+            <div class="stat-icon blue">
+              <i class="fa-solid fa-box-archive"></i>
+            </div>
+          </div>
+          <div id="statTotalOrders" class="stat-value">0</div>
+          <div class="stat-subtext">Lifetime store bookings</div>
+        </div>
+
+        <!-- Stat 3: Screenshots to Verify -->
+        <div class="stat-card" style="border-color: rgba(255, 184, 0, 0.4);">
+          <div class="stat-card-header">
+            <span class="stat-title" style="color: var(--admin-amber);">AWAITING SS REVIEW</span>
+            <div class="stat-icon amber">
+              <i class="fa-solid fa-image"></i>
+            </div>
+          </div>
+          <div id="statPendingReceipts" class="stat-value" style="color: var(--admin-amber);">0</div>
+          <div class="stat-subtext">Advance payment receipts to confirm</div>
+        </div>
+
+        <!-- Stat 4: Dispatched / Delivered -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-title">DISPATCHED / DELIVERED</span>
+            <div class="stat-icon green">
+              <i class="fa-solid fa-truck-fast"></i>
+            </div>
+          </div>
+          <div id="statDispatched" class="stat-value" style="color: var(--admin-green);">0</div>
+          <div class="stat-subtext">Packages in transit across Pakistan</div>
+        </div>
+      </section>
+
+      <!-- Toolbar & Filters -->
+      <section class="admin-toolbar">
+        <div class="toolbar-top">
+          <!-- Search Box -->
+          <div class="admin-search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="Search by customer name, phone, order ref (#SXZ-...), city...">
+          </div>
+
+          <!-- Quick Add Manual Order Button -->
+          <button id="adminAddManualBtn" class="admin-btn admin-btn-primary" type="button">
+            <i class="fa-solid fa-plus"></i> + Add Test Order
+          </button>
+        </div>
+
+        <!-- Status Filter Pills -->
+        <div class="toolbar-status-pills">
+          <button class="admin-pill active" data-filter="all">
+            <i class="fa-solid fa-list-check"></i> All Orders
+          </button>
+          <button class="admin-pill alert" data-filter="receipts">
+            <i class="fa-solid fa-receipt"></i> Screenshots To Verify
+          </button>
+          <button class="admin-pill" data-filter="verified">
+            <i class="fa-solid fa-circle-check"></i> Advance Verified
+          </button>
+          <button class="admin-pill" data-filter="cod">
+            <i class="fa-solid fa-money-bill-wave"></i> Cash On Delivery (COD)
+          </button>
+          <button class="admin-pill" data-filter="dispatched">
+            <i class="fa-solid fa-truck-ramp-box"></i> Dispatched
+          </button>
+          <button class="admin-pill" data-filter="delivered">
+            <i class="fa-solid fa-box-open"></i> Delivered
+          </button>
+        </div>
+      </section>
+
+      <!-- Orders Table -->
+      <section class="orders-table-wrapper">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID & Date</th>
+              <th>Customer Information</th>
+              <th>Ordered Items</th>
+              <th>Total Amount</th>
+              <th>Payment Screenshot (SS)</th>
+              <th>Order Status & Courier</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- Dynamically populated via js/admin.js -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       Screenshot / Payment Receipt Lightbox Modal
+       ========================================================================== -->
+  <div id="ssLightboxModal" class="ss-lightbox-backdrop">
+    <div class="ss-lightbox-modal">
+      <div class="ss-lightbox-header">
+        <h3 id="ssLightboxTitle" class="ss-lightbox-title">PAYMENT SCREENSHOT</h3>
+        <button id="ssLightboxClose" style="background: transparent; color: var(--admin-text-dim); font-size: 1.4rem; cursor: pointer; border: none;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Image Area -->
+      <div class="ss-lightbox-image-area">
+        <img id="ssLightboxImg" src="" alt="Payment Screenshot Full" class="ss-full-img">
+      </div>
+
+      <!-- Footer & Controls -->
+      <div class="ss-lightbox-footer">
+        <div id="ssLightboxMeta" style="font-size: 0.85rem; line-height: 1.4;">
+          <!-- Customer info & details -->
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <!-- Zoom Controls -->
+          <div style="display: flex; gap: 4px; margin-right: 12px; background: rgba(0,0,0,0.4); padding: 4px 6px; border-radius: 4px;">
+            <button id="ssZoomOutBtn" class="admin-btn admin-btn-secondary" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Zoom Out">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <button id="ssZoomResetBtn" class="admin-btn admin-btn-secondary" style="height: 30px; padding: 0 8px; font-size: 0.75rem;" title="Reset Zoom">
+              100%
+            </button>
+            <button id="ssZoomInBtn" class="admin-btn admin-btn-secondary" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Zoom In">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- Action Buttons -->
+          <button id="ssLightboxVerifyBtn" class="admin-btn admin-btn-primary" style="background: var(--admin-green); color: #02070D;">
+            <i class="fa-solid fa-check-double"></i> Mark Advance Verified
+          </button>
+          <button id="ssLightboxWABtn" class="admin-btn admin-btn-secondary" style="color: var(--admin-green); border-color: rgba(37, 211, 102, 0.4);">
+            <i class="fa-brands fa-whatsapp"></i> Chat WhatsApp
+          </button>
+          <button id="ssLightboxDownloadBtn" class="admin-btn admin-btn-secondary" title="Download Screenshot">
+            <i class="fa-solid fa-download"></i> Save Image
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/admin.js"></script>
+</body>
+</html>

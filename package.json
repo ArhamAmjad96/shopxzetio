@@ -1,0 +1,37 @@
+{
+  "name": "shopxzetio-esports-ecommerce",
+  "version": "1.0.0",
+  "description": "ShopXzetio Pakistan - Premium Esports & Gaming Hardware eCommerce Platform in React",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite --port 3000",
+    "build:data": "node scripts/build-data.js",
+    "test:assets": "node scripts/verify-assets.js"
+  },
+  "keywords": [
+    "gaming",
+    "esports",
+    "shopxzetio",
+    "pakistan",
+    "pubg-mobile",
+    "hyperx",
+    "piva",
+    "react"
+  ],
+  "author": "ShopXzetio Pakistan",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "http-node": "^1.2.0",
+    "isomorphic-git": "^1.41.9",
+    "vite": "^6.0.7"
+  }
+}
