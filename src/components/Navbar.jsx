@@ -68,19 +68,19 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
                 className={`pro-nav-link ${currentView === 'splitters' ? 'active' : ''}`}
                 onClick={() => handleNav('splitters')}
               >
-                Splitters & DAC
+                Splitters
               </button>
               <button 
                 className={`pro-nav-link ${currentView === 'arsenal' ? 'active' : ''}`}
                 onClick={() => handleNav('arsenal')}
               >
-                All Arsenal
+                Arsenal
               </button>
               <button 
                 className="pro-nav-link"
                 onClick={() => handleNav('home', '#inside-shopxzetio')}
               >
-                Inside Xzetio
+                Reels
               </button>
               <button 
                 className="pro-nav-link pro-nav-highlight"
