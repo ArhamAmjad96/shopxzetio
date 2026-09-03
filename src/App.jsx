@@ -36,14 +36,17 @@ export default function App() {
     };
   }, []);
 
+  // Auto-route /admin or #admin on mount
+  useEffect(() => {
+    if (window.location.hash === '#admin' || window.location.search.includes('view=admin') || window.location.pathname === '/admin') {
+      setCurrentView('admin');
+    }
+  }, [setCurrentView]);
+
   // Scroll to top when view changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentView]);
-
-  if (currentView === 'admin') {
-    return <AdminDashboard />;
-  }
 
   return (
     <div className="app-container">
@@ -66,7 +69,12 @@ export default function App() {
         <div className="global-site-vignette" />
       </div>
 
-      {/* Toast Notification */}
+      {/* Render Admin Dashboard when currentView is admin */}
+      {currentView === 'admin' ? (
+        <AdminDashboard />
+      ) : (
+        <>
+          {/* Toast Notification */}
       {toast && (
         <div className="cyber-toast">
           <i className="fa-solid fa-circle-check" style={{ color: '#10B981' }}></i>
@@ -164,6 +172,8 @@ export default function App() {
         <i className="fa-brands fa-whatsapp"></i>
         <span className="tooltip">Chat with Support</span>
       </a>
+      </>
+      )}
     </div>
   );
 }

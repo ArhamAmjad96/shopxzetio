@@ -252,10 +252,7 @@ export default function AdminDashboard() {
             )}
           </form>
 
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: '0.75rem', color: 'var(--admin-text-dim)' }}>
-            Default Passcode: <strong style={{ color: 'var(--admin-cyan)' }}>xzetio2026</strong> or <strong style={{ color: 'var(--admin-cyan)' }}>923348</strong>
-          </div>
-          <div style={{ marginTop: '12px' }}>
+          <div style={{ marginTop: '20px' }}>
             <button 
               onClick={() => setCurrentView('store')}
               style={{ background: 'transparent', border: 'none', fontSize: '0.8rem', color: 'var(--admin-text-dim)', textDecoration: 'underline', cursor: 'pointer' }}
@@ -376,31 +373,31 @@ export default function AdminDashboard() {
               className={`admin-pill ${activeFilter === 'all' ? 'active' : ''}`}
               onClick={() => setActiveFilter('all')}
             >
-              <i className="fa-solid fa-list-check"></i> All Orders
+              <i className="fa-solid fa-layer-group"></i> All Orders <span className="pill-count">{orders.length}</span>
             </button>
             <button 
               className={`admin-pill alert ${activeFilter === 'receipts' ? 'active' : ''}`}
               onClick={() => setActiveFilter('receipts')}
             >
-              <i className="fa-solid fa-receipt"></i> Screenshots To Verify
+              <i className="fa-solid fa-receipt"></i> Receipts To Verify <span className={`pill-count ${pendingReceipts > 0 ? 'badge-alert' : ''}`}>{pendingReceipts}</span>
             </button>
             <button 
               className={`admin-pill ${activeFilter === 'verified' ? 'active' : ''}`}
               onClick={() => setActiveFilter('verified')}
             >
-              <i className="fa-solid fa-circle-check"></i> Advance Verified
+              <i className="fa-solid fa-circle-check"></i> Advance Verified <span className="pill-count">{orders.filter(o => o.status === 'Advance Verified').length}</span>
             </button>
             <button 
               className={`admin-pill ${activeFilter === 'cod' ? 'active' : ''}`}
               onClick={() => setActiveFilter('cod')}
             >
-              <i className="fa-solid fa-money-bill-wave"></i> Cash On Delivery (COD)
+              <i className="fa-solid fa-money-bill-wave"></i> Full COD <span className="pill-count">{orders.filter(o => o.paymentCode === 'cod').length}</span>
             </button>
             <button 
               className={`admin-pill ${activeFilter === 'dispatched' ? 'active' : ''}`}
               onClick={() => setActiveFilter('dispatched')}
             >
-              <i className="fa-solid fa-truck-ramp-box"></i> Dispatched
+              <i className="fa-solid fa-truck-fast"></i> Dispatched <span className="pill-count">{orders.filter(o => o.status === 'Dispatched').length}</span>
             </button>
           </div>
         </section>
@@ -422,54 +419,81 @@ export default function AdminDashboard() {
             <tbody>
               {filteredOrders.length > 0 ? (
                 filteredOrders.map(order => {
-                  const dateStr = new Date(order.date).toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                  });
+                  const dateObj = new Date(order.date);
+                  const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                  const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                  const initials = (order.customer.fullName || 'User')
+                    .split(' ')
+                    .map(n => n[0])
+                    .slice(0, 2)
+                    .join('')
+                    .toUpperCase();
+
+                  let statusClass = 'status-pending';
+                  if (order.status === 'Advance Verified') statusClass = 'status-verified';
+                  else if (order.status === 'Dispatched') statusClass = 'status-dispatched';
+                  else if (order.status === 'Delivered') statusClass = 'status-delivered';
+                  else if (order.status === 'Cancelled') statusClass = 'status-cancelled';
 
                   return (
-                    <tr key={order.orderRef}>
+                    <tr key={order.orderRef} className={`order-row ${order.receiptDataUrl && order.status === 'Receipt Submitted' ? 'row-highlight-review' : ''}`}>
                       {/* 1. Order ID & Date */}
                       <td>
-                        <span className="order-ref-cell">#{order.orderRef}</span>
-                        <span className="order-date-sub">{dateStr}</span>
-                        <span style={{ display: 'inline-block', fontSize: '0.7rem', color: 'var(--admin-cyan)', marginTop: '4px' }}>
-                          {order.paymentMethod}
-                        </span>
+                        <div className="order-ref-badge">
+                          <i className="fa-solid fa-hashtag"></i>{order.orderRef}
+                        </div>
+                        <div className="order-time-meta">
+                          <span>{dateStr}</span> • <span>{timeStr}</span>
+                        </div>
+                        <div className={`order-payment-pill ${order.paymentCode === 'cod_advance' ? 'pill-advance' : ''}`}>
+                          {order.paymentMethod || 'Cash On Delivery'}
+                        </div>
                       </td>
 
                       {/* 2. Customer */}
                       <td>
-                        <div className="customer-name">{order.customer.fullName}</div>
-                        <a 
-                          href={`https://wa.me/92${order.customer.whatsapp.replace(/\D/g, '').replace(/^0+/, '')}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="customer-phone-link"
-                        >
-                          <i className="fa-brands fa-whatsapp"></i> {order.customer.whatsapp}
-                        </a>
-                        <div className="customer-address-sub" title={`${order.customer.address}, ${order.customer.city}`}>
-                          <i className="fa-solid fa-location-dot"></i> {order.customer.city}: {order.customer.address}
+                        <div className="customer-info-cell">
+                          <div className="customer-avatar">{initials}</div>
+                          <div className="customer-text-meta">
+                            <div className="customer-name-heading">{order.customer.fullName}</div>
+                            <a 
+                              href={`https://wa.me/92${order.customer.whatsapp.replace(/\D/g, '').replace(/^0+/, '')}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="customer-wa-pill"
+                            >
+                              <i className="fa-brands fa-whatsapp"></i> {order.customer.whatsapp}
+                            </a>
+                            <div className="customer-loc-pill" title={`${order.customer.address}, ${order.customer.city}`}>
+                              <i className="fa-solid fa-location-dot"></i> {order.customer.city}
+                            </div>
+                          </div>
                         </div>
                       </td>
 
                       {/* 3. Items */}
-                      <td style={{ fontSize: '0.8rem', lineHeight: '1.4', color: 'var(--admin-text-soft)' }}>
-                        {order.items.map((it, idx) => (
-                          <div key={idx}>{it.quantity}x {it.name}</div>
-                        ))}
+                      <td>
+                        <div className="order-items-wrapper">
+                          {order.items.map((it, idx) => (
+                            <div key={idx} className="order-item-chip">
+                              <span className="item-chip-qty">{it.quantity}x</span>
+                              <span className="item-chip-name">{it.name}</span>
+                            </div>
+                          ))}
+                        </div>
                       </td>
 
                       {/* 4. Financials */}
                       <td>
-                        <div style={{ fontFamily: 'var(--admin-font-digital)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
+                        <div className="order-price-display">
                           Rs. {order.total.toLocaleString()}
                         </div>
                         {order.paymentCode === 'cod_advance' && (
-                          <>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--admin-green)' }}>Advance: Rs. 500</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--admin-cyan)' }}>COD Bal: Rs. {(order.total - 500).toLocaleString()}</div>
-                          </>
+                          <div className="finance-breakdown-row">
+                            <span className="badge-adv-paid">✓ Adv: Rs. 500</span>
+                            <span className="badge-cod-due">COD: Rs. {(order.total - 500).toLocaleString()}</span>
+                          </div>
                         )}
                       </td>
 
@@ -477,70 +501,81 @@ export default function AdminDashboard() {
                       <td>
                         {order.receiptDataUrl ? (
                           <button 
-                            className="ss-badge-btn" 
+                            className={`ss-preview-card ${order.status === 'Receipt Submitted' ? 'glow-amber' : 'glow-cyan'}`} 
                             onClick={() => { setActiveSSOrder(order); setZoomLevel(1); }}
                           >
-                            <img src={order.receiptDataUrl} className="ss-thumb-img" alt="SS" />
-                            <span>View SS</span>
+                            <div className="ss-thumb-wrapper">
+                              <img src={order.receiptDataUrl} className="ss-thumb-img" alt="SS" />
+                              <div className="ss-hover-lens"><i className="fa-solid fa-magnifying-glass-plus"></i></div>
+                            </div>
+                            <span className="ss-btn-label">View Receipt</span>
                           </button>
                         ) : (
-                          <span className="no-ss-badge">No SS (COD)</span>
+                          <div className="no-ss-pill">
+                            <i className="fa-solid fa-money-bill-1"></i> No Advance
+                          </div>
                         )}
                       </td>
 
                       {/* 6. Status & Courier */}
                       <td>
-                        <select 
-                          className="status-select" 
-                          value={order.status}
-                          onChange={(e) => updateOrderStatus(order.orderRef, e.target.value)}
-                        >
-                          <option value="Receipt Submitted">Receipt Submitted</option>
-                          <option value="Advance Verified">Advance Verified</option>
-                          <option value="Confirmed (COD)">Confirmed (COD)</option>
-                          <option value="Dispatched">Dispatched</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
-                        </select>
-                        <div style={{ marginTop: '6px' }}>
-                          <input 
-                            type="text" 
-                            defaultValue={order.trackingNumber || ''} 
-                            placeholder="Tracking #" 
-                            onBlur={(e) => updateOrderTracking(order.orderRef, e.target.value)}
-                            style={{ width: '110px', height: '26px', fontSize: '0.75rem', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--admin-border)', borderRadius: '3px', color: '#fff', padding: '0 6px' }}
-                          />
+                        <div className="status-selector-wrap">
+                          <select 
+                            className={`status-select-enhanced ${statusClass}`}
+                            value={order.status}
+                            onChange={(e) => updateOrderStatus(order.orderRef, e.target.value)}
+                          >
+                            <option value="Receipt Submitted">🟡 Review Receipt</option>
+                            <option value="Advance Verified">🟢 Advance Verified</option>
+                            <option value="Confirmed (COD)">⚪ Confirmed (COD)</option>
+                            <option value="Dispatched">🔵 Dispatched</option>
+                            <option value="Delivered">🟣 Delivered</option>
+                            <option value="Cancelled">🔴 Cancelled</option>
+                          </select>
+                          <div className="tracking-input-group">
+                            <i className="fa-solid fa-truck-fast"></i>
+                            <input 
+                              type="text" 
+                              defaultValue={order.trackingNumber || ''} 
+                              placeholder="Tracking ID..." 
+                              onBlur={(e) => updateOrderTracking(order.orderRef, e.target.value)}
+                              className="tracking-code-field"
+                            />
+                          </div>
                         </div>
                       </td>
 
                       {/* 7. Actions */}
-                      <td style={{ whiteSpace: 'nowrap' }}>
-                        <button 
-                          className="admin-btn admin-btn-secondary" 
-                          style={{ height: '32px', padding: '0 10px', fontSize: '0.75rem' }} 
-                          onClick={() => chatWhatsApp(order)} 
-                          title="Message Customer on WhatsApp"
-                        >
-                          <i className="fa-brands fa-whatsapp" style={{ color: 'var(--admin-green)' }}></i> Chat
-                        </button>
-                        <button 
-                          className="admin-btn admin-btn-danger" 
-                          style={{ height: '32px', width: '32px', padding: 0, justifyContent: 'center', marginLeft: '6px' }} 
-                          onClick={() => deleteOrder(order.orderRef)} 
-                          title="Delete Order"
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                        </button>
+                      <td>
+                        <div className="table-actions-cell">
+                          <button 
+                            className="btn-action-chat" 
+                            onClick={() => chatWhatsApp(order)} 
+                            title="Message Customer on WhatsApp"
+                          >
+                            <i className="fa-brands fa-whatsapp"></i>
+                            <span>Chat</span>
+                          </button>
+                          <button 
+                            className="btn-action-delete" 
+                            onClick={() => deleteOrder(order.orderRef)} 
+                            title="Delete Order"
+                          >
+                            <i className="fa-solid fa-trash-can"></i>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '50px 20px', color: 'var(--admin-text-dim)' }}>
-                    <i className="fa-solid fa-folder-open" style={{ fontSize: '2.5rem', color: 'var(--admin-border)', marginBottom: '12px', display: 'block' }}></i>
-                    <h4 style={{ color: '#fff', marginBottom: '6px' }}>NO ORDERS FOUND</h4>
-                    <p style={{ fontSize: '0.85rem' }}>No customer orders match the selected filters.</p>
+                  <td colSpan="7" className="table-empty-state">
+                    <div className="empty-icon-wrap">
+                      <i className="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h4>NO MATCHING ORDERS</h4>
+                    <p>No customer orders match the selected filters.</p>
                   </td>
                 </tr>
               )}
