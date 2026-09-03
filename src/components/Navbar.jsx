@@ -92,16 +92,6 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
 
             {/* Right: Clean Pro Actions */}
             <div className="pro-nav-actions">
-              {/* Order Tracking Button */}
-              <button 
-                onClick={onOpenTracker}
-                className="pro-btn-action-nav"
-                title="Track Courier Order"
-              >
-                <i className="fa-solid fa-truck-fast"></i>
-                <span className="hide-on-mobile">Track</span>
-              </button>
-
               {/* WhatsApp Support Button */}
               <a 
                 href="https://wa.me/923348590229?text=Hello%20ShopXzetio!%20I%20have%20an%20inquiry%20regarding%20gaming%20gear." 
@@ -154,10 +144,10 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               </button>
             </div>
 
-            {/* Mobile Quick Action Cards (Matcher & Tracker) */}
-            <div className="pro-mobile-actions-grid">
+            {/* Mobile Quick Action Banner (Matcher) */}
+            <div className="pro-mobile-actions-single">
               <button 
-                className="pro-mobile-action-card card-matcher"
+                className="pro-mobile-action-card card-matcher full-width"
                 onClick={() => { setMobileOpen(false); onOpenCompat(); }}
               >
                 <div className="action-card-icon">
@@ -165,20 +155,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
                 </div>
                 <div className="action-card-text">
                   <strong>Device Matcher</strong>
-                  <span>Phone & cooler compatibility</span>
-                </div>
-              </button>
-
-              <button 
-                className="pro-mobile-action-card card-tracker"
-                onClick={() => { setMobileOpen(false); onOpenTracker(); }}
-              >
-                <div className="action-card-icon">
-                  <i className="fa-solid fa-truck-fast"></i>
-                </div>
-                <div className="action-card-text">
-                  <strong>Track Order</strong>
-                  <span>TCS / Leopards courier</span>
+                  <span>Find compatible coolers & gear for your phone</span>
                 </div>
               </button>
             </div>

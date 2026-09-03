@@ -4452,16 +4452,22 @@ button, input, select, textarea {
   color: #FFFFFF;
 }
 
-/* Mobile Drawer Quick Action Cards Grid (Matcher & Tracker) */
-.pro-mobile-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+/* Mobile Drawer Quick Action Banner (Matcher) */
+.pro-mobile-actions-single {
   margin-bottom: 20px;
 }
 
+.pro-mobile-action-card.full-width {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
 .pro-mobile-action-card {
-  padding: 12px 10px;
+  padding: 12px 14px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
