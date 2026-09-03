@@ -10,12 +10,6 @@ export default defineConfig({
       name: 'admin-and-mime-middleware',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          // Clean redirect /index.html to root /
-          if (req.url === '/index.html') {
-            res.writeHead(302, { Location: '/' });
-            res.end();
-            return;
-          }
           // Route /admin or /admin/ to /admin.html
           if (req.url === '/admin' || req.url === '/admin/') {
             req.url = '/admin.html';
