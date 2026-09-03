@@ -154,12 +154,41 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               </button>
             </div>
 
+            {/* Mobile Quick Action Cards (Matcher & Tracker) */}
+            <div className="pro-mobile-actions-grid">
+              <button 
+                className="pro-mobile-action-card card-matcher"
+                onClick={() => { setMobileOpen(false); onOpenCompat(); }}
+              >
+                <div className="action-card-icon">
+                  <i className="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div className="action-card-text">
+                  <strong>Device Matcher</strong>
+                  <span>Phone & cooler compatibility</span>
+                </div>
+              </button>
+
+              <button 
+                className="pro-mobile-action-card card-tracker"
+                onClick={() => { setMobileOpen(false); onOpenTracker(); }}
+              >
+                <div className="action-card-icon">
+                  <i className="fa-solid fa-truck-fast"></i>
+                </div>
+                <div className="action-card-text">
+                  <strong>Track Order</strong>
+                  <span>TCS / Leopards courier</span>
+                </div>
+              </button>
+            </div>
+
             <div className="pro-mobile-nav">
               <button 
                 className={`pro-mobile-link-btn ${(!currentView || currentView === 'home') ? 'active' : ''}`}
                 onClick={() => handleNav('home')}
               >
-                <i className="fa-solid fa-house"></i> Home
+                <i className="fa-solid fa-house"></i> Home Base
               </button>
               <button 
                 className={`pro-mobile-link-btn ${currentView === 'coolers' ? 'active' : ''}`}
@@ -207,8 +236,12 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
                 className="pro-mobile-whatsapp-btn"
               >
                 <i className="fa-brands fa-whatsapp"></i>
-                <span>Direct Helpline: 0334-8590229</span>
+                <span>Direct WhatsApp: 0334-8590229</span>
               </a>
+              <div className="pro-mobile-policy-strip">
+                <span>🛡️ 7 Days Warranty</span>
+                <span>💵 COD Nationwide</span>
+              </div>
             </div>
           </div>
         </div>
