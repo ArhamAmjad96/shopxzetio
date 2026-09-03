@@ -22,7 +22,7 @@ import DeviceCompatibilityModal from './components/DeviceCompatibilityModal';
 import OrderTrackerModal from './components/OrderTrackerModal';
 
 export default function App() {
-  const { currentView, toast } = useCart();
+  const { currentView, setCurrentView, toast } = useCart();
   const [compatModalOpen, setCompatModalOpen] = React.useState(false);
   const [trackerModalOpen, setTrackerModalOpen] = React.useState(false);
 
