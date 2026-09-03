@@ -243,6 +243,19 @@ export default function AdminDashboard() {
     });
   }, [orders, activeFilter, searchQuery]);
 
+  const handleGoToStorefront = () => {
+    if (window.location.port === '5173') {
+      window.location.href = 'http://localhost:3000/';
+    } else {
+      window.location.hash = '';
+      if (window.location.pathname.startsWith('/admin')) {
+        window.location.href = 'http://localhost:3000/';
+      } else {
+        setCurrentView('store');
+      }
+    }
+  };
+
   // If locked, render Lock Screen
   if (!isAuthenticated) {
     return (
@@ -275,10 +288,10 @@ export default function AdminDashboard() {
 
           <div style={{ marginTop: '20px' }}>
             <button 
-              onClick={() => setCurrentView('store')}
+              onClick={handleGoToStorefront}
               style={{ background: 'transparent', border: 'none', fontSize: '0.8rem', color: 'var(--admin-text-dim)', textDecoration: 'underline', cursor: 'pointer' }}
             >
-              &larr; Return to Customer Storefront
+              &larr; Return to Customer Storefront (Port 3000)
             </button>
           </div>
         </div>
@@ -306,7 +319,7 @@ export default function AdminDashboard() {
 
           <div className="admin-top-actions">
             <button 
-              onClick={() => setCurrentView('store')} 
+              onClick={handleGoToStorefront} 
               className="admin-btn admin-btn-secondary" 
               title="Return to Storefront"
             >
