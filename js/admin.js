@@ -485,10 +485,59 @@ class ShopAdmin {
     }).join('');
   }
 
+  showCyberToast(msg, icon = 'fa-circle-check', type = 'success') {
+    const existing = document.querySelector('.cyber-admin-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `cyber-admin-toast toast-${type}`;
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-20px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  showCyberConfirm(title, desc, onConfirm) {
+    const existing = document.querySelector('.cyber-confirm-backdrop');
+    if (existing) existing.remove();
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'cyber-confirm-backdrop';
+    backdrop.innerHTML = `
+      <div class="cyber-confirm-card">
+        <div class="confirm-icon-box">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="confirm-title">${title}</div>
+        <div class="confirm-desc">${desc}</div>
+        <div class="confirm-actions">
+          <button class="confirm-btn-cancel" id="cyberConfirmCancel">CANCEL</button>
+          <button class="confirm-btn-delete" id="cyberConfirmOk">DELETE PERMANENTLY</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    document.getElementById('cyberConfirmCancel').onclick = () => backdrop.remove();
+    document.getElementById('cyberConfirmOk').onclick = () => {
+      backdrop.remove();
+      if (typeof onConfirm === 'function') onConfirm();
+    };
+    backdrop.onclick = (e) => {
+      if (e.target === backdrop) backdrop.remove();
+    };
+  }
+
   openScreenshot(orderRef) {
     const order = this.orders.find(o => o.orderRef === orderRef);
     if (!order || !order.receiptDataUrl) {
-      alert('No screenshot found for this order.');
+      this.showCyberToast('No payment receipt uploaded for this order.', 'fa-image', 'info');
       return;
     }
 
@@ -516,6 +565,7 @@ class ShopAdmin {
       this.lightboxVerifyBtn.onclick = () => {
         this.updateStatus(order.orderRef, 'Advance Verified');
         this.closeLightbox();
+        this.showCyberToast(`Order #${order.orderRef} marked Advance Verified!`, 'fa-circle-check', 'success');
       };
     }
 
@@ -551,6 +601,7 @@ class ShopAdmin {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    this.showCyberToast(`Receipt #${order.orderRef} saved to device`, 'fa-download', 'info');
   }
 
   updateStatus(orderRef, newStatus) {
@@ -558,6 +609,7 @@ class ShopAdmin {
     if (order) {
       order.status = newStatus;
       this.saveOrders();
+      this.showCyberToast(`Order #${orderRef} status: ${newStatus}`, 'fa-arrows-rotate', 'info');
     }
   }
 
@@ -566,6 +618,7 @@ class ShopAdmin {
     if (order) {
       order.trackingNumber = trackingCode.trim();
       this.saveOrders();
+      this.showCyberToast(`Tracking ID saved for #${orderRef}`, 'fa-truck-fast', 'info');
     }
   }
 
@@ -592,10 +645,15 @@ class ShopAdmin {
   }
 
   deleteOrder(orderRef) {
-    if (confirm(`Are you sure you want to delete order #${orderRef}?`)) {
-      this.orders = this.orders.filter(o => o.orderRef !== orderRef);
-      this.saveOrders();
-    }
+    this.showCyberConfirm(
+      'DELETE ORDER RECORD',
+      `Are you sure you want to permanently delete order #${orderRef}? This action cannot be reversed.`,
+      () => {
+        this.orders = this.orders.filter(o => o.orderRef !== orderRef);
+        this.saveOrders();
+        this.showCyberToast(`Order #${orderRef} permanently removed.`, 'fa-trash-can', 'danger');
+      }
+    );
   }
 
   addManualTestOrder() {
@@ -604,12 +662,12 @@ class ShopAdmin {
       orderRef: randomId,
       date: new Date().toISOString(),
       customer: {
-        fullName: 'Test Customer (Manual)',
-        email: 'test@gamer.pk',
+        fullName: 'Daniyal Pro Gamer',
+        email: 'daniyal@gamer.pk',
         whatsapp: '03348590229',
         address: 'Sector F-7/2, Islamabad',
         city: 'Islamabad',
-        notes: 'Manual phone order entered by admin.'
+        notes: 'Manual test booking created in admin dashboard.'
       },
       paymentMethod: 'COD + Rs. 500 Advance',
       paymentCode: 'cod_advance',
@@ -628,19 +686,18 @@ class ShopAdmin {
 
     this.orders.unshift(newOrder);
     this.saveOrders();
-    alert(`Order #${randomId} added to dashboard!`);
+    this.showCyberToast(`Order #${randomId} added to pipeline!`, 'fa-circle-check', 'success');
   }
 
   exportToCSV() {
     if (this.orders.length === 0) {
-      alert('No orders available to export.');
+      this.showCyberToast('No orders available to export.', 'fa-file-excel', 'info');
       return;
     }
 
     let csv = 'Order Ref,Date,Customer Name,Phone,Email,City,Address,Total (PKR),Payment Method,Status,Has Receipt,Tracking Number\n';
     this.orders.forEach(o => {
       const cleanAddress = (o.customer.address || '').replace(/"/g, '""');
-      const cleanNotes = (o.customer.notes || '').replace(/"/g, '""');
       csv += `"${o.orderRef}","${o.date}","${o.customer.fullName}","${o.customer.whatsapp}","${o.customer.email || ''}","${o.customer.city}","${cleanAddress}",${o.total},"${o.paymentMethod}","${o.status}","${o.hasReceipt ? 'YES' : 'NO'}","${o.trackingNumber || ''}"\n`;
     });
 
@@ -653,6 +710,7 @@ class ShopAdmin {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    this.showCyberToast('Order ledger exported to CSV successfully!', 'fa-file-csv', 'success');
   }
 }
 

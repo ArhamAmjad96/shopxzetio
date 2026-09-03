@@ -983,3 +983,181 @@ body.admin-body {
 .shake {
   animation: shake 0.4s ease;
 }
+
+/* ==========================================================================
+   Cyber Toast Notifications & Confirmation Modal
+   ========================================================================== */
+.cyber-admin-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(8, 16, 28, 0.95);
+  border: 1px solid var(--admin-cyan);
+  border-radius: 10px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.3);
+  color: #FFFFFF;
+  font-family: var(--admin-font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-admin-toast.toast-success {
+  border-color: var(--admin-green);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 255, 157, 0.3);
+}
+
+.cyber-admin-toast.toast-success i {
+  color: var(--admin-green);
+  font-size: 1.15rem;
+}
+
+.cyber-admin-toast.toast-danger {
+  border-color: var(--admin-red);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(244, 63, 94, 0.3);
+}
+
+.cyber-admin-toast.toast-danger i {
+  color: var(--admin-red);
+  font-size: 1.15rem;
+}
+
+.cyber-admin-toast.toast-info {
+  border-color: var(--admin-cyan);
+}
+
+.cyber-admin-toast.toast-info i {
+  color: var(--admin-cyan);
+  font-size: 1.15rem;
+}
+
+@keyframes toastSlideIn {
+  0% { transform: translateY(-30px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Custom Cyber Confirmation Modal */
+.cyber-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: rgba(2, 6, 12, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInModal 0.2s ease;
+}
+
+.cyber-confirm-card {
+  background: rgba(8, 16, 28, 0.98);
+  border: 1px solid var(--admin-red);
+  border-radius: 14px;
+  max-width: 440px;
+  width: 100%;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 35px rgba(244, 63, 94, 0.3);
+  animation: popInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.confirm-icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(244, 63, 94, 0.12);
+  border: 2px solid var(--admin-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--admin-red);
+  margin: 0 auto 18px auto;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+}
+
+.confirm-title {
+  font-family: var(--admin-font-display);
+  font-size: 1.1rem;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.confirm-desc {
+  font-size: 0.85rem;
+  color: #94A3B8;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.confirm-btn-cancel {
+  flex: 1;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #E2E8F0;
+  border-radius: 6px;
+  font-family: var(--admin-font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.confirm-btn-delete {
+  flex: 1;
+  height: 42px;
+  background: linear-gradient(135deg, #F43F5E, #BE123C);
+  border: none;
+  color: #FFFFFF;
+  border-radius: 6px;
+  font-family: var(--admin-font-heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.4);
+  transition: all 0.2s ease;
+}
+
+.confirm-btn-delete:hover {
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.7);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popInModal {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+

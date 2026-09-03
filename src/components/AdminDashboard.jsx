@@ -19,6 +19,17 @@ export default function AdminDashboard() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Custom cyber toast notification & confirm modal state
+  const [adminToast, setAdminToast] = useState(null);
+  const [confirmDeleteRef, setConfirmDeleteRef] = useState(null);
+
+  const triggerToast = (msg, icon = 'fa-circle-check', type = 'success') => {
+    setAdminToast({ msg, icon, type });
+    setTimeout(() => {
+      setAdminToast(null);
+    }, 3500);
+  };
+
   // Lightbox
   const [activeSSOrder, setActiveSSOrder] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -122,17 +133,25 @@ export default function AdminDashboard() {
   const updateOrderStatus = (orderRef, newStatus) => {
     const updated = orders.map(o => o.orderRef === orderRef ? { ...o, status: newStatus } : o);
     saveOrders(updated);
+    triggerToast(`Order #${orderRef} updated to ${newStatus}`, 'fa-arrows-rotate', 'info');
   };
 
   const updateOrderTracking = (orderRef, tracking) => {
     const updated = orders.map(o => o.orderRef === orderRef ? { ...o, trackingNumber: tracking } : o);
     saveOrders(updated);
+    triggerToast(`Tracking ID saved for #${orderRef}`, 'fa-truck-fast', 'info');
   };
 
   const deleteOrder = (orderRef) => {
-    if (window.confirm(`Delete order #${orderRef}?`)) {
-      const updated = orders.filter(o => o.orderRef !== orderRef);
+    setConfirmDeleteRef(orderRef);
+  };
+
+  const handleConfirmDelete = () => {
+    if (confirmDeleteRef) {
+      const updated = orders.filter(o => o.orderRef !== confirmDeleteRef);
       saveOrders(updated);
+      triggerToast(`Order #${confirmDeleteRef} permanently removed.`, 'fa-trash-can', 'danger');
+      setConfirmDeleteRef(null);
     }
   };
 
@@ -158,12 +177,12 @@ export default function AdminDashboard() {
       orderRef: randomId,
       date: new Date().toISOString(),
       customer: {
-        fullName: 'Test Pro Gamer',
-        email: 'gamer@shopxzetio.pk',
+        fullName: 'Daniyal Pro Gamer',
+        email: 'daniyal@gamer.pk',
         whatsapp: '03348590229',
-        address: 'F-7/2, Islamabad',
+        address: 'Sector F-7/2, Islamabad',
         city: 'Islamabad',
-        notes: 'Manual order created in admin dashboard.'
+        notes: 'Manual test order created in admin dashboard.'
       },
       paymentMethod: 'COD + Rs. 500 Advance',
       paymentCode: 'cod_advance',
@@ -174,17 +193,18 @@ export default function AdminDashboard() {
       shipping: 250,
       total: 4600,
       hasReceipt: true,
-      receiptDataUrl: '/assets/brand/HERO.png',
+      receiptDataUrl: '/assets/brand/LOGO.png',
       status: 'Receipt Submitted',
       trackingNumber: '',
       courier: 'TCS Pakistan'
     };
     saveOrders([newOrder, ...orders]);
+    triggerToast(`Order #${randomId} added to pipeline!`, 'fa-circle-check', 'success');
   };
 
   const exportCSV = () => {
     if (orders.length === 0) {
-      alert('No orders available to export.');
+      triggerToast('No orders available to export.', 'fa-file-excel', 'info');
       return;
     }
     let csv = 'Order Ref,Date,Customer Name,Phone,Email,City,Address,Total (PKR),Payment Method,Status,Has Receipt,Tracking Number\n';
@@ -201,6 +221,7 @@ export default function AdminDashboard() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    triggerToast('Order ledger exported to CSV successfully!', 'fa-file-csv', 'success');
   };
 
   const filteredOrders = useMemo(() => {
@@ -660,6 +681,37 @@ export default function AdminDashboard() {
                   <i className="fa-brands fa-whatsapp"></i> Chat WhatsApp
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cyber Toast Notification */}
+      {adminToast && (
+        <div className={`cyber-admin-toast toast-${adminToast.type}`}>
+          <i className={`fa-solid ${adminToast.icon}`}></i>
+          <span>{adminToast.msg}</span>
+        </div>
+      )}
+
+      {/* Custom Cyber Confirmation Modal */}
+      {confirmDeleteRef && (
+        <div className="cyber-confirm-backdrop" onClick={(e) => { if (e.target.classList.contains('cyber-confirm-backdrop')) setConfirmDeleteRef(null); }}>
+          <div className="cyber-confirm-card">
+            <div className="confirm-icon-box">
+              <i className="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div className="confirm-title">DELETE ORDER RECORD</div>
+            <div className="confirm-desc">
+              Are you sure you want to permanently delete order <strong style={{ color: 'var(--admin-cyan)' }}>#{confirmDeleteRef}</strong>? This action cannot be reversed.
+            </div>
+            <div className="confirm-actions">
+              <button className="confirm-btn-cancel" onClick={() => setConfirmDeleteRef(null)}>
+                CANCEL
+              </button>
+              <button className="confirm-btn-delete" onClick={handleConfirmDelete}>
+                DELETE PERMANENTLY
+              </button>
             </div>
           </div>
         </div>
