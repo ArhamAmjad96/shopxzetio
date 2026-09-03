@@ -36,12 +36,14 @@ export default function App() {
     };
   }, []);
 
-  // Auto-route /admin or #admin on mount
+  // Auto-route /admin or #admin on mount or URL change
   useEffect(() => {
     if (window.location.hash === '#admin' || window.location.search.includes('view=admin') || window.location.pathname === '/admin') {
       setCurrentView('admin');
+    } else if (window.location.pathname === '/' && !window.location.hash && currentView === 'admin') {
+      setCurrentView('store');
     }
-  }, [setCurrentView]);
+  }, [setCurrentView, currentView]);
 
   // Scroll to top when view changes
   useEffect(() => {
