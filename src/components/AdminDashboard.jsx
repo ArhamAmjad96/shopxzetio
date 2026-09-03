@@ -244,16 +244,8 @@ export default function AdminDashboard() {
   }, [orders, activeFilter, searchQuery]);
 
   const handleGoToStorefront = () => {
-    if (window.location.port === '5173') {
-      window.location.href = 'http://localhost:3000/';
-    } else {
-      window.location.hash = '';
-      if (window.location.pathname.startsWith('/admin')) {
-        window.location.href = 'http://localhost:3000/';
-      } else {
-        setCurrentView('store');
-      }
-    }
+    window.location.hash = '';
+    window.location.href = '/';
   };
 
   // If locked, render Lock Screen
@@ -291,7 +283,7 @@ export default function AdminDashboard() {
               onClick={handleGoToStorefront}
               style={{ background: 'transparent', border: 'none', fontSize: '0.8rem', color: 'var(--admin-text-dim)', textDecoration: 'underline', cursor: 'pointer' }}
             >
-              &larr; Return to Customer Storefront (Port 3000)
+              &larr; Return to Customer Storefront
             </button>
           </div>
         </div>
