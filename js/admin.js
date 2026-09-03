@@ -276,13 +276,31 @@ class ShopAdmin {
   renderStats() {
     const totalRev = this.orders.reduce((sum, o) => sum + (o.total || 0), 0);
     const totalCount = this.orders.length;
-    const pendingReceipts = this.orders.filter(o => o.hasReceipt && o.status === 'Receipt Submitted').length;
-    const dispatchedCount = this.orders.filter(o => o.status === 'Dispatched' || o.status === 'Delivered').length;
+    const pendingReceipts = this.orders.filter(o => o.hasReceipt && (o.status === 'Receipt Submitted' || o.paymentCode === 'cod_advance')).length;
+    const advanceVerified = this.orders.filter(o => o.status === 'Advance Verified').length;
+    const codCount = this.orders.filter(o => o.paymentCode === 'cod').length;
+    const dispatchedCount = this.orders.filter(o => o.status === 'Dispatched').length;
+    const deliveredCount = this.orders.filter(o => o.status === 'Delivered').length;
 
     if (this.totalRevenueEl) this.totalRevenueEl.textContent = 'Rs. ' + totalRev.toLocaleString();
     if (this.totalOrdersEl) this.totalOrdersEl.textContent = totalCount;
     if (this.pendingReceiptsEl) this.pendingReceiptsEl.textContent = pendingReceipts;
-    if (this.dispatchedOrdersEl) this.dispatchedOrdersEl.textContent = dispatchedCount;
+    if (this.dispatchedOrdersEl) this.dispatchedOrdersEl.textContent = (dispatchedCount + deliveredCount);
+
+    // Update filter counts on pills
+    const pillAll = document.querySelector('[data-filter="all"]');
+    const pillReceipts = document.querySelector('[data-filter="receipts"]');
+    const pillVerified = document.querySelector('[data-filter="verified"]');
+    const pillCod = document.querySelector('[data-filter="cod"]');
+    const pillDispatched = document.querySelector('[data-filter="dispatched"]');
+    const pillDelivered = document.querySelector('[data-filter="delivered"]');
+
+    if (pillAll) pillAll.innerHTML = `<i class="fa-solid fa-layer-group"></i> All Orders <span class="pill-count">${totalCount}</span>`;
+    if (pillReceipts) pillReceipts.innerHTML = `<i class="fa-solid fa-receipt"></i> Receipts To Verify <span class="pill-count ${pendingReceipts > 0 ? 'badge-alert' : ''}">${pendingReceipts}</span>`;
+    if (pillVerified) pillVerified.innerHTML = `<i class="fa-solid fa-circle-check"></i> Advance Verified <span class="pill-count">${advanceVerified}</span>`;
+    if (pillCod) pillCod.innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> Full COD <span class="pill-count">${codCount}</span>`;
+    if (pillDispatched) pillDispatched.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Dispatched <span class="pill-count">${dispatchedCount}</span>`;
+    if (pillDelivered) pillDelivered.innerHTML = `<i class="fa-solid fa-box-open"></i> Delivered <span class="pill-count">${deliveredCount}</span>`;
   }
 
   renderOrdersTable() {
@@ -318,10 +336,12 @@ class ShopAdmin {
     if (filtered.length === 0) {
       this.ordersTbody.innerHTML = `
         <tr>
-          <td colspan="7" style="text-align: center; padding: 50px 20px; color: var(--admin-text-dim);">
-            <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--admin-border); margin-bottom: 12px; display: block;"></i>
-            <h4 style="color: #fff; margin-bottom: 6px;">NO ORDERS FOUND</h4>
-            <p style="font-size: 0.85rem;">No customer orders match the selected filters or query.</p>
+          <td colspan="7" class="table-empty-state">
+            <div class="empty-icon-wrap">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h4>NO MATCHING ORDERS</h4>
+            <p>No customer orders match the selected filters or query.</p>
           </td>
         </tr>
       `;
@@ -329,98 +349,136 @@ class ShopAdmin {
     }
 
     this.ordersTbody.innerHTML = filtered.map(order => {
-      const dateStr = new Date(order.date).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
+      const dateObj = new Date(order.date);
+      const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-      const itemsSummary = (order.items || []).map(it => `${it.quantity}x ${it.name}`).join('<br>');
+      // Initials for Avatar
+      const initials = (order.customer.fullName || 'User')
+        .split(' ')
+        .map(n => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+
+      const itemsMarkup = (order.items || []).map(it => `
+        <div class="order-item-chip">
+          <span class="item-chip-qty">${it.quantity}x</span>
+          <span class="item-chip-name">${it.name}</span>
+        </div>
+      `).join('');
+
       const hasSS = !!order.receiptDataUrl;
 
-      // Status class
-      let statusColor = '#CBD5E1';
-      if (order.status === 'Receipt Submitted') statusColor = 'var(--admin-amber)';
-      else if (order.status === 'Advance Verified') statusColor = 'var(--admin-green)';
-      else if (order.status === 'Dispatched') statusColor = 'var(--admin-blue)';
-      else if (order.status === 'Delivered') statusColor = '#00FF9D';
-      else if (order.status === 'Cancelled') statusColor = 'var(--admin-red)';
+      // Status badge style
+      let statusClass = 'status-pending';
+      if (order.status === 'Advance Verified') statusClass = 'status-verified';
+      else if (order.status === 'Dispatched') statusClass = 'status-dispatched';
+      else if (order.status === 'Delivered') statusClass = 'status-delivered';
+      else if (order.status === 'Cancelled') statusClass = 'status-cancelled';
 
       return `
-        <tr>
+        <tr class="order-row ${hasSS && order.status === 'Receipt Submitted' ? 'row-highlight-review' : ''}">
           <!-- 1. Order ID & Date -->
           <td>
-            <span class="order-ref-cell">#${order.orderRef}</span>
-            <span class="order-date-sub">${dateStr}</span>
-            <span style="display: inline-block; font-size: 0.7rem; color: var(--admin-cyan); margin-top: 4px;">
-              ${order.paymentMethod}
-            </span>
+            <div class="order-ref-badge">
+              <i class="fa-solid fa-hashtag"></i>${order.orderRef}
+            </div>
+            <div class="order-time-meta">
+              <span>${dateStr}</span> • <span>${timeStr}</span>
+            </div>
+            <div class="order-payment-pill ${order.paymentCode === 'cod_advance' ? 'pill-advance' : ''}">
+              ${order.paymentMethod || 'Cash On Delivery'}
+            </div>
           </td>
 
           <!-- 2. Customer Info -->
           <td>
-            <div class="customer-name">${order.customer.fullName}</div>
-            <a href="https://wa.me/92${order.customer.whatsapp.replace(/^0+/, '')}" target="_blank" class="customer-phone-link">
-              <i class="fa-brands fa-whatsapp"></i> ${order.customer.whatsapp}
-            </a>
-            <div class="customer-address-sub" title="${order.customer.address}, ${order.customer.city}">
-              <i class="fa-solid fa-location-dot"></i> ${order.customer.city}: ${order.customer.address}
+            <div class="customer-info-cell">
+              <div class="customer-avatar">${initials}</div>
+              <div class="customer-text-meta">
+                <div class="customer-name-heading">${order.customer.fullName}</div>
+                <a href="https://wa.me/92${order.customer.whatsapp.replace(/^0+/, '')}?text=Assalam%20o%20Alaikum%20${encodeURIComponent(order.customer.fullName)}!%20This%20is%20ShopXzetio%20regarding%20your%20order%20%23${order.orderRef}." target="_blank" class="customer-wa-pill">
+                  <i class="fa-brands fa-whatsapp"></i> ${order.customer.whatsapp}
+                </a>
+                <div class="customer-loc-pill" title="${order.customer.address}, ${order.customer.city}">
+                  <i class="fa-solid fa-location-dot"></i> ${order.customer.city}
+                </div>
+              </div>
             </div>
           </td>
 
           <!-- 3. Items -->
-          <td style="font-size: 0.8rem; line-height: 1.4; color: var(--admin-text-soft);">
-            ${itemsSummary}
+          <td>
+            <div class="order-items-wrapper">
+              ${itemsMarkup}
+            </div>
           </td>
 
           <!-- 4. Financials -->
           <td>
-            <div style="font-family: var(--admin-font-digital); font-size: 1.1rem; font-weight: 700; color: #fff;">
+            <div class="order-price-display">
               Rs. ${(order.total || 0).toLocaleString()}
             </div>
             ${order.paymentCode === 'cod_advance' ? `
-              <div style="font-size: 0.7rem; color: var(--admin-green);">Advance: Rs. 500</div>
-              <div style="font-size: 0.7rem; color: var(--admin-cyan);">COD Bal: Rs. ${(order.total - 500).toLocaleString()}</div>
+              <div class="finance-breakdown-row">
+                <span class="badge-adv-paid">✓ Adv: Rs. 500</span>
+                <span class="badge-cod-due">COD: Rs. ${(order.total - 500).toLocaleString()}</span>
+              </div>
             ` : ''}
           </td>
 
           <!-- 5. Screenshot (SS) Column -->
           <td>
             ${hasSS ? `
-              <button class="ss-badge-btn" onclick="window.shopAdmin.openScreenshot('${order.orderRef}')">
-                <img src="${order.receiptDataUrl}" class="ss-thumb-img" alt="SS">
-                <span>View SS</span>
+              <button class="ss-preview-card ${order.status === 'Receipt Submitted' ? 'glow-amber' : 'glow-cyan'}" onclick="window.shopAdmin.openScreenshot('${order.orderRef}')">
+                <div class="ss-thumb-wrapper">
+                  <img src="${order.receiptDataUrl}" class="ss-thumb-img" alt="SS">
+                  <div class="ss-hover-lens"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <span class="ss-btn-label">View Receipt</span>
               </button>
             ` : `
-              <span class="no-ss-badge">No SS (COD)</span>
+              <div class="no-ss-pill">
+                <i class="fa-solid fa-money-bill-1"></i> No Advance
+              </div>
             `}
           </td>
 
           <!-- 6. Status & Tracking -->
           <td>
-            <select class="status-select" onchange="window.shopAdmin.updateStatus('${order.orderRef}', this.value)" style="border-color: ${statusColor}; color: ${statusColor};">
-              <option value="Receipt Submitted" ${order.status === 'Receipt Submitted' ? 'selected' : ''}>Receipt Submitted</option>
-              <option value="Advance Verified" ${order.status === 'Advance Verified' ? 'selected' : ''}>Advance Verified</option>
-              <option value="Confirmed (COD)" ${order.status === 'Confirmed (COD)' ? 'selected' : ''}>Confirmed (COD)</option>
-              <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-            <div style="margin-top: 6px;">
-              <input type="text" value="${order.trackingNumber || ''}" placeholder="Tracking #" 
-                onchange="window.shopAdmin.updateTracking('${order.orderRef}', this.value)"
-                style="width: 110px; height: 26px; font-size: 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--admin-border); border-radius: 3px; color: #fff; padding: 0 6px;">
+            <div class="status-selector-wrap">
+              <select class="status-select-enhanced ${statusClass}" onchange="window.shopAdmin.updateStatus('${order.orderRef}', this.value)">
+                <option value="Receipt Submitted" ${order.status === 'Receipt Submitted' ? 'selected' : ''}>🟡 Review Receipt</option>
+                <option value="Advance Verified" ${order.status === 'Advance Verified' ? 'selected' : ''}>🟢 Advance Verified</option>
+                <option value="Confirmed (COD)" ${order.status === 'Confirmed (COD)' ? 'selected' : ''}>⚪ Confirmed (COD)</option>
+                <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>🔵 Dispatched</option>
+                <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>🟣 Delivered</option>
+                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>🔴 Cancelled</option>
+              </select>
+
+              <div class="tracking-input-group">
+                <i class="fa-solid fa-truck-fast"></i>
+                <input type="text" value="${order.trackingNumber || ''}" placeholder="Tracking ID..." 
+                  onchange="window.shopAdmin.updateTracking('${order.orderRef}', this.value)"
+                  class="tracking-code-field">
+              </div>
             </div>
           </td>
 
           <!-- 7. Actions -->
-          <td style="white-space: nowrap;">
-            <button class="admin-btn admin-btn-secondary" style="height: 32px; padding: 0 10px; font-size: 0.75rem;" 
-              onclick="window.shopAdmin.whatsappCustomer('${order.orderRef}')" title="Message Customer on WhatsApp">
-              <i class="fa-brands fa-whatsapp" style="color: var(--admin-green);"></i> Chat
-            </button>
-            <button class="admin-btn admin-btn-danger" style="height: 32px; width: 32px; padding: 0; justify-content: center; margin-left: 6px;" 
-              onclick="window.shopAdmin.deleteOrder('${order.orderRef}')" title="Delete Order">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
+          <td>
+            <div class="table-actions-cell">
+              <button class="btn-action-chat" 
+                onclick="window.shopAdmin.whatsappCustomer('${order.orderRef}')" title="Dispatch WhatsApp Notification">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>Chat</span>
+              </button>
+              <button class="btn-action-delete" 
+                onclick="window.shopAdmin.deleteOrder('${order.orderRef}')" title="Archive / Delete Order">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
           </td>
         </tr>
       `;
