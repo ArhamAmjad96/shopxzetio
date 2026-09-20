@@ -1,8 +1,13 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductCard({ product }) {
-  const { addToCart, openDetail } = useCart();
+  const { addToCart, openDetail, showToast } = useCart();
+  const { user, isCustomer } = useAuth();
+  const navigate = useNavigate();
 
   const mainImg = product.mainImage || (product.images && product.images[0]) || '/assets/brand/LOGO.png';
 
@@ -23,6 +28,19 @@ export default function ProductCard({ product }) {
     window.open(`https://wa.me/923348590229?text=${encodeURIComponent(text)}`, '_blank');
   };
 
+  const addToWishlist = async () => {
+    if (!isCustomer) {
+      navigate(`/login?return=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+    if (!product.databaseId) {
+      showToast('Wishlist becomes available after the database catalog is synchronized.');
+      return;
+    }
+    const { error } = await supabase.from('wishlist').upsert({ user_id: user.id, product_id: product.databaseId });
+    showToast(error ? error.message : `${product.shortName || product.name} saved to wishlist`);
+  };
+
   return (
     <div className="daraz-product-card" onClick={() => openDetail(product)}>
       {/* 1:1 Aspect Ratio Image Stage */}
@@ -33,6 +51,7 @@ export default function ProductCard({ product }) {
         {product.badge && (
           <span className="daraz-feature-badge">{product.badge}</span>
         )}
+        {product.stockQuantity === 0 && <span className="daraz-feature-badge" style={{ background:'#9f1239' }}>OUT OF STOCK</span>}
         <img 
           src={mainImg} 
           alt={product.name} 
@@ -72,7 +91,7 @@ export default function ProductCard({ product }) {
             <span>{product.rating || '4.9'}</span>
           </div>
           <span className="daraz-sold-count">
-            ({product.reviewsCount || Math.floor(Math.random() * 40 + 25)} sold)
+            ({product.reviewCount || 0} reviews)
           </span>
           <span className="daraz-tag-cod">COD</span>
         </div>
@@ -82,6 +101,7 @@ export default function ProductCard({ product }) {
           <button 
             className="daraz-btn-cart" 
             onClick={() => addToCart(product, 1)}
+            disabled={product.stockQuantity === 0}
             title="Add to Cart"
           >
             <i className="fa-solid fa-cart-shopping"></i>
@@ -94,6 +114,9 @@ export default function ProductCard({ product }) {
           >
             <i className="fa-brands fa-whatsapp"></i>
             <span>Order</span>
+          </button>
+          <button className="daraz-btn-wishlist" onClick={addToWishlist} title="Save to Wishlist" aria-label="Save to Wishlist">
+            <i className="fa-regular fa-heart"></i>
           </button>
         </div>
       </div>

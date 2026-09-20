@@ -20,13 +20,13 @@ if "%GITHUB_TOKEN%"=="" (
 
 echo.
 echo [1/3] Setting remote with authentication...
-"C:\Users\arham\AppData\Local\MinGit\cmd\git.exe" remote set-url origin https://%GITHUB_TOKEN%@github.com/maaz9999/shopxzetio.git
+"C:\Users\arham\AppData\Local\MinGit\cmd\git.exe" remote set-url origin https://%GITHUB_TOKEN%@github.com/ArhamAmjad96/shopxzetio.git
 
 echo [2/3] Staging and committing all updates...
 "C:\Users\arham\AppData\Local\MinGit\cmd\git.exe" add -A
 "C:\Users\arham\AppData\Local\MinGit\cmd\git.exe" commit -m "feat: luxury esports upgrades, admin dashboard redesign, and vercel deployment config" 2>nul
 
-echo [3/3] Pushing to https://github.com/maaz9999/shopxzetio...
+echo [3/3] Pushing to https://github.com/ArhamAmjad96/shopxzetio...
 "C:\Users\arham\AppData\Local\MinGit\cmd\git.exe" push -u origin main
 
 echo.

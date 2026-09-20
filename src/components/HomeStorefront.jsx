@@ -1,13 +1,16 @@
 import React from 'react';
-import PRODUCTS from '../data/products';
 import ProductCard from './ProductCard';
 import { useCart } from '../context/CartContext';
+import { useCatalog } from '../context/CatalogContext';
 
 export default function HomeStorefront() {
   const { setCurrentView } = useCart();
+  const { products } = useCatalog();
 
   // Curated 6-8 flagship products for Home Page
-  const featuredProducts = PRODUCTS.slice(0, 8);
+  const featuredProducts = (products.filter((product) => product.featured).length
+    ? products.filter((product) => product.featured)
+    : products).slice(0, 8);
 
   const categories = [
     {

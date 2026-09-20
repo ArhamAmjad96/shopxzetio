@@ -67,8 +67,7 @@ export default function Hero() {
             </h1>
 
             <p className="hero-spacious-desc">
-              Engineered for Pakistan's competitive PUBG Mobile, COD Mobile & FPS athletes. 
-              Zero thermal throttling, 0ms lossless audio, and tournament-approved build quality.
+              Tournament-ready gear for PUBG Mobile, COD Mobile & FPS. Stay cool, hear every step, and play at your peak.
             </p>
 
             {/* Clean, Spacious Guarantee Badges */}
@@ -104,8 +103,8 @@ export default function Hero() {
                 <span>WHATSAPP SUPPORT</span>
               </a>
 
-              <a href="#inside-shopxzetio" className="btn-hero-outline">
-                <i className="fa-solid fa-circle-play"></i>
+              <a href="#pro-reviews" className="btn-hero-outline">
+                <i className="fa-solid fa-angles-down"></i>
                 <span>PRO REVIEWS</span>
               </a>
             </div>
