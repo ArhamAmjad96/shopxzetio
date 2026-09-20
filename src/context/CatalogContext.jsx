@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import STATIC_PRODUCTS from '../data/products';
 import { supabase } from '../lib/supabase';
+import { normalizeAssetUrl } from '../lib/assets';
 
 const CatalogContext = createContext({ products: STATIC_PRODUCTS, source: 'static', loading: false });
 
@@ -25,8 +26,8 @@ function normalizeDatabaseProduct(product) {
     features: product.features || [],
     specs: product.specs || {},
     inTheBox: product.in_the_box || [],
-    images: product.images || [],
-    mainImage: product.main_image || product.images?.[0] || '/assets/brand/LOGO.png',
+    images: (product.images || []).map((image) => normalizeAssetUrl(image)),
+    mainImage: normalizeAssetUrl(product.main_image || product.images?.[0]),
   };
 }
 

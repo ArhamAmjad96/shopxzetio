@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+import { ASSET_PATHS, handleImageError } from '../lib/assets';
 
 export default function Footer() {
   const { currentView, setCurrentView } = useCart();
@@ -16,7 +17,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="footer-col footer-col-brand">
             <div className="brand-wrapper" style={{ marginBottom: '16px' }}>
-              <img src="/assets/brand/LOGO.png" alt="ShopXzetio Logo" style={{ height: '42px' }} />
+              <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" style={{ height: '42px' }} onError={handleImageError} />
               <div className="brand-meta">
                 <span className="brand-name">SHOP<span>XZETIO</span></span>
                 <span className="brand-badge">Official Esports Gear</span>

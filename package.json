@@ -5,10 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run test:assets",
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite --port 3000",
     "build:data": "node scripts/build-data.js",
+    "optimize:images": "python scripts/optimize-assets.py",
+    "optimize:videos": "python scripts/optimize-videos.py",
+    "optimize:assets": "npm run optimize:images && npm run optimize:videos",
     "test:assets": "node scripts/verify-assets.js",
     "supabase:seed-products": "node supabase/seed-products.mjs"
   },

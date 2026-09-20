@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { handleImageError, normalizeAssetUrl } from '../lib/assets';
 
 export default function ProductDetailModal() {
   const { activeDetailProduct, closeDetail, addToCart } = useCart();
@@ -11,7 +12,7 @@ export default function ProductDetailModal() {
       const images = activeDetailProduct.images && activeDetailProduct.images.length > 0 
         ? activeDetailProduct.images 
         : [activeDetailProduct.mainImage];
-      setSelectedImage(images[0] || '');
+      setSelectedImage(normalizeAssetUrl(images[0]));
       setQuantity(1);
     }
   }, [activeDetailProduct]);
@@ -19,7 +20,7 @@ export default function ProductDetailModal() {
   if (!activeDetailProduct) return null;
 
   const product = activeDetailProduct;
-  const images = product.images && product.images.length > 0 ? product.images : [product.mainImage];
+  const images = (product.images && product.images.length > 0 ? product.images : [product.mainImage]).map((image) => normalizeAssetUrl(image));
 
   const handleWhatsAppBuy = () => {
     const totalPrice = product.price * quantity;
@@ -55,7 +56,7 @@ export default function ProductDetailModal() {
                 src={selectedImage} 
                 alt={product.name} 
                 className="gallery-main-img" 
-                onError={(e) => { e.target.src = '/assets/brand/LOGO.png'; }}
+                onError={handleImageError}
               />
             </div>
             <div className="gallery-thumbnails-track">
@@ -65,7 +66,7 @@ export default function ProductDetailModal() {
                   className={`gallery-thumb ${img === selectedImage ? 'active' : ''}`}
                   onClick={() => setSelectedImage(img)}
                 >
-                  <img src={img} alt={`${product.name} ${idx + 1}`} loading="lazy" />
+                  <img src={img} alt={`${product.name} ${idx + 1}`} loading="lazy" onError={handleImageError} />
                 </div>
               ))}
             </div>

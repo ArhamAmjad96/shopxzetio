@@ -3,13 +3,14 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { handleImageError, normalizeAssetUrl } from '../lib/assets';
 
 export default function ProductCard({ product }) {
   const { addToCart, openDetail, showToast } = useCart();
   const { user, isCustomer } = useAuth();
   const navigate = useNavigate();
 
-  const mainImg = product.mainImage || (product.images && product.images[0]) || '/assets/brand/LOGO.png';
+  const mainImg = normalizeAssetUrl(product.mainImage || product.images?.[0]);
 
   // Calculate discount percentage if originalPrice exists
   const discountPercent = product.originalPrice && product.originalPrice > product.price
@@ -57,7 +58,7 @@ export default function ProductCard({ product }) {
           alt={product.name} 
           className="daraz-card-img" 
           loading="lazy" 
-          onError={(e) => { e.target.src = '/assets/brand/LOGO.png'; }}
+          onError={handleImageError}
         />
         <div className="daraz-hover-inspect">
           <i className="fa-solid fa-eye"></i> Quick View

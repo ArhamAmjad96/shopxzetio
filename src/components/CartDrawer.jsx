@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+import { handleImageError, normalizeAssetUrl } from '../lib/assets';
 
 export default function CartDrawer() {
   const {
@@ -69,10 +70,10 @@ export default function CartDrawer() {
             items.map(item => (
               <div key={item.id} className="cart-item">
                 <img 
-                  src={item.image} 
+                  src={normalizeAssetUrl(item.image)}
                   alt={item.name} 
                   className="cart-item-img"
-                  onError={(e) => { e.target.src = '/assets/brand/LOGO.png'; }}
+                  onError={handleImageError}
                 />
                 <div className="cart-item-details">
                   <div className="cart-item-title">{item.name}</div>

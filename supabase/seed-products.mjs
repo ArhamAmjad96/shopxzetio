@@ -16,6 +16,11 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
 
+const normalizeAssetUrl = (value) => {
+  if (!value || /^(?:https?:|data:|blob:|\/)/i.test(value)) return value;
+  return `/${value.replace(/^\.\//, '')}`;
+};
+
 const rows = products.map((product) => ({
   legacy_id: product.id,
   slug: product.id,
@@ -35,8 +40,8 @@ const rows = products.map((product) => ({
   features: product.features || [],
   specs: product.specs || {},
   in_the_box: product.inTheBox || [],
-  images: product.images || [],
-  main_image: product.mainImage || product.images?.[0] || null
+  images: (product.images || []).map(normalizeAssetUrl),
+  main_image: normalizeAssetUrl(product.mainImage || product.images?.[0]) || null
 }));
 
 const { data, error } = await supabase
@@ -50,4 +55,3 @@ if (error) {
 }
 
 console.log(`Imported ${data.length} ShopXzetio products into Supabase.`);
-

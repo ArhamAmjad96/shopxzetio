@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { PAYMENT_LABELS } from '../services/orders';
 import AdminProducts from './AdminProducts';
 import { AdminCustomers, AdminReviews } from './AdminManagement';
+import { ASSET_PATHS, handleImageError } from '../lib/assets';
 
 const ORDER_STATUS_LABELS = {
   placed: 'Order Placed', confirmed: 'Confirmed', processing: 'Processing',
@@ -178,7 +179,7 @@ export default function AdminDashboard() {
       <header className="admin-header">
         <div className="admin-nav">
           <div className="admin-brand">
-            <img src="/assets/brand/LOGO.png" alt="ShopXzetio Logo" className="admin-logo" />
+            <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" className="admin-logo" onError={handleImageError} />
             <div className="admin-title-group">
               <span className="admin-title">SHOP<span>XZETIO</span> ADMIN</span>
               <span className="admin-badge-status">Command Center Active</span>

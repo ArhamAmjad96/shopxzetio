@@ -1,7 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const baseDir = path.join(__dirname, '..', 'assets', 'products');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const baseDir = path.join(__dirname, '..', 'public', 'assets', 'products');
 
 const productConfigs = [
   // Cooling Fans / Mobile Coolers
@@ -706,9 +709,10 @@ const SHOPXZETIO_PRODUCTS = ${JSON.stringify(finalProducts, null, 2)};
 if (typeof window !== 'undefined') {
   window.SHOPXZETIO_PRODUCTS = SHOPXZETIO_PRODUCTS;
 }
-if (typeof module !== 'undefined') {
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = SHOPXZETIO_PRODUCTS;
 }
+export default SHOPXZETIO_PRODUCTS;
 `;
 
 fs.writeFileSync(path.join(__dirname, '..', 'js', 'products-data.js'), content, 'utf8');

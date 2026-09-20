@@ -1,113 +1,94 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import products from '../js/products-data.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, '..');
+const publicDir = path.join(rootDir, 'public');
+const assetDir = path.join(publicDir, 'assets');
+const supportedAsset = /\.(?:avif|jpe?g|png|webp|mp4)$/i;
+const externalUrl = /^(?:https?:|data:|blob:)/i;
+let failed = false;
+let checked = 0;
 
-console.log('--- STARTING ASSET & CATALOG VERIFICATION ---');
+function resolveWebAsset(webPath) {
+  if (!webPath || externalUrl.test(webPath)) return null;
+  const normalized = decodeURI(String(webPath)).replace(/^\/+/, '').replaceAll('/', path.sep);
+  return path.join(publicDir, normalized);
+}
 
-let passed = true;
-let totalImagesChecked = 0;
-
-// 1. Verify all products and their images
-console.log(`Checking ${products.length} products in catalog...`);
-
-products.forEach(p => {
-  if (!p.id || !p.name || !p.price) {
-    console.error(`[FAIL] Product missing mandatory fields: ${JSON.stringify(p)}`);
-    passed = false;
+function verifyAsset(webPath, label) {
+  const fullPath = resolveWebAsset(webPath);
+  if (!fullPath) return;
+  checked += 1;
+  if (!fs.existsSync(fullPath)) {
+    console.error(`[FAIL] ${label}: ${webPath}`);
+    failed = true;
+    return;
   }
-
-  // Verify main image
-  const mainPath = path.join(rootDir, p.mainImage);
-  if (!fs.existsSync(mainPath)) {
-    console.error(`[FAIL] Product ${p.id} main image missing: ${p.mainImage}`);
-    passed = false;
-  } else {
-    totalImagesChecked++;
+  if (fs.statSync(fullPath).size === 0) {
+    console.error(`[FAIL] Empty asset: ${webPath}`);
+    failed = true;
   }
+}
 
-  // Verify all images in gallery
-  p.images.forEach(img => {
-    const full = path.join(rootDir, img);
-    if (!fs.existsSync(full)) {
-      console.error(`[FAIL] Product ${p.id} gallery image missing: ${img}`);
-      passed = false;
-    } else {
-      totalImagesChecked++;
-    }
+function walk(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(directory, entry.name);
+    return entry.isDirectory() ? walk(fullPath) : [fullPath];
   });
-});
+}
 
-console.log(`Verified ${totalImagesChecked} product images on disk.`);
+console.log('--- ASSET & CATALOG VERIFICATION ---');
 
-// 2. Verify brand assets
-const brandAssets = [
-  'assets/brand/LOGO.png',
-  'assets/brand/HERO.png',
-  'assets/brand/PUBG.png',
-  'assets/brand/ASI8.png'
-];
-
-brandAssets.forEach(b => {
-  const full = path.join(rootDir, b);
-  if (!fs.existsSync(full)) {
-    console.error(`[FAIL] Brand asset missing: ${b}`);
-    passed = false;
-  } else {
-    const size = fs.statSync(full).size;
-    console.log(`[PASS] Brand asset ${b} (${size} bytes)`);
+for (const product of products) {
+  if (!product.id || !product.name || !Number.isFinite(Number(product.price))) {
+    console.error(`[FAIL] Product metadata is incomplete: ${product.id || product.name || 'unknown'}`);
+    failed = true;
   }
-});
+  verifyAsset(product.mainImage, `Product ${product.id} cover missing`);
+  for (const image of product.images || []) verifyAsset(image, `Product ${product.id} gallery image missing`);
+}
 
-// 3. Verify reels
-const reels = [
-  'assets/reels/CRYPTO.mp4',
-  'assets/reels/FALAK.mp4',
-  'assets/reels/PACAKGING.mp4',
-  'assets/reels/WHY GOOD EQIUPMENT.mp4'
+for (const webPath of [
+  '/assets/brand/LOGO.png',
+  '/assets/brand/HERO.png',
+  '/assets/brand/PUBG.png',
+  '/assets/brand/ASI8.png',
+  '/assets/reels/CRYPTO.mp4',
+  '/assets/reels/FALAK.mp4',
+  '/assets/reels/PACAKGING.mp4',
+  '/assets/reels/WHY GOOD EQIUPMENT.mp4',
+]) verifyAsset(webPath, 'Required storefront asset missing');
+
+const sourceFiles = [
+  path.join(rootDir, 'index.html'),
+  ...walk(path.join(rootDir, 'css')).filter((file) => /\.css$/i.test(file)),
+  ...walk(path.join(rootDir, 'src')).filter((file) => /\.(?:js|jsx|css)$/i.test(file)),
 ];
-
-reels.forEach(r => {
-  const full = path.join(rootDir, r);
-  if (!fs.existsSync(full)) {
-    console.error(`[FAIL] Reel missing: ${r}`);
-    passed = false;
-  } else {
-    const size = fs.statSync(full).size;
-    console.log(`[PASS] Reel video ${r} (${(size / (1024 * 1024)).toFixed(2)} MB)`);
+const literalAssetPattern = /["'`](\/?assets\/[^"'`$]+?\.(?:avif|jpe?g|png|webp|mp4))["'`]/gi;
+for (const sourceFile of sourceFiles) {
+  const source = fs.readFileSync(sourceFile, 'utf8');
+  for (const match of source.matchAll(literalAssetPattern)) {
+    verifyAsset(match[1], `${path.relative(rootDir, sourceFile)} references a missing asset`);
   }
-});
+}
 
-// 4. Verify core website and admin files
-const coreFiles = [
-  'index.html',
-  'admin.html',
-  'css/style.css',
-  'css/admin.css',
-  'js/products-data.js',
-  'js/cart.js',
-  'js/checkout.js',
-  'js/app.js',
-  'js/admin.js'
-];
+const allAssets = walk(assetDir).filter((file) => supportedAsset.test(file));
+const totalBytes = allAssets.reduce((sum, file) => sum + fs.statSync(file).size, 0);
+const largeImages = allAssets.filter((file) => !/\.mp4$/i.test(file) && fs.statSync(file).size > 2 * 1024 * 1024);
+for (const file of largeImages) {
+  console.warn(`[WARN] Large image (${(fs.statSync(file).size / 1024 / 1024).toFixed(2)} MB): ${path.relative(publicDir, file)}`);
+}
 
-coreFiles.forEach(f => {
-  const full = path.join(rootDir, f);
-  if (!fs.existsSync(full)) {
-    console.error(`[FAIL] Core file missing: ${f}`);
-    passed = false;
-  } else {
-    console.log(`[PASS] Core file ${f}`);
-  }
-});
+console.log(`Checked ${checked} referenced assets.`);
+console.log(`Managed asset library: ${allAssets.length} files, ${(totalBytes / 1024 / 1024).toFixed(2)} MB.`);
 
-if (passed) {
-  console.log('--- ALL ASSET & CATALOG VERIFICATIONS PASSED SUCCESSFULLY (100%) ---');
-} else {
-  console.error('--- SOME ASSET VERIFICATIONS FAILED ---');
+if (failed) {
+  console.error('--- ASSET VERIFICATION FAILED ---');
   process.exit(1);
 }
+
+console.log('--- ALL REFERENCED ASSETS ARE DEPLOYABLE ---');

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { PRODUCTS } from '../data/products';
+import { handleImageError, normalizeAssetUrl } from '../lib/assets';
 
 const blankProduct = {
   id: null, legacy_id: '', slug: '', name: '', short_name: '', price: '', original_price: '',
@@ -10,7 +11,33 @@ const blankProduct = {
 
 const PRODUCT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 const MAX_PRODUCT_IMAGES = 8;
-const MAX_PRODUCT_IMAGE_SIZE = 10 * 1024 * 1024;
+const MAX_PRODUCT_IMAGE_SIZE = 15 * 1024 * 1024;
+const PRODUCT_IMAGE_MAX_DIMENSION = 1600;
+const PRODUCT_IMAGE_QUALITY = 0.86;
+
+async function optimizeProductImage(file) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, PRODUCT_IMAGE_MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const context = canvas.getContext('2d', { alpha: true });
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', PRODUCT_IMAGE_QUALITY));
+    if (!blob || (scale === 1 && blob.size >= file.size)) return { file, saved: 0 };
+    const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9._-]/g, '-');
+    return {
+      file: new File([blob], `${baseName}.webp`, { type: 'image/webp', lastModified: Date.now() }),
+      saved: Math.max(0, file.size - blob.size),
+    };
+  } catch {
+    return { file, saved: 0 };
+  }
+}
 
 function staticProductPayload(product) {
   return {
@@ -29,6 +56,7 @@ export default function AdminProducts({ triggerToast }) {
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
+  const [optimizingImages, setOptimizingImages] = useState(false);
   const [editor, setEditor] = useState(null);
 
   const closeEditor = () => {
@@ -104,7 +132,7 @@ export default function AdminProducts({ triggerToast }) {
     }
   };
 
-  const queueImages = (files) => {
+  const queueImages = async (files) => {
     const currentCount = (editor.existing_images?.length || 0) + (editor.pending_images?.length || 0);
     const accepted = Array.from(files || []).filter((file) => {
       if (!PRODUCT_IMAGE_TYPES.includes(file.type)) {
@@ -112,18 +140,32 @@ export default function AdminProducts({ triggerToast }) {
         return false;
       }
       if (file.size > MAX_PRODUCT_IMAGE_SIZE) {
-        triggerToast(`${file.name}: maximum size is 10 MB.`, 'fa-triangle-exclamation', 'danger');
+        triggerToast(`${file.name}: maximum source size is 15 MB.`, 'fa-triangle-exclamation', 'danger');
         return false;
       }
       return true;
     }).slice(0, Math.max(0, MAX_PRODUCT_IMAGES - currentCount));
     if (!accepted.length) return;
-    const newItems = accepted.map((file) => ({ id: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }));
-    setEditor((current) => ({
-      ...current,
-      pending_images: [...(current.pending_images || []), ...newItems],
-      main_choice: current.main_choice || `local:${newItems[0].id}`,
-    }));
+    setOptimizingImages(true);
+    try {
+      const prepared = await Promise.all(accepted.map(optimizeProductImage));
+      const newItems = prepared.map(({ file }) => ({ id: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }));
+      setEditor((current) => {
+        if (!current) {
+          newItems.forEach((item) => URL.revokeObjectURL(item.preview));
+          return current;
+        }
+        return {
+          ...current,
+          pending_images: [...(current.pending_images || []), ...newItems],
+          main_choice: current.main_choice || `local:${newItems[0].id}`,
+        };
+      });
+      const savedBytes = prepared.reduce((total, item) => total + item.saved, 0);
+      triggerToast(`${prepared.length} image${prepared.length === 1 ? '' : 's'} prepared for web${savedBytes ? ` · saved ${(savedBytes / 1024 / 1024).toFixed(1)} MB` : ''}.`, 'fa-wand-magic-sparkles');
+    } finally {
+      setOptimizingImages(false);
+    }
   };
 
   const removeImage = (kind, value) => {
@@ -180,7 +222,7 @@ export default function AdminProducts({ triggerToast }) {
     </div>
     <div className="admin-search-wrapper admin-products-search"><i className="fa-solid fa-magnifying-glass"/><input className="admin-search-input" placeholder="Search products, categories or IDs…" value={query} onChange={(e) => setQuery(e.target.value)}/></div>
     {products.length === 0 && <div className="admin-catalog-empty"><i className="fa-solid fa-database"/><h3>THE DATABASE CATALOG IS EMPTY</h3><p>Use “Sync Existing Catalog” to copy the current 22 ShopXzetio products without changing the storefront.</p></div>}
-    {products.length > 0 && <div className="orders-table-wrapper"><table className="orders-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Flags</th><th>Actions</th></tr></thead><tbody>{filtered.map((product) => <tr key={product.id}><td><div className="admin-product-cell"><img src={product.main_image || '/assets/brand/LOGO.png'} alt=""/><div><strong>{product.name}</strong><small>{product.legacy_id}</small></div></div></td><td>{product.category}<small className="admin-block-small">{product.sub_category}</small></td><td><strong>Rs. {Number(product.price).toLocaleString()}</strong>{product.original_price && <small className="admin-block-small">Was Rs. {Number(product.original_price).toLocaleString()}</small>}</td><td><span className={`stock-pill ${product.stock_quantity !== null && product.stock_quantity <= 5 ? 'low' : ''}`}>{product.stock_quantity === null ? 'Unlimited' : product.stock_quantity}</span></td><td><span className={`visibility-pill ${product.active ? 'live' : ''}`}>{product.active ? 'Live' : 'Archived'}</span>{product.featured && <span className="visibility-pill featured">Featured</span>}</td><td><div className="table-actions-cell"><button className="btn-action-chat" onClick={() => edit(product)}><i className="fa-solid fa-pen"/><span>Edit</span></button><button className="btn-action-delete" title={product.active ? 'Archive product' : 'Restore product'} onClick={() => toggleActive(product)}><i className={`fa-solid ${product.active ? 'fa-box-archive' : 'fa-rotate-left'}`}/></button></div></td></tr>)}</tbody></table></div>}
+    {products.length > 0 && <div className="orders-table-wrapper"><table className="orders-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Flags</th><th>Actions</th></tr></thead><tbody>{filtered.map((product) => <tr key={product.id}><td><div className="admin-product-cell"><img src={normalizeAssetUrl(product.main_image)} alt="" onError={handleImageError}/><div><strong>{product.name}</strong><small>{product.legacy_id}</small></div></div></td><td>{product.category}<small className="admin-block-small">{product.sub_category}</small></td><td><strong>Rs. {Number(product.price).toLocaleString()}</strong>{product.original_price && <small className="admin-block-small">Was Rs. {Number(product.original_price).toLocaleString()}</small>}</td><td><span className={`stock-pill ${product.stock_quantity !== null && product.stock_quantity <= 5 ? 'low' : ''}`}>{product.stock_quantity === null ? 'Unlimited' : product.stock_quantity}</span></td><td><span className={`visibility-pill ${product.active ? 'live' : ''}`}>{product.active ? 'Live' : 'Archived'}</span>{product.featured && <span className="visibility-pill featured">Featured</span>}</td><td><div className="table-actions-cell"><button className="btn-action-chat" onClick={() => edit(product)}><i className="fa-solid fa-pen"/><span>Edit</span></button><button className="btn-action-delete" title={product.active ? 'Archive product' : 'Restore product'} onClick={() => toggleActive(product)}><i className={`fa-solid ${product.active ? 'fa-box-archive' : 'fa-rotate-left'}`}/></button></div></td></tr>)}</tbody></table></div>}
 
     {editor && <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && closeEditor()}><form className="admin-product-editor" onSubmit={saveProduct}><div className="ss-lightbox-header"><h3>{editor.id ? 'EDIT PRODUCT' : 'ADD PRODUCT'}</h3><button type="button" onClick={closeEditor}><i className="fa-solid fa-xmark"/></button></div><div className="admin-product-form-grid">
       <label>Product Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
@@ -194,11 +236,11 @@ export default function AdminProducts({ triggerToast }) {
       <div className="admin-wide-field product-image-manager">
         <div className="product-image-manager-head"><div><strong>PRODUCT IMAGES</strong><small>Upload up to {MAX_PRODUCT_IMAGES} images. Click a preview to make it the cover.</small></div><span>{editor.existing_images.length + editor.pending_images.length}/{MAX_PRODUCT_IMAGES}</span></div>
         <label className="product-image-dropzone" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); queueImages(e.dataTransfer.files); }}>
-          <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => { queueImages(e.target.files); e.target.value = ''; }}/>
-          <i className="fa-solid fa-cloud-arrow-up"/><strong>Drop product images here</strong><span>or click to browse · JPG, PNG, WebP, AVIF · max 10 MB each</span>
+          <input disabled={optimizingImages} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => { queueImages(e.target.files); e.target.value = ''; }}/>
+          <i className={`fa-solid ${optimizingImages ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}`}/><strong>{optimizingImages ? 'Optimizing images…' : 'Drop product images here'}</strong><span>JPG, PNG, WebP or AVIF · auto-resized to 1600px and compressed to WebP · max 15 MB source</span>
         </label>
         {(editor.existing_images.length > 0 || editor.pending_images.length > 0) && <div className="product-image-grid">
-          {editor.existing_images.map((url) => <div key={url} className={`product-image-tile ${editor.main_choice === url ? 'cover' : ''}`}><button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:url})}><img src={url} alt="Product"/><span>{editor.main_choice === url ? 'COVER IMAGE' : 'SET AS COVER'}</span></button><button type="button" className="product-image-remove" onClick={() => removeImage('existing', url)} aria-label="Remove image"><i className="fa-solid fa-xmark"/></button></div>)}
+          {editor.existing_images.map((url) => <div key={url} className={`product-image-tile ${editor.main_choice === url ? 'cover' : ''}`}><button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:url})}><img src={normalizeAssetUrl(url)} alt="Product" onError={handleImageError}/><span>{editor.main_choice === url ? 'COVER IMAGE' : 'SET AS COVER'}</span></button><button type="button" className="product-image-remove" onClick={() => removeImage('existing', url)} aria-label="Remove image"><i className="fa-solid fa-xmark"/></button></div>)}
           {editor.pending_images.map((item) => <div key={item.id} className={`product-image-tile ${editor.main_choice === `local:${item.id}` ? 'cover' : ''}`}><button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:`local:${item.id}`})}><img src={item.preview} alt={item.file.name}/><span>{editor.main_choice === `local:${item.id}` ? 'COVER IMAGE' : 'SET AS COVER'}</span></button><button type="button" className="product-image-remove" onClick={() => removeImage('pending', item.id)} aria-label="Remove image"><i className="fa-solid fa-xmark"/></button></div>)}
         </div>}
         <details className="product-image-advanced"><summary>Advanced: add an external image URL</summary><div><input type="url" placeholder="https://example.com/product.webp" value={editor.external_url || ''} onChange={(e) => setEditor({...editor, external_url:e.target.value})}/><button type="button" className="admin-btn admin-btn-secondary" onClick={addExternalUrl}>Add URL</button></div></details>
@@ -206,6 +248,6 @@ export default function AdminProducts({ triggerToast }) {
       <label className="admin-wide-field">Description<textarea value={editor.description || ''} onChange={(e) => setEditor({...editor, description:e.target.value})}/></label>
       <label>Features <small>(one per line)</small><textarea value={editor.features_text || ''} onChange={(e) => setEditor({...editor, features_text:e.target.value})}/></label>
       <label className="admin-wide-field">Specifications JSON<textarea className="admin-code-field" value={editor.specs_text || '{}'} onChange={(e) => setEditor({...editor, specs_text:e.target.value})}/></label>
-    </div><div className="admin-editor-flags"><label><input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront</label><label><input type="checkbox" checked={editor.featured} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> Featured product</label></div><div className="confirm-actions"><button type="button" className="confirm-btn-cancel" onClick={closeEditor}>CANCEL</button><button disabled={busy} className="admin-btn admin-btn-primary">{busy ? 'UPLOADING & SAVING…' : 'SAVE PRODUCT'}</button></div></form></div>}
+    </div><div className="admin-editor-flags"><label><input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront</label><label><input type="checkbox" checked={editor.featured} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> Featured product</label></div><div className="confirm-actions"><button type="button" className="confirm-btn-cancel" onClick={closeEditor}>CANCEL</button><button disabled={busy || optimizingImages} className="admin-btn admin-btn-primary">{optimizingImages ? 'OPTIMIZING IMAGES…' : busy ? 'UPLOADING & SAVING…' : 'SAVE PRODUCT'}</button></div></form></div>}
   </section>;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ASSET_PATHS, handleImageError } from '../lib/assets';
 
 export default function PartnersSection() {
   return (
@@ -16,7 +17,7 @@ export default function PartnersSection() {
           {/* Card 1: PUBG Mobile Esports */}
           <div className="partner-card">
             <div className="partner-logo-box">
-              <img src="/assets/brand/PUBG.png" alt="PUBG Mobile Esports Official Partner" />
+              <img src={ASSET_PATHS.pubg} alt="PUBG Mobile Esports Official Partner" onError={handleImageError} />
             </div>
             <div className="partner-content">
               <h3>PUBG MOBILE ESPORTS</h3>
@@ -30,7 +31,7 @@ export default function PartnersSection() {
           {/* Card 2: Team i8 Esports */}
           <div className="partner-card">
             <div className="partner-logo-box">
-              <img src="/assets/brand/ASI8.png" alt="Team i8 Esports Official Partner" />
+              <img src={ASSET_PATHS.teamI8} alt="Team i8 Esports Official Partner" onError={handleImageError} />
             </div>
             <div className="partner-content">
               <h3>TEAM i8 ESPORTS</h3>

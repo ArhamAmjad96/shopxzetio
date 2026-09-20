@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import AccountDropdown from './AccountDropdown';
+import { ASSET_PATHS, handleImageError } from '../lib/assets';
 
 export default function Navbar({ onOpenCompat, onOpenTracker }) {
   const { totalItemsCount, openCart, currentView, setCurrentView } = useCart();
@@ -49,7 +50,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               className="pro-brand-btn"
               onClick={() => handleNav('home')}
             >
-              <img src="/assets/brand/LOGO.png" alt="ShopXzetio Logo" className="pro-brand-logo" />
+              <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" className="pro-brand-logo" onError={handleImageError} />
               <span className="pro-brand-title">
                 SHOP<span>XZETIO</span>
               </span>
@@ -157,7 +158,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
           <div className="pro-mobile-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="pro-mobile-header">
               <div className="pro-brand">
-                <img src="/assets/brand/LOGO.png" alt="ShopXzetio Logo" className="pro-brand-logo" />
+                <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" className="pro-brand-logo" onError={handleImageError} />
                 <span className="pro-brand-title">SHOP<span>XZETIO</span></span>
               </div>
               <button className="pro-mobile-close" onClick={() => setMobileOpen(false)}>
