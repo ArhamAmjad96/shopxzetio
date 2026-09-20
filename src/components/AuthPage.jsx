@@ -27,7 +27,8 @@ export default function AuthPage({ mode = 'login', admin = false }) {
         if (!data.session) setMessage('Check your email to confirm your account, then log in.');
         else navigate(returnTo, { replace: true });
       } else if (mode === 'forgot') {
-        const redirectTo = `${window.location.origin}/reset-password`;
+        const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim().replace(/\/+$/, '');
+        const redirectTo = `${configuredSiteUrl || window.location.origin}/reset-password`;
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(form.email, { redirectTo });
         if (resetError) throw resetError;
         setMessage('Password reset instructions have been sent to your email.');
