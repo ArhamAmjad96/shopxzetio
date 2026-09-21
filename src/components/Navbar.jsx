@@ -116,12 +116,6 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               >
                 Reels
               </button>
-              <button 
-                className="pro-nav-link pro-nav-highlight"
-                onClick={onOpenCompat}
-              >
-                <i className="fa-solid fa-mobile-screen-button"></i> Matcher
-              </button>
             </div>
 
             {/* Right: Clean Pro Actions */}
@@ -175,21 +169,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               </button>
             </div>
 
-            {/* Mobile Quick Action Banner (Matcher) */}
-            <div className="pro-mobile-actions-single">
-              <button 
-                className="pro-mobile-action-card card-matcher full-width"
-                onClick={() => { setMobileOpen(false); onOpenCompat(); }}
-              >
-                <div className="action-card-icon">
-                  <i className="fa-solid fa-mobile-screen-button"></i>
-                </div>
-                <div className="action-card-text">
-                  <strong>Device Matcher</strong>
-                  <span>Find compatible coolers & gear for your phone</span>
-                </div>
-              </button>
-            </div>
+
 
             <div className="pro-mobile-nav">
               <div className="pro-mobile-account-group">
