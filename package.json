@@ -14,7 +14,8 @@
     "optimize:videos": "python scripts/optimize-videos.py",
     "optimize:assets": "npm run optimize:images && npm run optimize:videos",
     "test:assets": "node scripts/verify-assets.js",
-    "supabase:seed-products": "node supabase/seed-products.mjs"
+    "supabase:seed-products": "node supabase/seed-products.mjs",
+    "supabase:configure-smtp": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-supabase-smtp.ps1"
   },
   "keywords": [
     "gaming",

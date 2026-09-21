@@ -7,6 +7,7 @@ import { CatalogProvider } from './context/CatalogContext.jsx';
 import { BrowserRouter } from 'react-router-dom';
 import '../css/style.css';
 import '../css/admin.css';
+import '../css/buttons.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

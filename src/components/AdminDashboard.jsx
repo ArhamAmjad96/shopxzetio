@@ -536,9 +536,10 @@ export default function AdminDashboard() {
                 PAYMENT SCREENSHOT #{activeSSOrder.orderRef}
               </h3>
               <button 
-                onClick={() => setActiveSSOrder(null)} 
-                style={{ background: 'transparent', color: 'var(--admin-text-dim)', fontSize: '1.4rem', cursor: 'pointer', border: 'none' }}
-              >
+                  className="admin-modal-close-btn"
+                  onClick={() => setActiveSSOrder(null)}
+                  aria-label="Close receipt preview"
+                >
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>

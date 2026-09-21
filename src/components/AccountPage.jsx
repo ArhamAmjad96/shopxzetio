@@ -113,7 +113,7 @@ export default function AccountPage() {
   return <main className="account-shell">
     <div className="account-heading"><div><p>// CUSTOMER COMMAND CENTER</p><h1>MY ACCOUNT</h1><span>{profile?.full_name || user.email}</span></div><Link to="/" className="btn-cyber-secondary">Continue Shopping</Link></div>
     {notice && <div className="auth-alert success" role="status">{notice}</div>}
-    {loadError && <div className="auth-alert error" role="alert">{loadError} <button onClick={load}>Try again</button></div>}
+    {loadError && <div className="auth-alert error" role="alert">{loadError} <button className="btn-cyber-secondary" onClick={load}>Try again</button></div>}
     <div className="account-layout">
       <aside className="account-nav" aria-label="Account navigation">
         {sections.map(([key, icon, label, path]) => <button key={key} className={section === key ? 'active' : ''} onClick={() => navigate(path)}><i className={`fa-solid ${icon}`}/> {label}{key === 'notifications' && unreadCount > 0 && <span className="account-nav-count">{unreadCount}</span>}</button>)}

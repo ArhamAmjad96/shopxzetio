@@ -44,8 +44,9 @@ export default function CartDrawer() {
             <i className="fa-solid fa-shield-halved" style={{ color: 'var(--cyan)' }}></i> YOUR ARMORY
           </h3>
           <button 
+            className="cart-drawer-close-btn"
             onClick={closeCart}
-            style={{ background: 'transparent', color: 'var(--text-dim)', fontSize: '1.3rem', cursor: 'pointer', border: 'none' }}
+            aria-label="Close cart"
           >
             <i className="fa-solid fa-xmark"></i>
           </button>
@@ -93,7 +94,6 @@ export default function CartDrawer() {
                   className="cart-item-remove-btn" 
                   title="Remove" 
                   onClick={() => removeFromCart(item.id)}
-                  style={{ border: 'none', background: 'transparent' }}
                 >
                   <i className="fa-solid fa-trash-can"></i>
                 </button>

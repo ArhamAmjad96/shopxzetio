@@ -1,0 +1,799 @@
+/* ==========================================================================
+   ShopXzetio Unified Action Button System
+   Matches the clipped-corner hero controls across storefront, account, and admin.
+   Utility controls (close, quantity, carousel, tabs) intentionally keep their
+   compact component-specific shapes.
+   ========================================================================== */
+
+:root {
+  --sx-button-primary: linear-gradient(104deg, #713df3 0%, #5862eb 52%, #12b5d7 100%);
+  --sx-button-primary-hover: linear-gradient(104deg, #8050ff 0%, #6270f4 52%, #20c7e7 100%);
+  --sx-button-green-bg: rgba(4, 27, 27, 0.92);
+  --sx-button-green-border: rgba(16, 185, 129, 0.42);
+  --sx-button-green-text: #34d399;
+  --sx-button-neutral-bg: rgba(22, 18, 38, 0.82);
+  --sx-button-neutral-border: rgba(203, 213, 225, 0.2);
+  --sx-button-neutral-text: #d7d5e5;
+  --sx-button-danger-bg: rgba(69, 11, 35, 0.7);
+  --sx-button-danger-border: rgba(244, 63, 94, 0.58);
+  --sx-button-danger-text: #fda4af;
+  --sx-button-focus: #67e8f9;
+  --sx-button-shadow: 0 10px 24px rgba(82, 72, 229, 0.22);
+  --sx-hero-solid: #f4b942;
+  --sx-button-cut: polygon(
+    9px 0,
+    100% 0,
+    100% calc(100% - 9px),
+    calc(100% - 9px) 100%,
+    0 100%,
+    0 9px
+  );
+  --sx-button-cut-compact: polygon(
+    6px 0,
+    100% 0,
+    100% calc(100% - 6px),
+    calc(100% - 6px) 100%,
+    0 100%,
+    0 6px
+  );
+}
+
+:is(
+  .btn-cyber-primary,
+  .btn-cyber-secondary,
+  .btn-checkout-primary,
+  .btn-whatsapp-direct,
+  .btn-hero-gradient,
+  .btn-hero-whatsapp-clean,
+  .btn-hero-outline,
+  .btn-showcase-equip,
+  .btn-pro-equip,
+  .btn-enter-division,
+  .btn-view-all-arsenal,
+  .btn-explore-full-store,
+  .btn-daraz-reset,
+  .btn-equip-loadout,
+  .btn-tracker-submit,
+  .btn-tracker-wa,
+  .daraz-btn-cart,
+  .daraz-btn-wa,
+  .compat-add-btn,
+  .review-wall-load-btn,
+  .reviews-archive-link,
+  .btn-primary,
+  .pro-btn-support,
+  .pro-btn-cart,
+  .pro-mobile-whatsapp-btn,
+  .nav-track-order,
+  .nav-account-link,
+  .pro-mobile-action-card,
+  .pro-mobile-link-btn,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-nav button,
+  .account-dropdown-menu button,
+  .address-card button,
+  .wishlist-grid button,
+  .checkout-choice-card button
+) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding-inline: 20px;
+  border-radius: 0;
+  clip-path: var(--sx-button-cut);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+/* Primary actions */
+:is(
+  .btn-cyber-primary,
+  .btn-checkout-primary,
+  .btn-showcase-equip,
+  .btn-pro-equip,
+  .btn-explore-full-store,
+  .btn-daraz-reset,
+  .btn-equip-loadout,
+  .btn-tracker-submit,
+  .daraz-btn-cart,
+  .compat-add-btn,
+  .btn-primary,
+  .pro-btn-cart,
+  .pro-mobile-action-card,
+  .wishlist-grid button:first-of-type,
+  .checkout-choice-card button:first-of-type
+) {
+  border: 1px solid transparent;
+  background: var(--sx-button-primary);
+  color: #fff;
+  box-shadow: var(--sx-button-shadow);
+}
+
+:is(
+  .btn-cyber-primary,
+  .btn-checkout-primary,
+  .btn-showcase-equip,
+  .btn-pro-equip,
+  .btn-explore-full-store,
+  .btn-daraz-reset,
+  .btn-equip-loadout,
+  .btn-tracker-submit,
+  .daraz-btn-cart,
+  .compat-add-btn,
+  .btn-primary,
+  .pro-btn-cart,
+  .pro-mobile-action-card,
+  .wishlist-grid button:first-of-type,
+  .checkout-choice-card button:first-of-type
+):hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: var(--sx-button-primary-hover);
+  color: #fff;
+  box-shadow: 0 14px 32px rgba(82, 72, 229, 0.34), 0 0 20px rgba(8, 173, 215, 0.16);
+  transform: translateY(-2px);
+}
+
+/* WhatsApp and positive actions */
+:is(
+  .btn-hero-whatsapp-clean,
+  .btn-whatsapp-direct,
+  .btn-tracker-wa,
+  .daraz-btn-wa,
+  .pro-btn-support,
+  .pro-mobile-whatsapp-btn,
+  .btn-pro-whatsapp
+) {
+  border: 1px solid var(--sx-button-green-border);
+  background: var(--sx-button-green-bg);
+  color: var(--sx-button-green-text);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+}
+
+:is(
+  .btn-hero-whatsapp-clean,
+  .btn-whatsapp-direct,
+  .btn-tracker-wa,
+  .daraz-btn-wa,
+  .pro-btn-support,
+  .pro-mobile-whatsapp-btn,
+  .btn-pro-whatsapp
+):hover {
+  border-color: rgba(52, 211, 153, 0.82);
+  background: rgba(7, 51, 42, 0.96);
+  color: #6ee7b7;
+  box-shadow: 0 12px 26px rgba(16, 185, 129, 0.16), 0 0 18px rgba(37, 211, 102, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Neutral/secondary actions */
+:is(
+  .btn-cyber-secondary,
+  .btn-hero-outline,
+  .btn-enter-division,
+  .btn-view-all-arsenal,
+  .review-wall-load-btn,
+  .reviews-archive-link,
+  .nav-track-order,
+  .nav-account-link,
+  .pro-mobile-link-btn,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-nav button,
+  .account-dropdown-menu button,
+  .address-card button,
+  .wishlist-grid button:last-of-type,
+  .checkout-choice-card button:last-of-type
+) {
+  border: 1px solid var(--sx-button-neutral-border);
+  background: var(--sx-button-neutral-bg);
+  color: var(--sx-button-neutral-text);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+:is(
+  .btn-cyber-secondary,
+  .btn-hero-outline,
+  .btn-enter-division,
+  .btn-view-all-arsenal,
+  .review-wall-load-btn,
+  .reviews-archive-link,
+  .nav-track-order,
+  .nav-account-link,
+  .pro-mobile-link-btn,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-nav button,
+  .account-dropdown-menu button,
+  .address-card button,
+  .wishlist-grid button:last-of-type,
+  .checkout-choice-card button:last-of-type
+):hover {
+  border-color: rgba(167, 139, 250, 0.58);
+  background: rgba(48, 35, 76, 0.92);
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(36, 20, 61, 0.3), 0 0 16px rgba(139, 92, 246, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Product-card and inline actions retain their compact footprint. */
+:is(
+  .daraz-btn-cart,
+  .daraz-btn-wa,
+  .compat-add-btn,
+  .nav-track-order,
+  .nav-account-link,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-dropdown-menu button,
+  .address-card button,
+  .wishlist-grid button,
+  .checkout-choice-card button
+) {
+  min-height: 34px;
+  height: 34px;
+  padding-inline: 12px;
+  clip-path: var(--sx-button-cut-compact);
+  font-size: 0.76rem;
+  letter-spacing: 0.035em;
+}
+
+:is(.btn-hero-gradient, .btn-hero-whatsapp-clean, .btn-hero-outline) {
+  min-height: 48px;
+  padding-inline: 24px;
+}
+
+:is(.btn-showcase-equip, .btn-pro-equip) {
+  min-height: 40px;
+}
+
+/* Selection controls use the same geometry while retaining their control role. */
+:is(
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .pro-mobile-link-btn,
+  .account-nav button
+).active,
+.account-nav button.active {
+  border-color: transparent;
+  background: var(--sx-button-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(82, 72, 229, 0.24);
+}
+
+:is(
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .pro-mobile-link-btn,
+  .account-nav button
+).active i,
+.account-nav button.active i {
+  color: #fff;
+}
+
+.mode-btn.active-cryo {
+  clip-path: var(--sx-button-cut-compact);
+  border-color: rgba(34, 211, 238, 0.72);
+  background: linear-gradient(104deg, rgba(14, 116, 144, 0.92), rgba(8, 173, 215, 0.92));
+  color: #fff;
+}
+
+.mode-btn.active-throttled,
+.admin-pill.alert.active {
+  clip-path: var(--sx-button-cut-compact);
+  border-color: rgba(251, 113, 133, 0.74);
+  background: linear-gradient(104deg, rgba(136, 19, 55, 0.94), rgba(225, 29, 72, 0.88));
+  color: #fff;
+}
+
+.review-filter-btn small {
+  min-width: 28px;
+  color: #e2e8f0;
+  background: #25183b;
+  font-size: 0.75rem;
+}
+
+.review-filter-btn.active small {
+  color: #fff;
+  background: #12091f;
+}
+
+/* Small utility buttons follow the same clipped silhouette without competing
+   with primary actions. Content cards that happen to use <button> are excluded. */
+:is(
+  .search-clear-btn,
+  .daraz-search-clear,
+  .qty-btn,
+  .modal-close-btn,
+  .compat-close-btn,
+  .tracker-close-btn,
+  .cart-drawer-close-btn,
+  .admin-modal-close-btn,
+  .admin-editor-close-btn,
+  .pro-mobile-toggle,
+  .pro-mobile-close,
+  .daraz-btn-wishlist,
+  .btn-review-arrow,
+  .review-lightbox-close,
+  .review-lightbox-arrow,
+  .cart-item-remove-btn,
+  .btn-action-delete,
+  .product-image-remove
+) {
+  border: 1px solid var(--sx-button-neutral-border);
+  border-radius: 0;
+  clip-path: var(--sx-button-cut-compact);
+  background: var(--sx-button-neutral-bg);
+  color: var(--sx-button-neutral-text);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+:is(
+  .search-clear-btn,
+  .daraz-search-clear,
+  .qty-btn,
+  .modal-close-btn,
+  .compat-close-btn,
+  .tracker-close-btn,
+  .cart-drawer-close-btn,
+  .admin-modal-close-btn,
+  .admin-editor-close-btn,
+  .pro-mobile-toggle,
+  .pro-mobile-close,
+  .btn-review-arrow,
+  .review-lightbox-close,
+  .review-lightbox-arrow
+):hover {
+  border-color: rgba(103, 232, 249, 0.65);
+  background: linear-gradient(104deg, rgba(79, 70, 229, 0.82), rgba(8, 173, 215, 0.82));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(8, 173, 215, 0.16);
+  transform: translateY(-1px);
+}
+
+:is(
+  .account-dropdown-logout,
+  .account-nav button:last-child,
+  .address-card button:last-child,
+  .wishlist-grid button:last-child,
+  .daraz-btn-wishlist,
+  .cart-item-remove-btn,
+  .btn-action-delete,
+  .product-image-remove
+) {
+  border-color: var(--sx-button-danger-border);
+  background: var(--sx-button-danger-bg);
+  color: var(--sx-button-danger-text);
+}
+
+:is(
+  .account-dropdown-logout,
+  .account-nav button:last-child,
+  .address-card button:last-child,
+  .wishlist-grid button:last-child,
+  .daraz-btn-wishlist,
+  .cart-item-remove-btn,
+  .btn-action-delete,
+  .product-image-remove
+):hover {
+  border-color: #fb7185;
+  background: rgba(105, 17, 47, 0.94);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(244, 63, 94, 0.18);
+  transform: translateY(-1px);
+}
+
+:is(
+  .modal-close-btn,
+  .compat-close-btn,
+  .tracker-close-btn,
+  .cart-drawer-close-btn,
+  .admin-modal-close-btn,
+  .admin-editor-close-btn,
+  .pro-mobile-close
+) {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+:is(
+  .btn-cyber-primary,
+  .btn-cyber-secondary,
+  .btn-checkout-primary,
+  .btn-whatsapp-direct,
+  .btn-hero-gradient,
+  .btn-hero-whatsapp-clean,
+  .btn-hero-outline,
+  .btn-showcase-equip,
+  .btn-pro-equip,
+  .btn-enter-division,
+  .btn-view-all-arsenal,
+  .btn-explore-full-store,
+  .btn-daraz-reset,
+  .btn-equip-loadout,
+  .btn-tracker-submit,
+  .btn-tracker-wa,
+  .daraz-btn-cart,
+  .daraz-btn-wa,
+  .compat-add-btn,
+  .review-wall-load-btn,
+  .reviews-archive-link,
+  .btn-primary,
+  .pro-btn-support,
+  .pro-btn-cart,
+  .pro-mobile-whatsapp-btn,
+  .nav-track-order,
+  .nav-account-link,
+  .pro-mobile-action-card,
+  .pro-mobile-link-btn,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-nav button,
+  .account-dropdown-menu button,
+  .search-clear-btn,
+  .daraz-search-clear,
+  .qty-btn,
+  .modal-close-btn,
+  .compat-close-btn,
+  .tracker-close-btn,
+  .cart-drawer-close-btn,
+  .admin-modal-close-btn,
+  .admin-editor-close-btn,
+  .pro-mobile-toggle,
+  .pro-mobile-close,
+  .daraz-btn-wishlist,
+  .btn-review-arrow,
+  .review-lightbox-close,
+  .review-lightbox-arrow,
+  .cart-item-remove-btn,
+  .btn-action-delete,
+  .product-image-remove,
+  .address-card button,
+  .wishlist-grid button,
+  .checkout-choice-card button
+):focus-visible {
+  outline: 2px solid var(--sx-button-focus);
+  outline-offset: 3px;
+}
+
+:is(
+  .btn-cyber-primary,
+  .btn-cyber-secondary,
+  .btn-checkout-primary,
+  .btn-whatsapp-direct,
+  .btn-showcase-equip,
+  .btn-pro-equip,
+  .btn-explore-full-store,
+  .btn-equip-loadout,
+  .btn-tracker-submit,
+  .daraz-btn-cart,
+  .daraz-btn-wa,
+  .compat-add-btn,
+  .review-wall-load-btn
+):disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+:is(
+  .pro-mobile-action-card,
+  .pro-mobile-link-btn,
+  .filter-pill,
+  .daraz-subcat-pill,
+  .review-filter-btn,
+  .device-pill-btn,
+  .mode-btn,
+  .switcher-tab-btn,
+  .admin-pill,
+  .account-nav button,
+  .account-dropdown-menu button,
+  .qty-btn
+):disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Category portal: secondary cyber action with the storefront's gold accent. */
+.home-category-card button.btn-enter-division {
+  min-height: 44px;
+  padding-inline: 17px 15px;
+  border: 1px solid rgba(244, 185, 66, 0.42);
+  background: rgba(22, 14, 43, 0.92);
+  color: #f8f7ff;
+  box-shadow:
+    inset 3px 0 0 rgba(244, 185, 66, 0.86),
+    inset 0 1px rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(8, 5, 20, 0.28);
+}
+
+.home-category-card button.btn-enter-division i {
+  color: #f4b942;
+  font-size: 0.86rem;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.home-category-card:hover button.btn-enter-division,
+.home-category-card button.btn-enter-division:hover {
+  border-color: rgba(244, 185, 66, 0.82);
+  background: rgba(244, 185, 66, 0.12);
+  color: #fff;
+  box-shadow:
+    inset 3px 0 0 #f4b942,
+    inset 0 1px rgba(255, 255, 255, 0.08),
+    0 12px 26px rgba(8, 5, 20, 0.34),
+    0 0 20px rgba(244, 185, 66, 0.12);
+  transform: translateY(-2px);
+}
+
+.home-category-card:hover button.btn-enter-division i,
+.home-category-card button.btn-enter-division:hover i {
+  color: #ffd978;
+  transform: translateX(4px);
+}
+
+.home-category-card button.btn-enter-division:focus-visible {
+  outline: 2px solid #f4b942;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  :is(.btn-hero-gradient, .btn-hero-whatsapp-clean, .btn-hero-outline) {
+    width: 100%;
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .pro-nav-actions .nav-track-order {
+    display: none;
+  }
+}
+
+/* Admin variants share the same geometry while retaining semantic colors. */
+:is(.admin-btn, .btn-action-chat, .confirm-btn-cancel, .confirm-btn-delete) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding-inline: 16px;
+  border-radius: 0;
+  clip-path: var(--sx-button-cut-compact);
+  font-family: var(--admin-font-heading, var(--font-heading));
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.admin-btn-primary {
+  border: 1px solid transparent;
+  background: var(--sx-button-primary);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(82, 72, 229, 0.22);
+}
+
+.admin-btn-primary:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: var(--sx-button-primary-hover);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(82, 72, 229, 0.34);
+  transform: translateY(-2px);
+}
+
+:is(.admin-btn-secondary, .confirm-btn-cancel) {
+  border: 1px solid var(--sx-button-neutral-border);
+  background: var(--sx-button-neutral-bg);
+  color: var(--sx-button-neutral-text);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+:is(.admin-btn-secondary, .confirm-btn-cancel):hover {
+  border-color: rgba(167, 139, 250, 0.58);
+  background: rgba(48, 35, 76, 0.92);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(36, 20, 61, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-action-chat {
+  border: 1px solid var(--sx-button-green-border);
+  background: var(--sx-button-green-bg);
+  color: var(--sx-button-green-text);
+  box-shadow: none;
+}
+
+.btn-action-chat:hover {
+  border-color: rgba(52, 211, 153, 0.82);
+  background: rgba(7, 51, 42, 0.96);
+  color: #6ee7b7;
+  box-shadow: 0 10px 22px rgba(16, 185, 129, 0.16);
+  transform: translateY(-2px);
+}
+
+:is(.admin-btn-danger, .confirm-btn-delete) {
+  border: 1px solid var(--sx-button-danger-border);
+  background: var(--sx-button-danger-bg);
+  color: var(--sx-button-danger-text);
+  box-shadow: none;
+}
+
+:is(.admin-btn-danger, .confirm-btn-delete):hover {
+  border-color: #fb7185;
+  background: rgba(105, 17, 47, 0.9);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(244, 63, 94, 0.2);
+  transform: translateY(-2px);
+}
+
+:is(.btn-action-delete, .cart-item-remove-btn) {
+  border-radius: 0;
+  clip-path: var(--sx-button-cut-compact);
+}
+
+:is(.admin-btn, .btn-action-chat, .btn-action-delete, .confirm-btn-cancel, .confirm-btn-delete):focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+:is(.admin-btn, .btn-action-chat, .confirm-btn-cancel, .confirm-btn-delete):disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Hero primary CTA: a restrained ShopXzetio energy treatment. */
+.hero-actions-group a.btn-hero-gradient {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 54px;
+  padding-inline: 28px;
+  border: 1px solid rgba(255, 237, 178, 0.66);
+  background: var(--sx-hero-solid);
+  color: #1b1028;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.36),
+    inset 0 -2px rgba(91, 52, 6, 0.2),
+    0 12px 28px rgba(244, 185, 66, 0.28),
+    0 0 20px rgba(244, 185, 66, 0.12);
+}
+
+.hero-actions-group a.btn-hero-gradient::before {
+  display: none;
+}
+
+.hero-actions-group a.btn-hero-gradient::after {
+  display: none;
+}
+
+.hero-actions-group a.btn-hero-gradient > :is(i, span) {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-actions-group a.btn-hero-gradient > i {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(27, 16, 40, 0.24);
+  clip-path: var(--sx-button-cut-compact);
+  background: rgba(27, 16, 40, 0.1);
+  color: #1b1028;
+  text-shadow: none;
+}
+
+.hero-actions-group a.btn-hero-gradient > span {
+  text-shadow: 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.hero-actions-group a.btn-hero-gradient:hover {
+  border-color: rgba(255, 243, 199, 0.92);
+  background: var(--sx-hero-solid);
+  color: #1b1028;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.42),
+    inset 0 -2px rgba(91, 52, 6, 0.16),
+    0 16px 34px rgba(244, 185, 66, 0.38),
+    0 0 26px rgba(244, 185, 66, 0.2);
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.hero-actions-group a.btn-hero-gradient:active {
+  filter: brightness(0.94);
+  transform: translateY(0);
+}
+
+.hero-actions-group a.btn-hero-gradient:focus-visible {
+  outline: 2px solid #fef3c7;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .hero-actions-group a.btn-hero-gradient {
+    min-height: 52px;
+    padding-inline: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-actions-group a.btn-hero-gradient::after {
+    display: none;
+  }
+}

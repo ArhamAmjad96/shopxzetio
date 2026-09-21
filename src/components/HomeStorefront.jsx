@@ -123,7 +123,7 @@ export default function HomeStorefront() {
                     <span className="cat-price-from">{cat.price}</span>
                   </div>
 
-                  <button className="btn-enter-division" style={{ borderColor: `${cat.accent}66` }}>
+                  <button className="btn-enter-division" type="button">
                     <span>ENTER DIVISION</span>
                     <i className="fa-solid fa-arrow-right"></i>
                   </button>
