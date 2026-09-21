@@ -64,9 +64,11 @@ export function AuthProvider({ children }) {
     if (!supabase) throw new Error('Supabase is not configured.');
     const { data: current } = await supabase.auth.getUser();
     const details = { full_name: fullName.trim(), phone: phone.trim() };
+    const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim().replace(/\/+$/, '');
+    const emailRedirectTo = `${configuredSiteUrl || window.location.origin}/account`;
     const result = current.user?.is_anonymous
       ? await supabase.auth.updateUser({ email, password, data: details })
-      : await supabase.auth.signUp({ email, password, options: { data: details } });
+      : await supabase.auth.signUp({ email, password, options: { data: details, emailRedirectTo } });
     if (result.error) throw result.error;
     await loadProfile(result.data.user);
     return result.data;
