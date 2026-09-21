@@ -57,22 +57,52 @@ export default function CheckoutModal() {
         warning: result.receiptError ? `Your order was created, but the receipt could not be attached: ${result.receiptError}. Please send it on WhatsApp with your Order ID.` : '',
       };
       
-      // Fire-and-forget Admin Email Notification via FormSubmit
-      const emailBody = `New Order Placed: ${result.order_ref}\n\n`
-        + `Total: Rs. ${Number(result.total).toLocaleString()}\n`
-        + `Payment Method: ${PAYMENT_LABELS[paymentMethod]}\n\n`
-        + `Customer Details:\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nCity: ${formData.city}\nAddress: ${formData.address}\nNotes: ${formData.notes || 'None'}\n\n`
-        + `Items:\n${items.map(i => `${i.quantity}x ${i.name} (Rs. ${i.price.toLocaleString()})`).join('\n')}`;
+      // Automatic invoice dispatch to Matiorton786@gmail.com
+      const invoiceDate = new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' });
+      const invoiceContent = `=================================================\n`
+        + `        SHOPXZETIO OFFICIAL ORDER INVOICE\n`
+        + `=================================================\n\n`
+        + `Order / Invoice ID : ${result.order_ref}\n`
+        + `Date & Time        : ${invoiceDate} (PKT)\n`
+        + `Payment Method     : ${PAYMENT_LABELS[paymentMethod]}\n`
+        + `Payment Status     : ${order.paymentStatus}\n\n`
+        + `-------------------------------------------------\n`
+        + `CUSTOMER DETAILS\n`
+        + `-------------------------------------------------\n`
+        + `Full Name          : ${formData.name}\n`
+        + `WhatsApp / Phone   : ${formData.phone}\n`
+        + `Customer Email     : ${formData.email}\n`
+        + `City               : ${formData.city}\n`
+        + `Province           : ${formData.province || 'N/A'}\n`
+        + `Complete Address   : ${formData.address}\n`
+        + `Delivery Notes     : ${formData.notes || 'None'}\n\n`
+        + `-------------------------------------------------\n`
+        + `ITEMS ORDERED\n`
+        + `-------------------------------------------------\n`
+        + items.map((item, idx) => `${idx + 1}. ${item.name}\n   Qty: ${item.quantity}  x  Rs. ${item.price.toLocaleString()} = Rs. ${(item.price * item.quantity).toLocaleString()}`).join('\n\n') + '\n\n'
+        + `-------------------------------------------------\n`
+        + `PRICING SUMMARY\n`
+        + `-------------------------------------------------\n`
+        + `Subtotal           : Rs. ${Number(result.subtotal).toLocaleString()}\n`
+        + `Delivery Fee       : ${Number(result.shipping) > 0 ? `Rs. ${Number(result.shipping).toLocaleString()}` : 'FREE (Nationwide)'}\n`
+        + `GRAND TOTAL        : Rs. ${Number(result.total).toLocaleString()}\n`
+        + `=================================================\n`;
 
       fetch('https://formsubmit.co/ajax/matiorton786@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          _subject: `[New Order] ${result.order_ref} - Rs. ${Number(result.total).toLocaleString()}`,
+          _subject: `[INVOICE] Order #${result.order_ref} - Rs. ${Number(result.total).toLocaleString()} (${formData.name})`,
           _replyto: formData.email,
-          message: emailBody
+          invoice: invoiceContent,
+          order_id: result.order_ref,
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_city: formData.city,
+          total_amount: `Rs. ${Number(result.total).toLocaleString()}`,
+          payment_method: PAYMENT_LABELS[paymentMethod]
         })
-      }).catch(err => console.error('Failed to send admin email notification:', err));
+      }).catch(err => console.error('Failed to send invoice notification:', err));
 
       order.whatsappUrl = buildWhatsAppUrl(order);
       clearCart(); closeCheckout(); openSuccess(order);
