@@ -88,12 +88,17 @@ export default function CategoryPage({ categoryKey, title, subtitle, icon }) {
             <div className="category-icon-box">
               <i className={`fa-solid ${icon || 'fa-gamepad'}`}></i>
             </div>
-            <div>
+            <div className="category-header-copy">
+              <span className="category-header-kicker">ShopXzetio Division Catalog</span>
               <h1 className="category-page-title">{title}</h1>
               <p className="category-page-desc">
-                {subtitle || `Explore our curated tournament-grade ${title.toLowerCase()} collection.`} 
-                <span className="category-count-badge"> ({categoryProducts.length} Items Available)</span>
+                {subtitle || `Explore our curated tournament-grade ${title.toLowerCase()} collection.`}
               </p>
+            </div>
+            <div className="category-availability" aria-label={`${categoryProducts.length} items available`}>
+              <span className="category-availability-dot" aria-hidden="true"></span>
+              <strong>{categoryProducts.length}</strong>
+              <span>{categoryProducts.length === 1 ? 'Item Available' : 'Items Available'}</span>
             </div>
           </div>
         </div>

@@ -57,27 +57,22 @@ export default function CheckoutModal() {
         warning: result.receiptError ? `Your order was created, but the receipt could not be attached: ${result.receiptError}. Please send it on WhatsApp with your Order ID.` : '',
       };
       
-      // Fire-and-forget Admin Email Notification via Web3Forms
-      const web3FormsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-      if (web3FormsKey) {
-        const emailBody = `New Order Placed: ${result.order_ref}\n\n`
-          + `Total: Rs. ${Number(result.total).toLocaleString()}\n`
-          + `Payment Method: ${PAYMENT_LABELS[paymentMethod]}\n\n`
-          + `Customer Details:\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nCity: ${formData.city}\nAddress: ${formData.address}\nNotes: ${formData.notes || 'None'}\n\n`
-          + `Items:\n${items.map(i => `${i.quantity}x ${i.name} (Rs. ${i.price.toLocaleString()})`).join('\n')}`;
+      // Fire-and-forget Admin Email Notification via FormSubmit
+      const emailBody = `New Order Placed: ${result.order_ref}\n\n`
+        + `Total: Rs. ${Number(result.total).toLocaleString()}\n`
+        + `Payment Method: ${PAYMENT_LABELS[paymentMethod]}\n\n`
+        + `Customer Details:\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nCity: ${formData.city}\nAddress: ${formData.address}\nNotes: ${formData.notes || 'None'}\n\n`
+        + `Items:\n${items.map(i => `${i.quantity}x ${i.name} (Rs. ${i.price.toLocaleString()})`).join('\n')}`;
 
-        fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            access_key: web3FormsKey,
-            subject: `[New Order] ${result.order_ref} - Rs. ${Number(result.total).toLocaleString()}`,
-            from_name: 'ShopXzetio Orders',
-            replyto: formData.email,
-            message: emailBody
-          })
-        }).catch(err => console.error('Failed to send admin email notification:', err));
-      }
+      fetch('https://formsubmit.co/ajax/matiorton786@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[New Order] ${result.order_ref} - Rs. ${Number(result.total).toLocaleString()}`,
+          _replyto: formData.email,
+          message: emailBody
+        })
+      }).catch(err => console.error('Failed to send admin email notification:', err));
 
       order.whatsappUrl = buildWhatsAppUrl(order);
       clearCart(); closeCheckout(); openSuccess(order);
