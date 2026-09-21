@@ -7344,6 +7344,39 @@ body {
   box-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
 }
 
+.auth-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-password-wrap input {
+  padding-right: 44px !important;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-dim, #94a3b8);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.auth-password-toggle:hover {
+  color: var(--cyan, #00f0ff);
+}
+
 .auth-links,
 .auth-switch {
   display: flex;

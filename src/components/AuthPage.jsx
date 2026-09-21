@@ -12,6 +12,8 @@ export default function AuthPage({ mode = 'login', admin = false }) {
   const [error, setError] = useState(params.get('error') === 'not-admin' ? 'This account does not have administrator access.' : '');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const returnTo = params.get('return') || (admin ? '/admin' : '/account');
 
   const submit = async (event) => {
@@ -78,8 +80,50 @@ export default function AuthPage({ mode = 'login', admin = false }) {
             </>
           )}
           {!['reset'].includes(mode) && <label>Email<input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>}
-          {!['forgot'].includes(mode) && <label>Password<input required type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></label>}
-          {['signup', 'reset'].includes(mode) && <label>Confirm Password<input required type="password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} /></label>}
+          {!['forgot'].includes(mode) && (
+            <label>
+              Password
+              <div className="auth-password-wrap">
+                <input
+                  required
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
+                </button>
+              </div>
+            </label>
+          )}
+          {['signup', 'reset'].includes(mode) && (
+            <label>
+              Confirm Password
+              <div className="auth-password-wrap">
+                <input
+                  required
+                  type={showConfirm ? 'text' : 'password'}
+                  value={form.confirm}
+                  onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                  title={showConfirm ? 'Hide password' : 'Show password'}
+                >
+                  <i className={`fa-solid ${showConfirm ? 'fa-eye-slash' : 'fa-eye'}`} />
+                </button>
+              </div>
+            </label>
+          )}
           {error && <div className="auth-alert error">{error}</div>}
           {message && <div className="auth-alert success">{message}</div>}
           <button disabled={busy} className="btn-cyber-primary cyber-cut-sm" type="submit">
