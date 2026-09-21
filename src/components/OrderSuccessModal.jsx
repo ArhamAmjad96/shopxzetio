@@ -18,7 +18,7 @@ export default function OrderSuccessModal() {
     invoice += `ORDER REFERENCE:  #${order.orderRef}\n`;
     invoice += `ORDER DATE:       ${new Date().toLocaleString()}\n`;
     invoice += `PAYMENT METHOD:   ${order.paymentMethod}\n`;
-    invoice += `SUPPORT WHATSAPP: +92 334 8590229\n`;
+    invoice += `SUPPORT WHATSAPP: +92 326 5656336\n`;
     invoice += `INSTAGRAM:        @shopxzetio_\n\n`;
     invoice += `-----------------------------------------------------------------\n`;
     invoice += `CUSTOMER DISPATCH DETAILS\n`;

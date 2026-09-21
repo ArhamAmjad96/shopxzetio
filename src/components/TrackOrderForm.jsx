@@ -37,7 +37,7 @@ export default function TrackOrderForm() {
     {result && <div className="tracker-result-box" aria-live="polite"><div className="tracker-result-header"><div><span className="tracker-order-id">{result.order_ref}</span><span className="tracker-order-date">Placed {new Date(result.created_at).toLocaleDateString()}</span></div><span className="tracker-status-badge">{labels[result.order_status] || result.order_status}</span></div>
       <OrderTrackingProgress status={result.order_status}/>
       <div className="tracker-details-card"><div className="detail-row"><span>Payment:</span><strong>{result.payment_status}</strong></div><div className="detail-row"><span>Courier:</span><strong>{result.courier || 'Awaiting dispatch'}</strong></div><div className="detail-row"><span>Tracking number:</span><strong>{result.tracking_number || 'Not assigned'}</strong></div><div className="detail-row"><span>Destination:</span><strong>{result.city}</strong></div><div className="detail-row"><span>Total:</span><strong>Rs. {Number(result.total).toLocaleString()}</strong></div></div>
-      <a href={`https://wa.me/923348590229?text=${encodeURIComponent(`Hello ShopXzetio, please help with ${result.order_ref}`)}`} target="_blank" rel="noreferrer" className="btn-tracker-wa"><i className="fa-brands fa-whatsapp"/> Chat with Dispatcher</a>
+      <a href={`https://wa.me/923265656336?text=${encodeURIComponent(`Hello ShopXzetio, please help with ${result.order_ref}`)}`} target="_blank" rel="noreferrer" className="btn-tracker-wa"><i className="fa-brands fa-whatsapp"/> Chat with Dispatcher</a>
     </div>}
   </div>;
 }

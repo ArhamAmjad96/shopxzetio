@@ -72,7 +72,7 @@ function Storefront() {
     </main>
     <Footer/><CartDrawer/><ProductDetailModal/><CheckoutModal/><OrderSuccessModal/><DeviceCompatibilityModal isOpen={compatModalOpen} onClose={() => setCompatModalOpen(false)}/><OrderTrackerModal isOpen={trackerModalOpen} onClose={() => setTrackerModalOpen(false)}/>
     <a
-      href="https://wa.me/923348590229?text=Hello%20ShopXzetio!%20I%20need%20help%20with%20an%20order%20or%20product."
+      href="https://wa.me/923265656336?text=Hello%20ShopXzetio!%20I%20need%20help%20with%20an%20order%20or%20product."
       target="_blank"
       rel="noopener noreferrer"
       className="whatsapp-floating-btn"

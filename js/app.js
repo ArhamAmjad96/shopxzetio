@@ -529,5 +529,5 @@ window.orderSingleViaWhatsApp = function(productId, qty = 1) {
              `Hello! I would like to order this item. Please confirm stock availability and courier delivery to my city.`;
 
   const encoded = encodeURIComponent(text);
-  window.open(`https://wa.me/923348590229?text=${encoded}`, '_blank');
+  window.open(`https://wa.me/923265656336?text=${encoded}`, '_blank');
 };

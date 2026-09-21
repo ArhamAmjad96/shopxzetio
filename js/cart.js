@@ -258,7 +258,7 @@ class ShopCart {
     text += `Please confirm my order and share delivery details!`;
 
     const encoded = encodeURIComponent(text);
-    const url = `https://wa.me/923348590229?text=${encoded}`;
+    const url = `https://wa.me/923265656336?text=${encoded}`;
     window.open(url, '_blank');
   }
 
