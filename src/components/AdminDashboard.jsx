@@ -175,9 +175,9 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard-shell">
-      {/* Top Header */}
-      <header className="admin-header">
-        <div className="admin-nav">
+      {/* Desktop sidebar / compact mobile navigation */}
+      <aside className="admin-header" aria-label="Admin navigation">
+        <nav className="admin-nav">
           <div className="admin-brand">
             <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" className="admin-logo" onError={handleImageError} />
             <div className="admin-title-group">
@@ -186,7 +186,8 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="admin-top-actions">
+          <span className="admin-sidebar-label">Management</span>
+          <div className="admin-top-actions admin-primary-actions">
             <button onClick={() => setActiveSection('orders')} className={`admin-btn ${activeSection === 'orders' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-box-archive"></i> Orders
             </button>
@@ -199,6 +200,10 @@ export default function AdminDashboard() {
             <button onClick={() => setActiveSection('reviews')} className={`admin-btn ${activeSection === 'reviews' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-star"></i> Reviews
             </button>
+          </div>
+
+          <span className="admin-sidebar-label admin-sidebar-label-tools">Quick Actions</span>
+          <div className="admin-top-actions admin-utility-actions">
             <button 
               onClick={handleGoToStorefront} 
               className="admin-btn admin-btn-secondary" 
@@ -213,6 +218,9 @@ export default function AdminDashboard() {
             >
               <i className="fa-solid fa-file-excel"></i> Export CSV
             </button>
+          </div>
+
+          <div className="admin-sidebar-footer">
             <button 
               onClick={handleLogout} 
               className="admin-btn admin-btn-danger" 
@@ -221,8 +229,8 @@ export default function AdminDashboard() {
               <i className="fa-solid fa-right-from-bracket"></i> Lock
             </button>
           </div>
-        </div>
-      </header>
+        </nav>
+      </aside>
 
       {activeSection === 'products' && <main className="admin-container">
         <AdminProducts triggerToast={triggerToast}/>
