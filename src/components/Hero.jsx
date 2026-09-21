@@ -113,14 +113,6 @@ export default function Hero() {
           {/* Right Column: Clean Floating Spotlight Showcase */}
           <div className="hero-right-showcase">
             <div className="showcase-card glass-card">
-              {/* Top Floating Badge */}
-              <div className="showcase-top-tag">
-                <span className="showcase-badge-pill">{activeProduct.badge}</span>
-                <span className="showcase-stat-pill">
-                  <i className={`fa-solid ${activeProduct.icon}`} style={{ color: activeProduct.accent }}></i>
-                  {activeProduct.stat}
-                </span>
-              </div>
 
               {/* Center Floating High-Res Product Visual */}
               <div 

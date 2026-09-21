@@ -588,6 +588,8 @@ button, input, select, textarea {
   padding: 24px 0 35px 0;
   position: relative;
   background: transparent;
+  width: 100%;
+  overflow: hidden;
 }
 
 .broadcast-container {
@@ -619,6 +621,8 @@ button, input, select, textarea {
   overflow-x: auto;
   scrollbar-width: none;
   padding: 8px 0;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .broadcast-logos-row::-webkit-scrollbar {
@@ -7803,9 +7807,9 @@ body {
   z-index: 900;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 54px;
-  padding: 7px 16px 7px 7px;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
   border: 1px solid rgba(74, 222, 128, 0.62);
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   background: rgba(5, 32, 27, 0.96);

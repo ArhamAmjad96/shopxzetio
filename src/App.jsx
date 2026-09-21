@@ -79,7 +79,6 @@ function Storefront() {
       aria-label="Get help on WhatsApp"
     >
       <span className="whatsapp-floating-icon" aria-hidden="true"><i className="fa-brands fa-whatsapp"/></span>
-      <span className="whatsapp-floating-copy"><strong>Need help?</strong><small>Chat on WhatsApp</small></span>
     </a>
   </>;
 }
