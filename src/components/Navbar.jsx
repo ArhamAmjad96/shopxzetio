@@ -21,6 +21,28 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+    };
+    const closeAtDesktopWidth = () => {
+      if (window.innerWidth > 1180) setMobileOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('resize', closeAtDesktopWidth);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('resize', closeAtDesktopWidth);
+    };
+  }, [mobileOpen]);
+
   const handleNav = (viewName, hashTarget = null) => {
     if (window.location.pathname !== '/') navigate('/');
     setCurrentView(viewName);
@@ -104,26 +126,11 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
 
             {/* Right: Clean Pro Actions */}
             <div className="pro-nav-actions">
-              <button className="nav-track-order" onClick={handleTrackOrder}>
-                <i className="fa-solid fa-box-location-dot"/><span>Track Order</span>
-              </button>
-              {/* WhatsApp Support Button */}
-              <a 
-                href="https://wa.me/923348590229?text=Hello%20ShopXzetio!%20I%20have%20an%20inquiry%20regarding%20gaming%20gear." 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="pro-btn-support"
-                title="WhatsApp Support"
-              >
-                <i className="fa-brands fa-whatsapp"></i>
-                <span>Support</span>
-              </a>
               <div className="nav-account-actions">
                 {isAdmin
                   ? <button className="nav-account-link" onClick={() => navigate('/admin')}><i className="fa-solid fa-shield-halved"/><span>Admin</span></button>
-                  : isCustomer
-                    ? <AccountDropdown profile={profile} onLogout={logout}/>
-                    : <button className="nav-account-link nav-signup" onClick={() => navigate('/login')}><i className="fa-solid fa-user"/> <span>Account</span></button>}
+                  : <AccountDropdown profile={profile} onLogout={logout} onTrackOrder={handleTrackOrder} isAuthenticated={isCustomer}/>
+                }
               </div>
 
               {/* Minimalist Cart Button */}
@@ -142,8 +149,10 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               {/* Mobile Menu Toggle Button */}
               <button 
                 className="pro-mobile-toggle"
-                onClick={() => setMobileOpen(!mobileOpen)}
+                onClick={() => setMobileOpen((value) => !value)}
                 aria-label="Toggle Navigation Menu"
+                aria-expanded={mobileOpen}
+                aria-controls="storefront-mobile-menu"
               >
                 <i className={`fa-solid ${mobileOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
               </button>
@@ -155,13 +164,13 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
       {/* Mobile Navigation Drawer */}
       {mobileOpen && (
         <div className="pro-mobile-backdrop" onClick={() => setMobileOpen(false)}>
-          <div className="pro-mobile-drawer" onClick={(e) => e.stopPropagation()}>
+          <div className="pro-mobile-drawer" id="storefront-mobile-menu" role="dialog" aria-modal="true" aria-label="Store navigation" onClick={(e) => e.stopPropagation()}>
             <div className="pro-mobile-header">
               <div className="pro-brand">
                 <img src={ASSET_PATHS.logo} alt="ShopXzetio Logo" className="pro-brand-logo" onError={handleImageError} />
                 <span className="pro-brand-title">SHOP<span>XZETIO</span></span>
               </div>
-              <button className="pro-mobile-close" onClick={() => setMobileOpen(false)}>
+              <button className="pro-mobile-close" onClick={() => setMobileOpen(false)} aria-label="Close navigation menu">
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -183,11 +192,14 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
             </div>
 
             <div className="pro-mobile-nav">
-              <button className="pro-mobile-link-btn mobile-track-order" onClick={handleTrackOrder}><i className="fa-solid fa-box-location-dot"/> Track Order</button>
-              {isCustomer ? <>
-                <button className="pro-mobile-link-btn" onClick={() => { navigate(isAdmin ? '/admin' : '/account'); setMobileOpen(false); }}><i className={`fa-solid ${isAdmin ? 'fa-shield-halved' : 'fa-user'}`}/> {isAdmin ? 'Admin Portal' : 'My Account'}</button>
-                <button className="pro-mobile-link-btn" onClick={() => { logout(); setMobileOpen(false); }}><i className="fa-solid fa-right-from-bracket"/> Logout</button>
-              </> : <button className="pro-mobile-link-btn" onClick={() => { navigate('/login'); setMobileOpen(false); }}><i className="fa-solid fa-user"/> Account</button>}
+              <div className="pro-mobile-account-group">
+                <span className="pro-mobile-group-label">Account &amp; Orders</span>
+                {isCustomer
+                  ? <button className="pro-mobile-link-btn" onClick={() => { navigate(isAdmin ? '/admin' : '/account'); setMobileOpen(false); }}><i className={`fa-solid ${isAdmin ? 'fa-shield-halved' : 'fa-user'}`}/> {isAdmin ? 'Admin Portal' : 'My Account'}</button>
+                  : <button className="pro-mobile-link-btn" onClick={() => { navigate('/login'); setMobileOpen(false); }}><i className="fa-solid fa-user"/> Sign In / Account</button>}
+                <button className="pro-mobile-link-btn mobile-track-order" onClick={handleTrackOrder}><i className="fa-solid fa-box-location-dot"/> Track Order</button>
+                {isCustomer && <button className="pro-mobile-link-btn" onClick={() => { logout(); setMobileOpen(false); }}><i className="fa-solid fa-right-from-bracket"/> Logout</button>}
+              </div>
               <button 
                 className={`pro-mobile-link-btn ${(!currentView || currentView === 'home') ? 'active' : ''}`}
                 onClick={() => handleNav('home')}
@@ -233,15 +245,6 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
             </div>
 
             <div className="pro-mobile-footer">
-              <a 
-                href="https://wa.me/923348590229" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="pro-mobile-whatsapp-btn"
-              >
-                <i className="fa-brands fa-whatsapp"></i>
-                <span>Direct WhatsApp: 0334-8590229</span>
-              </a>
               <div className="pro-mobile-policy-strip">
                 <span>🛡️ 7 Days Warranty</span>
                 <span>💵 COD Nationwide</span>

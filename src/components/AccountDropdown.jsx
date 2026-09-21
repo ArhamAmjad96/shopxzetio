@@ -9,12 +9,14 @@ const customerItems = [
   ['fa-user', 'Profile', '/account/profile'],
 ];
 
-export default function AccountDropdown({ profile, onLogout }) {
+export default function AccountDropdown({ profile, onLogout, onTrackOrder, isAuthenticated = true }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const displayName = profile?.full_name?.trim()?.split(/\s+/)[0] || 'Account';
+  const displayName = isAuthenticated
+    ? profile?.full_name?.trim()?.split(/\s+/)[0] || 'Account'
+    : 'Account';
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -72,11 +74,17 @@ export default function AccountDropdown({ profile, onLogout }) {
       <i className="fa-solid fa-user"/><span>{displayName}</span><i className={`fa-solid fa-chevron-${open ? 'up' : 'down'} account-dropdown-chevron`}/>
     </button>
     {open && <div className="account-dropdown-menu" role="menu" ref={menuRef} onKeyDown={handleMenuKeys}>
-      <div className="account-dropdown-label">MY ACCOUNT</div>
-      {customerItems.map(([icon, label, path]) => <button key={path} role="menuitem" onClick={() => openRoute(path)}><i className={`fa-solid ${icon}`}/><span>{label}</span></button>)}
+      <div className="account-dropdown-label">{isAuthenticated ? 'MY ACCOUNT' : 'ACCOUNT & ORDERS'}</div>
+      <button role="menuitem" className="account-dropdown-track" onClick={() => { setOpen(false); onTrackOrder(); }}><i className="fa-solid fa-box-location-dot"/><span>Track Order</span></button>
+      {isAuthenticated && customerItems.map(([icon, label, path]) => <button key={path} role="menuitem" onClick={() => openRoute(path)}><i className={`fa-solid ${icon}`}/><span>{label}</span></button>)}
       <div className="account-dropdown-separator"/>
-      <button role="menuitem" onClick={() => openRoute('/account')}><i className="fa-solid fa-gauge-high"/><span>View Full Account</span></button>
-      <button role="menuitem" className="account-dropdown-logout" onClick={() => { setOpen(false); onLogout(); }}><i className="fa-solid fa-right-from-bracket"/><span>Logout</span></button>
+      {isAuthenticated ? <>
+        <button role="menuitem" onClick={() => openRoute('/account')}><i className="fa-solid fa-gauge-high"/><span>View Full Account</span></button>
+        <button role="menuitem" className="account-dropdown-logout" onClick={() => { setOpen(false); onLogout(); }}><i className="fa-solid fa-right-from-bracket"/><span>Logout</span></button>
+      </> : <>
+        <button role="menuitem" onClick={() => openRoute('/login')}><i className="fa-solid fa-right-to-bracket"/><span>Sign In</span></button>
+        <button role="menuitem" onClick={() => openRoute('/signup')}><i className="fa-solid fa-user-plus"/><span>Create Account</span></button>
+      </>}
     </div>}
   </div>;
 }

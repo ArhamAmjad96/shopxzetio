@@ -7774,3 +7774,314 @@ body {
 @media(max-width:1120px){.nav-track-order span,.pro-btn-support span{display:none}.nav-track-order,.pro-btn-support{width:36px;padding:0;justify-content:center}.order-list-card{grid-template-columns:1fr 1fr}.order-card-actions{justify-content:flex-start;grid-column:1/-1}}
 @media(max-width:900px){.nav-track-order{display:none}.account-quick-grid{grid-template-columns:1fr 1fr}.mobile-track-order{color:#e9d5ff!important;border-color:rgba(168,85,247,.4)!important;background:rgba(168,85,247,.12)!important}}
 @media(max-width:600px){.account-quick-grid{grid-template-columns:1fr}.active-order-card{align-items:flex-start;flex-wrap:wrap}.active-order-card .btn-cyber-primary{width:100%}.order-list-card{grid-template-columns:1fr 1fr}.order-card-actions{grid-column:1/-1}.order-detail-heading{flex-direction:column}.detail-grid{grid-template-columns:1fr}.tracker-stepper{overflow-x:auto;padding-bottom:9px}.step-item{min-width:72px}.step-label{text-align:center}.account-dropdown-menu{right:auto;left:0}.public-tracking-card{padding:20px 16px}.public-tracking-card .track-order-form-shell{padding:16px}.tracker-page-heading{align-items:flex-start}.tracker-page-heading .tracker-icon-badge{flex:0 0 auto}}
+
+/* Responsive storefront navigation and persistent customer help. */
+.account-dropdown-menu .account-dropdown-track {
+  border-color: rgba(244, 185, 66, 0.2);
+  background: rgba(244, 185, 66, 0.07);
+  color: #fff4ce;
+}
+
+.account-dropdown-menu button {
+  justify-content: flex-start;
+}
+
+.account-dropdown-menu .account-dropdown-track i {
+  color: #f4b942;
+}
+
+.account-dropdown-menu .account-dropdown-track:hover,
+.account-dropdown-menu .account-dropdown-track:focus-visible {
+  border-color: rgba(244, 185, 66, 0.48);
+  background: rgba(244, 185, 66, 0.13);
+}
+
+.whatsapp-floating-btn {
+  position: fixed;
+  right: max(22px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 7px 16px 7px 7px;
+  border: 1px solid rgba(74, 222, 128, 0.62);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  background: rgba(5, 32, 27, 0.96);
+  color: #f4fff8;
+  text-decoration: none;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.46), 0 0 24px rgba(37, 211, 102, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.whatsapp-floating-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  background: #25d366;
+  color: #052016;
+  font-size: 1.25rem;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.whatsapp-floating-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.whatsapp-floating-copy strong {
+  color: #ffffff;
+  font: 900 0.78rem/1 var(--font-heading);
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.whatsapp-floating-copy small {
+  color: #86efac;
+  font: 700 0.68rem/1.1 var(--font-body);
+  white-space: nowrap;
+}
+
+.whatsapp-floating-btn:hover,
+.whatsapp-floating-btn:focus-visible {
+  border-color: #86efac;
+  background: rgba(7, 51, 42, 0.98);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.52), 0 0 30px rgba(37, 211, 102, 0.34);
+  transform: translateY(-3px);
+  outline: none;
+}
+
+.pro-mobile-account-group {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid rgba(244, 185, 66, 0.2);
+  background: rgba(244, 185, 66, 0.045);
+}
+
+.pro-mobile-group-label {
+  padding: 2px 4px 6px;
+  color: #f4b942;
+  font: 800 0.64rem/1 var(--font-heading);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1180px) {
+  .pro-nav {
+    gap: 14px;
+  }
+
+  .pro-nav-links {
+    display: none !important;
+  }
+
+  .pro-mobile-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid rgba(167, 139, 250, 0.32);
+    clip-path: var(--sx-button-cut-compact, polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px));
+    background: rgba(26, 16, 49, 0.9);
+  }
+
+  .pro-nav-actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .pro-navbar-sticky,
+  .pro-nav {
+    height: 60px;
+  }
+
+  .pro-nav-container {
+    padding-inline: 12px;
+  }
+
+  .pro-nav {
+    gap: 8px;
+  }
+
+  .pro-brand-btn {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .pro-brand-logo {
+    height: 28px;
+  }
+
+  .pro-brand-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+  }
+
+  .pro-nav-actions {
+    gap: 6px;
+  }
+
+  .nav-account-actions {
+    display: flex;
+  }
+
+  .account-dropdown-trigger,
+  .pro-btn-cart,
+  .pro-mobile-toggle {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+  }
+
+  .account-dropdown-trigger {
+    justify-content: center;
+  }
+
+  .account-dropdown-trigger > span,
+  .account-dropdown-trigger .account-dropdown-chevron {
+    display: none;
+  }
+
+  .account-dropdown-menu {
+    position: fixed;
+    top: 68px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: calc(100dvh - 84px);
+    overflow-y: auto;
+  }
+
+  .pro-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    padding-inline: 4px;
+  }
+
+  .pro-btn-cart {
+    position: relative;
+  }
+
+  .pro-mobile-drawer {
+    width: min(92vw, 380px);
+    padding: 18px;
+  }
+
+  .pro-mobile-header {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+  }
+
+  .pro-mobile-actions-single {
+    margin-bottom: 14px;
+  }
+
+  .pro-mobile-link-btn {
+    min-height: 44px;
+  }
+
+  .whatsapp-floating-btn {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    min-height: 50px;
+    padding: 5px 13px 5px 5px;
+  }
+
+  .whatsapp-floating-icon {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 420px) {
+  .showcase-card {
+    padding: 18px;
+  }
+
+  .showcase-info-bar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .showcase-title-price {
+    min-width: 0;
+  }
+
+  .showcase-price-box {
+    flex-wrap: wrap;
+  }
+
+  .btn-showcase-equip {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .pro-brand-title {
+    font-size: 0.82rem;
+  }
+
+  .pro-brand-logo {
+    height: 25px;
+  }
+
+  .account-dropdown-trigger,
+  .pro-btn-cart,
+  .pro-mobile-toggle {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+  }
+
+  .whatsapp-floating-copy small {
+    display: none;
+  }
+
+  .partners-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .partner-card {
+    width: 100%;
+    min-width: 0;
+    padding: 22px 18px;
+    gap: 16px;
+  }
+
+  .partner-logo-box {
+    width: 78px;
+    height: 78px;
+    flex: 0 0 78px;
+  }
+
+  .partner-content {
+    min-width: 0;
+  }
+}
+
+body:has(.pro-mobile-backdrop) .whatsapp-floating-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-floating-btn {
+    transition: none;
+  }
+}

@@ -71,6 +71,15 @@ function Storefront() {
       {currentView === 'arsenal' && <CategoryPage categoryKey="all" title="Complete Tournament Arsenal" subtitle="Explore our full catalog of authentic esports hardware." icon="fa-boxes-stacked"/>}
     </main>
     <Footer/><CartDrawer/><ProductDetailModal/><CheckoutModal/><OrderSuccessModal/><DeviceCompatibilityModal isOpen={compatModalOpen} onClose={() => setCompatModalOpen(false)}/><OrderTrackerModal isOpen={trackerModalOpen} onClose={() => setTrackerModalOpen(false)}/>
-    <a href="https://wa.me/923348590229" target="_blank" rel="noreferrer" className="whatsapp-floating-btn"><i className="fa-brands fa-whatsapp"/><span className="tooltip">Chat with Support</span></a>
+    <a
+      href="https://wa.me/923348590229?text=Hello%20ShopXzetio!%20I%20need%20help%20with%20an%20order%20or%20product."
+      target="_blank"
+      rel="noopener noreferrer"
+      className="whatsapp-floating-btn"
+      aria-label="Get help on WhatsApp"
+    >
+      <span className="whatsapp-floating-icon" aria-hidden="true"><i className="fa-brands fa-whatsapp"/></span>
+      <span className="whatsapp-floating-copy"><strong>Need help?</strong><small>Chat on WhatsApp</small></span>
+    </a>
   </>;
 }
