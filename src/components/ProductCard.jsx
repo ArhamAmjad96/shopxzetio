@@ -10,7 +10,11 @@ export default function ProductCard({ product }) {
   const { user, isCustomer } = useAuth();
   const navigate = useNavigate();
 
-  const mainImg = normalizeAssetUrl(product.mainImage || product.images?.[0]);
+  const images = (product.images && product.images.length > 0 ? product.images : [product.mainImage])
+    .filter(Boolean)
+    .map(normalizeAssetUrl);
+  const mainImg = normalizeAssetUrl(product.mainImage || images[0]);
+  const secondaryImg = images.find((img) => img && img !== mainImg) || null;
 
   // Calculate discount percentage if originalPrice exists
   const discountPercent = product.originalPrice && product.originalPrice > product.price
@@ -29,6 +33,11 @@ export default function ProductCard({ product }) {
     window.open(`https://wa.me/923348590229?text=${encodeURIComponent(text)}`, '_blank');
   };
 
+  const handlePreview = (e) => {
+    e.stopPropagation();
+    openDetail(product);
+  };
+
   const addToWishlist = async () => {
     if (!isCustomer) {
       navigate(`/login?return=${encodeURIComponent(window.location.pathname + window.location.search)}`);
@@ -43,7 +52,7 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="daraz-product-card" onClick={() => openDetail(product)}>
+    <div className="daraz-product-card">
       {/* 1:1 Aspect Ratio Image Stage */}
       <div className="daraz-card-img-wrap">
         {discountPercent && (
@@ -53,16 +62,46 @@ export default function ProductCard({ product }) {
           <span className="daraz-feature-badge">{product.badge}</span>
         )}
         {product.stockQuantity === 0 && <span className="daraz-feature-badge" style={{ background:'#9f1239' }}>OUT OF STOCK</span>}
+
+        {/* Dedicated Eye Icon Quick-Preview Button */}
+        <button 
+          type="button" 
+          className="daraz-card-eye-btn" 
+          onClick={handlePreview} 
+          title="Preview Product" 
+          aria-label={`Preview ${product.name}`}
+        >
+          <i className="fa-solid fa-eye"></i>
+        </button>
+
         <img 
           src={mainImg} 
           alt={product.name} 
-          className="daraz-card-img" 
+          className={`daraz-card-img daraz-card-img-primary ${secondaryImg ? 'has-secondary' : ''}`} 
           loading="lazy" 
           onError={handleImageError}
         />
-        <div className="daraz-hover-inspect">
-          <i className="fa-solid fa-eye"></i> Quick View
-        </div>
+        {secondaryImg && (
+          <img 
+            src={secondaryImg} 
+            alt={`${product.name} alternate angle`} 
+            className="daraz-card-img daraz-card-img-secondary" 
+            loading="lazy" 
+            onError={handleImageError}
+          />
+        )}
+
+        {/* Center Hover Preview Button */}
+        <button 
+          type="button" 
+          className="daraz-preview-pill-btn" 
+          onClick={handlePreview}
+          title="Quick Preview"
+          aria-label={`Preview ${product.name}`}
+        >
+          <i className="fa-solid fa-eye"></i>
+          <span>Preview</span>
+        </button>
       </div>
 
       {/* Card Information Body */}
