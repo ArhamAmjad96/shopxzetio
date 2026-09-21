@@ -3,7 +3,7 @@
    Cyber Indigo & Electric Violet/Cyan Design System
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
 
 :root {
   /* Color Palette - Cyber Indigo & Electric Violet/Cyan Theme */
@@ -41,11 +41,12 @@
   --text-muted: #64748B;
 
   /* Typography - Clean, Modern, Tier-1 Tech Ecommerce */
-  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-digital: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-accent: 'Chakra Petch', sans-serif;
+  --font-display: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-digital: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Sizing & Transitions */
   --max-w: 1320px;
@@ -4366,7 +4367,7 @@ button, input, select, textarea {
 }
 
 .price-main {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 1.45rem;
   font-weight: 800;
   color: #FFFFFF;
@@ -4376,7 +4377,7 @@ button, input, select, textarea {
 }
 
 .price-slash {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.88rem;
   font-weight: 500;
   color: #64748B;
@@ -4423,7 +4424,7 @@ button, input, select, textarea {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   color: #94A3B8;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -4740,7 +4741,7 @@ button, input, select, textarea {
 }
 
 .daraz-card-title {
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.92rem;
   font-weight: 600;
   color: #F1F5F9;
@@ -4767,7 +4768,7 @@ button, input, select, textarea {
 }
 
 .daraz-current-price {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 1.35rem;
   font-weight: 800;
   color: #FF6B00;
@@ -4783,7 +4784,7 @@ button, input, select, textarea {
 }
 
 .daraz-orig-price {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 500;
   color: #64748B;
@@ -4794,7 +4795,7 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.78rem;
   color: #94A3B8;
   margin-bottom: 12px;
@@ -4840,7 +4841,7 @@ button, input, select, textarea {
   background: rgba(139, 92, 246, 0.15);
   border: 1px solid rgba(139, 92, 246, 0.4);
   color: #FFFFFF;
-  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.78rem;
   font-weight: 700;
   border-radius: 4px;
@@ -4865,7 +4866,7 @@ button, input, select, textarea {
   background: rgba(37, 211, 102, 0.12);
   border: 1px solid rgba(37, 211, 102, 0.35);
   color: #4ADE80;
-  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.78rem;
   font-weight: 700;
   border-radius: 4px;

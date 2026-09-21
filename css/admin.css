@@ -27,10 +27,10 @@
   --admin-text-dim: #C5D1E3;
   --admin-text-bright: #F8FAFC;
   
-  --admin-font-display: 'Orbitron', sans-serif;
-  --admin-font-heading: 'Chakra Petch', sans-serif;
-  --admin-font-body: 'Inter', sans-serif;
-  --admin-font-digital: 'Share Tech Mono', monospace;
+  --admin-font-display: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-heading: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-body: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-digital: 'Roboto Flex', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .admin-dashboard-shell {
