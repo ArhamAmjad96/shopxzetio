@@ -92,17 +92,31 @@ export default function CheckoutModal() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
+          _captcha: 'false',
+          _template: 'table',
           _subject: `[INVOICE] Order #${result.order_ref} - Rs. ${Number(result.total).toLocaleString()} (${formData.name})`,
           _replyto: formData.email,
-          invoice: invoiceContent,
-          order_id: result.order_ref,
-          customer_name: formData.name,
-          customer_phone: formData.phone,
-          customer_city: formData.city,
-          total_amount: `Rs. ${Number(result.total).toLocaleString()}`,
-          payment_method: PAYMENT_LABELS[paymentMethod]
+          'Order ID': result.order_ref,
+          'Date & Time': `${invoiceDate} (PKT)`,
+          'Customer Name': formData.name,
+          'Phone / WhatsApp': formData.phone,
+          'Customer Email': formData.email,
+          'City': formData.city,
+          'Province': formData.province || 'N/A',
+          'Delivery Address': formData.address,
+          'Delivery Notes': formData.notes || 'None',
+          'Payment Method': PAYMENT_LABELS[paymentMethod],
+          'Payment Status': order.paymentStatus,
+          'Items Ordered': items.map((item, idx) => `${idx + 1}. ${item.name} (Qty: ${item.quantity} x Rs. ${item.price.toLocaleString()})`).join(' | '),
+          'Subtotal': `Rs. ${Number(result.subtotal).toLocaleString()}`,
+          'Delivery Fee': Number(result.shipping) > 0 ? `Rs. ${Number(result.shipping).toLocaleString()}` : 'FREE (Nationwide)',
+          'Grand Total': `Rs. ${Number(result.total).toLocaleString()}`,
+          'Invoice Breakdown': invoiceContent
         })
-      }).catch(err => console.error('Failed to send invoice notification:', err));
+      })
+      .then(res => res.json())
+      .then(data => console.log('Invoice email response:', data))
+      .catch(err => console.error('Failed to send invoice notification:', err));
 
       order.whatsappUrl = buildWhatsAppUrl(order);
       try {
