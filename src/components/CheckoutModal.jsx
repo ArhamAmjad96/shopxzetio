@@ -105,6 +105,11 @@ export default function CheckoutModal() {
       }).catch(err => console.error('Failed to send invoice notification:', err));
 
       order.whatsappUrl = buildWhatsAppUrl(order);
+      try {
+        window.open(order.whatsappUrl, '_blank');
+      } catch (e) {
+        console.log('Popup blocked, customer can use modal button', e);
+      }
       clearCart(); closeCheckout(); openSuccess(order);
     } catch (err) { setError(err.message || 'Order could not be created.'); }
     finally { setBusy(false); }
