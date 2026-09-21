@@ -37,17 +37,19 @@ export default function PartnershipSlider() {
           <span className="broadcast-subtext">OFFICIAL TOURNAMENT INFRASTRUCTURE & PARTNERS</span>
         </div>
 
-        {/* Borderless, Reduced-Width Floating Logo Carousel */}
-        <div className="broadcast-logos-row">
-          {PARTNERS.map((partner, idx) => (
-            <div key={idx} className="broadcast-partner-item">
-              <img src={partner.logo} alt={partner.name} className="broadcast-logo-img" onError={handleImageError} />
-              <div className="broadcast-partner-meta">
-                <span className="broadcast-partner-name">{partner.name}</span>
-                <span className="broadcast-partner-sub">{partner.sub}</span>
+        {/* Borderless, Infinite Scrolling Logo Carousel */}
+        <div className="marquee-wrapper">
+          <div className="marquee-track">
+            {[...PARTNERS, ...PARTNERS].map((partner, idx) => (
+              <div key={idx} className="broadcast-partner-item">
+                <img src={partner.logo} alt={partner.name} className="broadcast-logo-img" onError={handleImageError} />
+                <div className="broadcast-partner-meta">
+                  <span className="broadcast-partner-name">{partner.name}</span>
+                  <span className="broadcast-partner-sub">{partner.sub}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

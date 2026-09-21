@@ -93,15 +93,7 @@ export default function Hero() {
                 <span>EXPLORE ARSENAL</span>
               </a>
 
-              <a 
-                href="https://wa.me/923348590229?text=Hello%20ShopXzetio!%20I%20want%20to%20consult%20about%20tournament%20gaming%20gear." 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-hero-whatsapp-clean cyber-cut"
-              >
-                <i className="fa-brands fa-whatsapp"></i>
-                <span>WHATSAPP SUPPORT</span>
-              </a>
+
 
               <a href="#pro-reviews" className="btn-hero-outline">
                 <i className="fa-solid fa-angles-down"></i>

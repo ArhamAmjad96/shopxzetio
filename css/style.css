@@ -611,22 +611,31 @@ button, input, select, textarea {
   color: #64748B;
   text-transform: uppercase;
 }
-
-.broadcast-logos-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 8px 0;
+.marquee-wrapper {
+  overflow: hidden;
   width: 100%;
-  -webkit-overflow-scrolling: touch;
+  padding: 8px 0;
+  white-space: nowrap;
+  position: relative;
+  /* Fading edges */
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
 }
 
-.broadcast-logos-row::-webkit-scrollbar {
-  display: none;
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  animation: scroll-left 15s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 20px)); } /* Half the track width minus half the gap */
 }
 
 .broadcast-partner-item {
@@ -680,12 +689,6 @@ button, input, select, textarea {
   text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
-  .broadcast-logos-row {
-    justify-content: flex-start;
-    gap: 20px;
-  }
-}
 
 /* ==========================================================================
    Trust Bar
