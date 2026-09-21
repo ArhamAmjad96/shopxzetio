@@ -14,7 +14,8 @@ const FLAGSHIP_SHOWCASE = [
     badge: '20W ULTRA FREEZE',
     stat: '-25°C RAPID DROP',
     icon: 'fa-snowflake',
-    accent: '#8B5CF6'
+    accent: '#8B5CF6',
+    fit: 'cover'
   },
   {
     id: 'piva-g71',
@@ -26,7 +27,8 @@ const FLAGSHIP_SHOWCASE = [
     badge: '32-BIT DSP + 65W PD',
     stat: '0MS SOUND LATENCY',
     icon: 'fa-bolt',
-    accent: '#06B6D4'
+    accent: '#06B6D4',
+    fit: 'contain'
   },
   {
     id: 'hyperx-cloud-alpha-s',
@@ -38,7 +40,8 @@ const FLAGSHIP_SHOWCASE = [
     badge: 'DUAL CHAMBER TECH',
     stat: '360° FOOTSTEP RADAR',
     icon: 'fa-headphones',
-    accent: '#EC4899'
+    accent: '#EC4899',
+    fit: 'contain'
   }
 ];
 
@@ -120,7 +123,7 @@ export default function Hero() {
                   key={activeProduct.id}
                   src={activeProduct.image} 
                   alt={activeProduct.name} 
-                  className="showcase-product-img animate-float-clean"
+                  className={`showcase-product-img ${activeProduct.fit === 'cover' ? 'fit-cover' : 'fit-contain'} animate-float-clean`}
                 />
               </div>
 

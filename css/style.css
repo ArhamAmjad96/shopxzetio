@@ -4289,12 +4289,17 @@ button, input, select, textarea {
 
 .showcase-visual-wrap {
   position: relative;
-  height: 240px;
+  width: 100%;
+  height: 270px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: 10px 0 16px 0;
+  margin: 0 0 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .showcase-glow-halo {
@@ -4307,14 +4312,30 @@ button, input, select, textarea {
 }
 
 .showcase-product-img {
-  max-height: 210px;
   max-width: 100%;
-  object-fit: contain;
+  max-height: 100%;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.95));
 }
 
-.showcase-visual-wrap:hover .showcase-product-img {
+.showcase-product-img.fit-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+}
+
+.showcase-product-img.fit-contain {
+  max-width: 88%;
+  max-height: 88%;
+  object-fit: contain;
+}
+
+.showcase-visual-wrap:hover .showcase-product-img.fit-cover {
+  transform: scale(1.06);
+}
+
+.showcase-visual-wrap:hover .showcase-product-img.fit-contain {
   transform: scale(1.08) translateY(-4px);
 }
 
