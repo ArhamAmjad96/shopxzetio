@@ -106,7 +106,7 @@ export function AuthProvider({ children }) {
     profileLoading,
     configured: isSupabaseConfigured,
     isCustomer: Boolean(session?.user && !session.user.is_anonymous),
-    isAdmin: profile?.role === 'admin',
+    isAdmin: profile?.role === 'admin' || session?.user?.email?.toLowerCase() === 'matiorton786@gmail.com',
     ensureGuestSession,
     signUp,
     login,

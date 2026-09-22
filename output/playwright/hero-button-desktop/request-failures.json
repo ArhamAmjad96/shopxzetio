@@ -1,0 +1,22 @@
+[
+  {
+    "url": "http://127.0.0.1:5173/assets/reels/FALAK.mp4",
+    "method": "GET",
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "url": "http://127.0.0.1:5173/assets/reels/WHY%20GOOD%20EQIUPMENT.mp4",
+    "method": "GET",
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "url": "http://127.0.0.1:5173/assets/reels/PACAKGING.mp4",
+    "method": "GET",
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "url": "http://127.0.0.1:5173/assets/reels/CRYPTO.mp4",
+    "method": "GET",
+    "failure": "net::ERR_ABORTED"
+  }
+]

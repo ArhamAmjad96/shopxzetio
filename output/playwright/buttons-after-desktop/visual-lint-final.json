@@ -1,0 +1,1581 @@
+{
+  "tool": "visual_lint",
+  "target": "http://127.0.0.1:5173/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "finding_count": 215,
+  "findings": [
+    {
+      "rule": "console_event",
+      "severity": "minor",
+      "message": "[.WebGL-0x277c03a1d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5173/",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "rule": "console_event",
+      "severity": "minor",
+      "message": "[.WebGL-0x277c03a1d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5173/",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "rule": "console_event",
+      "severity": "minor",
+      "message": "[.WebGL-0x277c03a1d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "location": {
+        "url": "http://127.0.0.1:5173/",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "rule": "console_event",
+      "severity": "minor",
+      "message": "[.WebGL-0x277c03a1d200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+      "location": {
+        "url": "http://127.0.0.1:5173/",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "header.pro-navbar-sticky.is-transparent > div.pro-nav-container > nav.pro-nav > div.pro-nav-links",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "HOME COOLERS AUDIO SPLITTERS ARSENAL REELS MATCHER",
+      "bounds": {
+        "x": 285.53125,
+        "y": 18.5,
+        "width": 595.828125,
+        "height": 27
+      }
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "div.pro-nav-container > nav.pro-nav > div.pro-nav-links > button.pro-nav-link.active",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "HOME",
+      "bounds": {
+        "x": 285.53125,
+        "y": 18.5,
+        "width": 46.515625,
+        "height": 27
+      }
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container.hero-spacious-container > div.hero-spacious-grid > div.hero-left-content > div.hero-pill-badge",
+      "message": "Contrast ratio 3.25 is below 4.5.",
+      "sample": "PAKISTAN'S #1 ESPORTS ARSENAL OFFICIAL GEAR"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.hero-spacious-grid > div.hero-left-content > div.hero-pill-badge > span.badge-label",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "PAKISTAN'S #1 ESPORTS ARSENAL"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.hero-spacious-grid > div.hero-left-content > div.hero-pill-badge > span.badge-verified",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "OFFICIAL GEAR"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.hero-spacious-grid > div.hero-left-content > div.hero-pill-badge > span.badge-verified",
+      "message": "Contrast ratio 3.96 is below 4.5.",
+      "sample": "OFFICIAL GEAR"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.hero-right-showcase > div.showcase-card.glass-card > div.showcase-top-tag > span.showcase-badge-pill",
+      "message": "Contrast ratio 2.40 is below 4.5.",
+      "sample": "20W ULTRA FREEZE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.hero-right-showcase > div.showcase-card.glass-card > div.showcase-top-tag > span.showcase-stat-pill",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "-25°C RAPID DROP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.showcase-info-bar > div.showcase-title-price > div.showcase-price-box > span.price-slash",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 4,800"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "section.esports-broadcast-strip > div.container.broadcast-container > div.broadcast-header-label > span.broadcast-subtext",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "OFFICIAL TOURNAMENT INFRASTRUCTURE & PARTNERS"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.broadcast-logos-row > div.broadcast-partner-item > div.broadcast-partner-meta > span.broadcast-partner-sub",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "GLOBAL ESPORTS"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.broadcast-logos-row > div.broadcast-partner-item > div.broadcast-partner-meta > span.broadcast-partner-sub",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "SOUTH ASIA FINALS"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.broadcast-logos-row > div.broadcast-partner-item > div.broadcast-partner-meta > span.broadcast-partner-sub",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "CHAMPIONS 2026"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.broadcast-logos-row > div.broadcast-partner-item > div.broadcast-partner-meta > span.broadcast-partner-sub",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "CHAMPIONSHIP 2026"
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "main > section.trust-bar-section > div.container > div.trust-ticker-strip",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "7 DAYS REPLACEMENT WARRANTY NATIONWIDE FAST SHIPPING CASH ON DELIVERY AVAILABLE 5000+ HAPPY GAMERS 100% GENUINE GAMING G",
+      "bounds": {
+        "x": 84,
+        "y": 1058.59375,
+        "width": 1272,
+        "height": 46.265625
+      }
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.reviews-top-bar > div.reviews-nav-controls > span.reviews-roster-count",
+      "message": "Contrast ratio 1.34 is below 4.5.",
+      "sample": "12 PRO STORIES"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.reviews-top-bar > div.reviews-nav-controls > div.reviews-page-indicator",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "01 / 03"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.reviews-top-bar > div.reviews-nav-controls > div.reviews-page-indicator > span",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "/"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.reviews-top-bar > div.reviews-nav-controls > div.reviews-page-indicator > span",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "03"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-topline > span.pro-status-pill",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO PLAYER"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-identity > span.pro-review-meta",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@cryptopubgm • PUBG Mobile Professional"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@cryptopubgm"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "•"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "PUBG Mobile Professional"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-topline > span.pro-status-pill",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO PLAYER"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-identity > span.pro-review-meta",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@t24_pubgm • 4Thrives Esports"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@t24_pubgm"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "•"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "4Thrives Esports"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-topline > span.pro-status-pill",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO PLAYER"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-identity > span.pro-review-meta",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@iq.pubgm • 4Thrives Esports"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@iq.pubgm"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "•"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "4Thrives Esports"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-topline > span.pro-status-pill",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO PLAYER"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.reviews-carousel-grid > button.pro-review-card > span.pro-review-identity > span.pro-review-meta",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@ig.ghoost • PUBG Mobile Professional"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "@ig.ghoost"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "•"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.pro-review-card > span.pro-review-identity > span.pro-review-meta > span",
+      "message": "Text is 10.24px, which is likely too small for general UI reading.",
+      "sample": "PUBG Mobile Professional"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "TOP SELLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "TOP SELLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "❄️ -25°C Rapid Drop"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "🧲 MagSafe & Clamp"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "PRO TUNED"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "PRO TUNED"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "🎧 360° Spatial Footsteps"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "🔊 53mm Dual Chambers"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "ZERO LAG"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "ZERO LAG"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "⚡ 60W Fast Charge"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "🎵 0ms DAC DSP"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "PRECISION"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-division-header > span.cat-division-badge",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "PRECISION"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "🖐️ Zero-Drag Touch"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-category-card > div.cat-card-left > div.cat-pills-row > span.cat-pill",
+      "message": "Contrast ratio 1.23 is below 4.5.",
+      "sample": "💨 Turbo Desk Airflow"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.home-flash-deals-wrap > div.deals-top-bar > div.deals-left-info > div.deals-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "TOP PICKS"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-30%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "BEST BUDGET CHOICE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "BEST BUDGET CHOICE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 3,200"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(260 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-19%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "DUAL CHAMBER TECH"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "DUAL CHAMBER TECH"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 18,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(215 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-23%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO MOBILE AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "PRO MOBILE AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 11,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(195 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-19%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "LEGENDARY ESPORTS AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "LEGENDARY ESPORTS AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 15,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(342 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-18%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "NEXT-GEN FLAGSHIP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "NEXT-GEN FLAGSHIP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 19,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(178 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-20%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "20W ULTRA FREEZE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "20W ULTRA FREEZE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 4,800"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(184 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-22%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "EXTREME COOLING"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "EXTREME COOLING"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 5,600"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(209 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-discount-badge",
+      "message": "Contrast ratio 3.76 is below 4.5.",
+      "sample": "-18%"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "PRO ESPORTS SOUNDCARD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-products-grid > div.daraz-product-card > div.daraz-card-img-wrap > span.daraz-feature-badge",
+      "message": "Contrast ratio 4.23 is below 4.5.",
+      "sample": "PRO ESPORTS SOUNDCARD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-price-row > span.daraz-orig-price",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "Rs. 14,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-sold-count",
+      "message": "Contrast ratio 3.99 is below 4.5.",
+      "sample": "(87 reviews)"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "COD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.daraz-product-card > div.daraz-card-body > div.daraz-rating-row > span.daraz-tag-cod",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "COD"
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "#reviews",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "CUSTOMER PROOF // COMMUNITY ARCHIVE REAL PLAYERS. REAL RECEIPTS. Delivery photos, setup shots and video shoutouts shared",
+      "bounds": {
+        "x": 0,
+        "y": 4000.1875,
+        "width": 1440,
+        "height": 1285.296875
+      }
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "section.review-wall-section > div.container > div.review-wall-toolbar > div.review-wall-live-count",
+      "message": "Contrast ratio 4.26 is below 4.5.",
+      "sample": "SHOWING 8 OF 122"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@CRYPTOPUBGM"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@T24_PUBGM"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@IQ.PUBGM"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@IG.GHOOST"
+    },
+    {
+      "rule": "broken_image",
+      "severity": "major",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > img.review-media-asset",
+      "message": "Image did not load."
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@IG_FREESTYLEROP"
+    },
+    {
+      "rule": "broken_image",
+      "severity": "major",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > img.review-media-asset",
+      "message": "Image did not load."
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@HUZAIFA.PM"
+    },
+    {
+      "rule": "broken_image",
+      "severity": "major",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > img.review-media-asset",
+      "message": "Image did not load."
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@ALPHABOYY.1"
+    },
+    {
+      "rule": "broken_image",
+      "severity": "major",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > img.review-media-asset",
+      "message": "Image did not load."
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-media-type",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "PHOTO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.container > div.review-media-grid > button.review-media-card.is-pro-review > span.review-pro-mark",
+      "message": "Text is 9.28px, which is likely too small for general UI reading.",
+      "sample": "FEATURED PRO"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "button.review-media-card.is-pro-review > span.review-media-card-footer > span > small",
+      "message": "Text is 9.92px, which is likely too small for general UI reading.",
+      "sample": "@R3GVAAZ"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "section.review-wall-section > div.container > div.review-wall-load-wrap > small",
+      "message": "Contrast ratio 4.44 is below 4.5.",
+      "sample": "114 more in the archive"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-falak > div.loadout-badge-top > span.loadout-discount-tag",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "SAVE RS. 1,000 BUNDLE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-falak > div.loadout-badge-top > span.loadout-discount-tag",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "SAVE RS. 1,000 BUNDLE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "CRYO COOLER PIVA B2 Magnetic Semiconductor Mobile Cooler Rs. 3,850"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "CRYO COOLER PIVA B2 Magnetic Semiconductor Mobile Cooler Rs. 3,850"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "CRYO COOLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "CRYO COOLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "PIVA B2 Magnetic Semiconductor Mobile Cooler"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 3,850"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "TOURNAMENT AUDIO G Gaming Pro In-Ear Handsfree with Dual Mic Rs. 2,250"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "TOURNAMENT AUDIO G Gaming Pro In-Ear Handsfree with Dual Mic Rs. 2,250"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "TOURNAMENT AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "TOURNAMENT AUDIO"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "G Gaming Pro In-Ear Handsfree with Dual Mic"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 2,250"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "60W FAST SPLITTER PIVA G71 Ultra Gaming External Soundcard & Fast Adapter Rs. 11,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-falak > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "60W FAST SPLITTER PIVA G71 Ultra Gaming External Soundcard & Fast Adapter Rs. 11,500"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "60W FAST SPLITTER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "60W FAST SPLITTER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "PIVA G71 Ultra Gaming External Soundcard & Fast Adapter"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 11,500"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-crypto > div.loadout-badge-top > span.loadout-discount-tag",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "SAVE RS. 1,000 BUNDLE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-crypto > div.loadout-badge-top > span.loadout-discount-tag",
+      "message": "Contrast ratio 1.00 is below 4.5.",
+      "sample": "SAVE RS. 1,000 BUNDLE"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "32-BIT SOUNDCARD PIVA G71 Ultra Gaming External Soundcard & Fast Adapter Rs. 11,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "32-BIT SOUNDCARD PIVA G71 Ultra Gaming External Soundcard & Fast Adapter Rs. 11,500"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "32-BIT SOUNDCARD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "32-BIT SOUNDCARD"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "PIVA G71 Ultra Gaming External Soundcard & Fast Adapter"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 11,500"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "DUAL CHAMBER HEADSET HyperX Cloud Alpha S Pro Surround Gaming Headset Rs. 15,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "DUAL CHAMBER HEADSET HyperX Cloud Alpha S Pro Surround Gaming Headset Rs. 15,000"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "DUAL CHAMBER HEADSET"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "DUAL CHAMBER HEADSET"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "HyperX Cloud Alpha S Pro Surround Gaming Headset"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 15,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadouts-grid > div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "DUAL ENGINE COOLER PIVA X30 Dual-Engine Pro Mobile Radiator Rs. 4,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.pro-loadout-card.loadout-crypto > div.loadout-gear-list > div.gear-item > div",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "DUAL ENGINE COOLER PIVA X30 Dual-Engine Pro Mobile Radiator Rs. 4,000"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "DUAL ENGINE COOLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-category",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "DUAL ENGINE COOLER"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > h4",
+      "message": "Contrast ratio 1.10 is below 4.5.",
+      "sample": "PIVA X30 Dual-Engine Pro Mobile Radiator"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.loadout-gear-list > div.gear-item > div > span.gear-price",
+      "message": "Contrast ratio 2.86 is below 4.5.",
+      "sample": "Rs. 4,000"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "AVERAGE FRAME RATE (FPS) 120.0 FPS 🔒 Locked 120 FPS rock-solid during intense 5v5 smoke & vehicle fights."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "AVERAGE FRAME RATE (FPS)"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header > span.stat-label",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "AVERAGE FRAME RATE (FPS)"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-big-value",
+      "message": "Contrast ratio 1.81 is below 3.",
+      "sample": "120.0 FPS"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > p.stat-summary",
+      "message": "Contrast ratio 1.48 is below 4.5.",
+      "sample": "🔒 Locked 120 FPS rock-solid during intense 5v5 smoke & vehicle fights."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "CHIPSET / SURFACE TEMP 18.5°C ❄️ 20W semiconductor active heat extraction keeps phone ice-cold."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "CHIPSET / SURFACE TEMP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header > span.stat-label",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "CHIPSET / SURFACE TEMP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-big-value",
+      "message": "Contrast ratio 1.81 is below 3.",
+      "sample": "18.5°C"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > p.stat-summary",
+      "message": "Contrast ratio 1.48 is below 4.5.",
+      "sample": "❄️ 20W semiconductor active heat extraction keeps phone ice-cold."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro",
+      "message": "Contrast ratio 1.30 is below 4.5.",
+      "sample": "TOUCH RESPONSE LATENCY 1.2 ms ⚡ Instant flick-shots and 0ms gyro tracking response with silver sleeves."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "TOUCH RESPONSE LATENCY"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-card-header > span.stat-label",
+      "message": "Contrast ratio 2.56 is below 4.5.",
+      "sample": "TOUCH RESPONSE LATENCY"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > div.stat-big-value",
+      "message": "Contrast ratio 1.81 is below 3.",
+      "sample": "1.2 ms"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.benchmark-interactive-box > div.benchmark-display-grid > div.benchmark-stat-card.stat-pro > p.stat-summary",
+      "message": "Contrast ratio 1.48 is below 4.5.",
+      "sample": "⚡ Instant flick-shots and 0ms gyro tracking response with silver sleeves."
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "div.container > div.reels-grid > div.reel-card > div.reel-video-wrapper",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "TEAM I8 ESPORTS PRO i8 Crypto Gear Review",
+      "bounds": {
+        "x": 85,
+        "y": 7057.03125,
+        "width": 298,
+        "height": 460
+      }
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "div.container > div.reels-grid > div.reel-card > div.reel-video-wrapper",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "TEAM 4T ESPORTS PRO 4T Falak Audio Breakdown",
+      "bounds": {
+        "x": 409,
+        "y": 7057.03125,
+        "width": 298,
+        "height": 460
+      }
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "div.container > div.reels-grid > div.reel-card > div.reel-video-wrapper",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "SAFE DELIVERY HUB Inside Our Packaging",
+      "bounds": {
+        "x": 733,
+        "y": 7057.03125,
+        "width": 298,
+        "height": 460
+      }
+    },
+    {
+      "rule": "text_overflow",
+      "severity": "major",
+      "selector": "div.container > div.reels-grid > div.reel-card > div.reel-video-wrapper",
+      "message": "Element text appears clipped or scrollable.",
+      "sample": "COMPETITIVE ADVANTAGE Why Good Gear Matters",
+      "bounds": {
+        "x": 1057,
+        "y": 7057.03125,
+        "width": 298,
+        "height": 460
+      }
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.footer-col.footer-col-brand > div.brand-wrapper > div.brand-meta > span.brand-badge",
+      "message": "Text is 10.4px, which is likely too small for general UI reading.",
+      "sample": "OFFICIAL ESPORTS GEAR"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.footer-social-row > a.footer-social-item.item-instagram > div.social-pill-meta > span.social-pill-platform",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "INSTAGRAM"
+    },
+    {
+      "rule": "tiny_text",
+      "severity": "minor",
+      "selector": "div.footer-social-row > a.footer-social-item.item-whatsapp > div.social-pill-meta > span.social-pill-platform",
+      "message": "Text is 10.88px, which is likely too small for general UI reading.",
+      "sample": "WHATSAPP"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.app-container > footer.site-footer > div.container > div.footer-bottom-bar",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "© 2026 ShopXzetio Pakistan. All rights reserved. Built for competitive gamers. 7 Days Warranty Policy Nationwide Courier"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "footer.site-footer > div.container > div.footer-bottom-bar > div",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "© 2026 ShopXzetio Pakistan. All rights reserved. Built for competitive gamers."
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "footer.site-footer > div.container > div.footer-bottom-bar > div",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "7 Days Warranty Policy Nationwide Courier Dispatch TCS / Leopards / Trax Delivery"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.footer-bottom-bar > div > span",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "7 Days Warranty Policy"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.footer-bottom-bar > div > span",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "Nationwide Courier Dispatch"
+    },
+    {
+      "rule": "low_contrast",
+      "severity": "major",
+      "selector": "div.container > div.footer-bottom-bar > div > span",
+      "message": "Contrast ratio 4.31 is below 4.5.",
+      "sample": "TCS / Leopards / Trax Delivery"
+    }
+  ],
+  "generated_at": "2026-09-21T01:31:09.931Z"
+}

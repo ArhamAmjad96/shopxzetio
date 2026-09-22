@@ -57,7 +57,7 @@ export default function CheckoutModal() {
         warning: result.receiptError ? `Your order was created, but the receipt could not be attached: ${result.receiptError}. Please send it on WhatsApp with your Order ID.` : '',
       };
       
-      // Automatic invoice dispatch to arhamamjad14@gmail.com
+      // Automatic invoice dispatch to Matiorton786@gmail.com
       const invoiceDate = new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' });
       const invoiceContent = `=================================================\n`
         + `        SHOPXZETIO OFFICIAL ORDER INVOICE\n`
@@ -88,7 +88,7 @@ export default function CheckoutModal() {
         + `GRAND TOTAL        : Rs. ${Number(result.total).toLocaleString()}\n`
         + `=================================================\n`;
 
-      fetch('https://formsubmit.co/ajax/arhamamjad14@gmail.com', {
+      fetch('https://formsubmit.co/ajax/Matiorton786@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({

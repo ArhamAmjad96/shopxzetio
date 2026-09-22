@@ -1,0 +1,17 @@
+{
+  "tool": "capture_page",
+  "target": "http://127.0.0.1:5173/",
+  "title": "ShopXzetio | Pakistan's Premier Esports & Gaming Accessories Store",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "device_scale_factor": 1,
+  "screenshot_path": "D:\\ARHAM\\SHOPXZETIO\\SHOPXZETIO\\SHOPXZETIO\\output\\playwright\\buttons-after-mobile\\screenshot.png",
+  "pdf_path": null,
+  "console_events_path": "D:\\ARHAM\\SHOPXZETIO\\SHOPXZETIO\\SHOPXZETIO\\output\\playwright\\buttons-after-mobile\\console-events.json",
+  "request_failures_path": "D:\\ARHAM\\SHOPXZETIO\\SHOPXZETIO\\SHOPXZETIO\\output\\playwright\\buttons-after-mobile\\request-failures.json",
+  "console_event_count": 7,
+  "request_failure_count": 4,
+  "generated_at": "2026-09-21T01:27:29.484Z"
+}
