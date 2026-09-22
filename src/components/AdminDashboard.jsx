@@ -637,6 +637,7 @@ export default function AdminDashboard() {
                             title="Remove or Cancel Order"
                           >
                             <i className="fa-solid fa-trash-can"></i>
+                            <span>Remove</span>
                           </button>
                         </div>
                       </td>
@@ -1053,23 +1054,39 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="confirm-actions" style={{ marginTop: '24px' }}>
+            <div className="confirm-actions" style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button 
                 type="button" 
-                className="confirm-btn-cancel" 
+                className="confirm-btn-delete" 
+                style={{ flex: 'none', padding: '0 16px', height: '44px', background: 'rgba(255, 59, 105, 0.18)', border: '1px solid var(--admin-red)', color: 'var(--admin-red)' }}
                 disabled={savingEdit}
-                onClick={() => setEditingOrder(null)}
+                onClick={() => {
+                  const toDelete = editingOrder;
+                  setEditingOrder(null);
+                  setDeleteModalOrder(toDelete);
+                }}
               >
-                Cancel
+                <i className="fa-solid fa-trash-can"></i> Remove Order
               </button>
-              <button 
-                type="submit" 
-                className="admin-btn admin-btn-primary"
-                disabled={savingEdit}
-                style={{ padding: '0 24px', height: '44px' }}
-              >
-                <i className="fa-solid fa-floppy-disk"></i> {savingEdit ? 'Saving Changes...' : 'Save Order Changes'}
-              </button>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  type="button" 
+                  className="confirm-btn-cancel" 
+                  disabled={savingEdit}
+                  onClick={() => setEditingOrder(null)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="admin-btn admin-btn-primary"
+                  disabled={savingEdit}
+                  style={{ padding: '0 24px', height: '44px' }}
+                >
+                  <i className="fa-solid fa-floppy-disk"></i> {savingEdit ? 'Saving Changes...' : 'Save Order Changes'}
+                </button>
+              </div>
             </div>
           </form>
         </div>

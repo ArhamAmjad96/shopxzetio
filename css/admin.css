@@ -1049,17 +1049,20 @@ body.admin-body {
 }
 
 .btn-action-delete {
-  width: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   height: 32px;
+  padding: 0 10px;
   border-radius: 6px;
   background: rgba(255, 59, 105, 0.15);
   border: 1px solid var(--admin-red);
   color: var(--admin-red);
-  font-size: 0.85rem;
+  font-family: var(--admin-font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.2s ease;
   box-shadow: 0 0 10px rgba(255, 59, 105, 0.2);
 }
