@@ -1022,6 +1022,32 @@ body.admin-body {
   transform: translateY(-1px);
 }
 
+.btn-action-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid var(--admin-cyan);
+  color: var(--admin-cyan);
+  font-family: var(--admin-font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.btn-action-edit:hover {
+  background: var(--admin-cyan);
+  color: #02070D;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
+  transform: translateY(-1px);
+}
+
 .btn-action-delete {
   width: 32px;
   height: 32px;
@@ -1648,6 +1674,77 @@ body.admin-body {
 .confirm-btn-delete:hover {
   box-shadow: 0 0 30px rgba(255, 59, 105, 0.8);
   transform: translateY(-1px);
+}
+
+.confirm-btn-warning {
+  flex: 1;
+  height: 44px;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+  border-radius: 8px;
+  font-family: var(--admin-font-heading);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.confirm-btn-warning:hover {
+  background: #f59e0b;
+  color: #02070D;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.admin-order-editor {
+  width: min(920px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 220, 255, 0.35);
+  border-radius: 14px;
+  background: #080d1a;
+  padding: 24px;
+  box-shadow: 0 25px 90px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 240, 255, 0.15);
+  animation: popInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-order-editor .admin-form-section-title {
+  color: var(--admin-cyan);
+  font-family: var(--admin-font-display);
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  margin: 18px 0 10px 0;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  padding-bottom: 5px;
+  grid-column: 1 / -1;
+}
+
+.admin-order-editor .order-items-preview-box {
+  grid-column: 1 / -1;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.admin-order-editor .order-items-preview-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+}
+
+.admin-order-editor .order-items-preview-item:last-child {
+  border-bottom: none;
 }
 
 @keyframes fadeInModal {

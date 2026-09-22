@@ -21,9 +21,12 @@ export default function AdminDashboard() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Custom cyber toast notification & confirm modal state
+  // Custom cyber toast notification & modal states
   const [adminToast, setAdminToast] = useState(null);
-  const [confirmDeleteRef, setConfirmDeleteRef] = useState(null);
+  const [deleteModalOrder, setDeleteModalOrder] = useState(null);
+  const [deletingBusy, setDeletingBusy] = useState(false);
+  const [editingOrder, setEditingOrder] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const triggerToast = (msg, icon = 'fa-circle-check', type = 'success') => {
     setAdminToast({ msg, icon, type });
@@ -46,7 +49,39 @@ export default function AdminDashboard() {
         const signed = await supabase.storage.from('payment-receipts').createSignedUrl(payment.receipt_path, 900);
         receiptDataUrl = signed.data?.signedUrl || null;
       }
-      return { id: o.id, orderRef: o.order_ref, date: o.created_at, customer: { fullName: o.customer_name, email: o.customer_email, whatsapp: o.customer_phone, address: o.address_line, city: o.city, notes: o.delivery_notes }, paymentMethod: PAYMENT_LABELS[o.payment_method], paymentCode: o.payment_method, items: o.order_items.map(i => ({ name: i.product_name, price: Number(i.unit_price), quantity: i.quantity })), subtotal: Number(o.subtotal), shipping: Number(o.shipping_amount), total: Number(o.total_amount), hasReceipt: Boolean(payment?.receipt_path), receiptDataUrl, paymentId: payment?.id, paymentStatus: payment?.status || o.payment_status, orderStatus: o.order_status, status: ORDER_STATUS_LABELS[o.order_status] || o.order_status, trackingNumber: o.tracking_number || '', courier: o.courier || '' };
+      return { 
+        id: o.id, 
+        orderRef: o.order_ref, 
+        date: o.created_at, 
+        customer: { 
+          fullName: o.customer_name, 
+          email: o.customer_email || '', 
+          whatsapp: o.customer_phone, 
+          address: o.address_line, 
+          city: o.city, 
+          province: o.province || '', 
+          notes: o.delivery_notes || '' 
+        }, 
+        paymentMethod: PAYMENT_LABELS[o.payment_method] || o.payment_method, 
+        paymentCode: o.payment_method, 
+        items: (o.order_items || []).map(i => ({ 
+          id: i.id,
+          name: i.product_name, 
+          price: Number(i.unit_price), 
+          quantity: i.quantity 
+        })), 
+        subtotal: Number(o.subtotal), 
+        shipping: Number(o.shipping_amount), 
+        total: Number(o.total_amount), 
+        hasReceipt: Boolean(payment?.receipt_path), 
+        receiptDataUrl, 
+        paymentId: payment?.id, 
+        paymentStatus: payment?.status || o.payment_status, 
+        orderStatus: o.order_status, 
+        status: ORDER_STATUS_LABELS[o.order_status] || o.order_status, 
+        trackingNumber: o.tracking_number || '', 
+        courier: o.courier || '' 
+      };
     }));
     setOrders(mapped);
   };
@@ -91,18 +126,107 @@ export default function AdminDashboard() {
     triggerToast(paymentStatus === 'verified' ? 'Payment verified.' : 'Payment receipt rejected.', paymentStatus === 'verified' ? 'fa-check-double' : 'fa-xmark', paymentStatus === 'verified' ? 'success' : 'danger');
   };
 
-  const deleteOrder = (orderRef) => {
-    setConfirmDeleteRef(orderRef);
+  const handleOpenEditOrder = (order) => {
+    setEditingOrder({
+      ...order,
+      customer: { ...order.customer },
+      items: (order.items || []).map(it => ({ ...it })),
+    });
   };
 
-  const handleConfirmDelete = async () => {
-    if (confirmDeleteRef) {
-      const order = orders.find(o => o.orderRef === confirmDeleteRef);
-      const { error } = await supabase.from('orders').update({ order_status: 'cancelled' }).eq('id', order.id);
-      if (error) return triggerToast(error.message, 'fa-triangle-exclamation', 'danger');
+  const handleSaveOrderEdit = async (e) => {
+    e.preventDefault();
+    if (!editingOrder) return;
+    setSavingEdit(true);
+    try {
+      const orderId = editingOrder.id;
+      const subtotalNum = Math.max(0, Number(editingOrder.subtotal) || 0);
+      const shippingNum = Math.max(0, Number(editingOrder.shipping) || 0);
+      const totalNum = Math.max(0, Number(editingOrder.total) || (subtotalNum + shippingNum));
+
+      // 1. Update orders table
+      const { error: orderError } = await supabase
+        .from('orders')
+        .update({
+          customer_name: editingOrder.customer.fullName?.trim() || '',
+          customer_phone: editingOrder.customer.whatsapp?.trim() || '',
+          customer_email: editingOrder.customer.email?.trim() || null,
+          address_line: editingOrder.customer.address?.trim() || '',
+          city: editingOrder.customer.city?.trim() || '',
+          province: editingOrder.customer.province?.trim() || null,
+          delivery_notes: editingOrder.customer.notes?.trim() || null,
+          subtotal: subtotalNum,
+          shipping_amount: shippingNum,
+          total_amount: totalNum,
+          order_status: editingOrder.orderStatus,
+          payment_status: editingOrder.paymentStatus,
+          courier: editingOrder.courier?.trim() || null,
+          tracking_number: editingOrder.trackingNumber?.trim() || null,
+        })
+        .eq('id', orderId);
+
+      if (orderError) throw orderError;
+
+      // 2. If payments row exists, synchronize status & amount
+      if (editingOrder.paymentId) {
+        await supabase
+          .from('payments')
+          .update({
+            status: editingOrder.paymentStatus,
+            ...(editingOrder.paymentStatus === 'verified'
+              ? { amount_received: totalNum, verified_at: new Date().toISOString() }
+              : {})
+          })
+          .eq('id', editingOrder.paymentId);
+      }
+
+      triggerToast(`Order #${editingOrder.orderRef} updated successfully.`, 'fa-circle-check', 'success');
+      setEditingOrder(null);
       await loadOrders();
-      triggerToast(`Order #${confirmDeleteRef} cancelled and retained for audit.`, 'fa-ban', 'danger');
-      setConfirmDeleteRef(null);
+    } catch (err) {
+      triggerToast(err.message || 'Failed to update order.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!deleteModalOrder) return;
+    setDeletingBusy(true);
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', deleteModalOrder.id);
+
+      if (error) throw error;
+      triggerToast(`Order #${deleteModalOrder.orderRef} permanently removed.`, 'fa-trash-can', 'success');
+      setDeleteModalOrder(null);
+      await loadOrders();
+    } catch (err) {
+      triggerToast(err.message || 'Failed to remove order.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setDeletingBusy(false);
+    }
+  };
+
+  const handleMarkCancelled = async () => {
+    if (!deleteModalOrder) return;
+    setDeletingBusy(true);
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ order_status: 'cancelled' })
+        .eq('id', deleteModalOrder.id);
+
+      if (error) throw error;
+      triggerToast(`Order #${deleteModalOrder.orderRef} cancelled.`, 'fa-ban', 'info');
+      setDeleteModalOrder(null);
+      await loadOrders();
+    } catch (err) {
+      triggerToast(err.message || 'Failed to cancel order.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setDeletingBusy(false);
     }
   };
 
@@ -492,6 +616,14 @@ export default function AdminDashboard() {
                       <td>
                         <div className="table-actions-cell">
                           <button 
+                            className="btn-action-edit" 
+                            onClick={() => handleOpenEditOrder(order)} 
+                            title="Edit Order Details"
+                          >
+                            <i className="fa-solid fa-pen-to-square"></i>
+                            <span>Edit</span>
+                          </button>
+                          <button 
                             className="btn-action-chat" 
                             onClick={() => chatWhatsApp(order)} 
                             title="Message Customer on WhatsApp"
@@ -501,10 +633,10 @@ export default function AdminDashboard() {
                           </button>
                           <button 
                             className="btn-action-delete" 
-                            onClick={() => deleteOrder(order.orderRef)} 
-                            title="Cancel Order"
+                            onClick={() => setDeleteModalOrder(order)} 
+                            title="Remove or Cancel Order"
                           >
-                            <i className="fa-solid fa-ban"></i>
+                            <i className="fa-solid fa-trash-can"></i>
                           </button>
                         </div>
                       </td>
@@ -627,26 +759,319 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Custom Cyber Confirmation Modal */}
-      {confirmDeleteRef && (
-        <div className="cyber-confirm-backdrop" onClick={(e) => { if (e.target.classList.contains('cyber-confirm-backdrop')) setConfirmDeleteRef(null); }}>
-          <div className="cyber-confirm-card">
+      {/* Remove / Cancel Order Modal */}
+      {deleteModalOrder && (
+        <div 
+          className="cyber-confirm-backdrop" 
+          onClick={(e) => { if (e.target.classList.contains('cyber-confirm-backdrop') && !deletingBusy) setDeleteModalOrder(null); }}
+        >
+          <div className="cyber-confirm-card" style={{ maxWidth: '520px' }}>
             <div className="confirm-icon-box">
               <i className="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <div className="confirm-title">CANCEL ORDER</div>
+            <div className="confirm-title">REMOVE OR CANCEL ORDER</div>
             <div className="confirm-desc">
-              Cancel order <strong style={{ color: 'var(--admin-cyan)' }}>#{confirmDeleteRef}</strong>? The record will be retained for reporting and customer support.
+              Manage order <strong style={{ color: 'var(--admin-cyan)' }}>#{deleteModalOrder.orderRef}</strong> for <strong style={{ color: '#fff' }}>{deleteModalOrder.customer.fullName}</strong>.
+              <p style={{ marginTop: '10px', fontSize: '0.82rem', color: '#94a3b8' }}>
+                You can permanently remove this order and all its associated records from the database, or mark it as cancelled for accounting and customer support records.
+              </p>
             </div>
-            <div className="confirm-actions">
-              <button className="confirm-btn-cancel" onClick={() => setConfirmDeleteRef(null)}>
-                CANCEL
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button 
+                className="confirm-btn-delete" 
+                style={{ width: '100%', height: '46px' }} 
+                disabled={deletingBusy} 
+                onClick={handlePermanentDelete}
+              >
+                <i className="fa-solid fa-trash-can"></i> {deletingBusy ? 'Processing...' : 'Permanently Delete from Database'}
               </button>
-              <button className="confirm-btn-delete" onClick={handleConfirmDelete}>
-                CANCEL ORDER
+              <button 
+                className="confirm-btn-warning" 
+                style={{ width: '100%', height: '46px' }} 
+                disabled={deletingBusy} 
+                onClick={handleMarkCancelled}
+              >
+                <i className="fa-solid fa-ban"></i> Mark as Cancelled Only
+              </button>
+              <button 
+                className="confirm-btn-cancel" 
+                style={{ width: '100%', height: '42px' }} 
+                disabled={deletingBusy} 
+                onClick={() => setDeleteModalOrder(null)}
+              >
+                Keep Order (Dismiss)
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Edit Order Modal */}
+      {editingOrder && (
+        <div 
+          className="cyber-confirm-backdrop" 
+          onClick={(e) => { if (e.target.classList.contains('cyber-confirm-backdrop') && !savingEdit) setEditingOrder(null); }}
+        >
+          <form className="admin-order-editor" onSubmit={handleSaveOrderEdit}>
+            <div className="ss-lightbox-header" style={{ marginBottom: '16px' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                <i className="fa-solid fa-pen-to-square" style={{ color: 'var(--admin-cyan)' }}></i>
+                EDIT ORDER #{editingOrder.orderRef}
+              </h3>
+              <button 
+                type="button" 
+                className="admin-modal-close-btn" 
+                onClick={() => setEditingOrder(null)}
+                aria-label="Close edit order modal"
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="admin-product-form-grid">
+              {/* Section 1: Customer Information */}
+              <div className="admin-form-section-title">
+                <i className="fa-solid fa-user"></i> CUSTOMER INFORMATION
+              </div>
+
+              <label>
+                Customer Full Name *
+                <input 
+                  type="text" 
+                  required 
+                  value={editingOrder.customer.fullName} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, fullName: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label>
+                Phone / WhatsApp Number *
+                <input 
+                  type="text" 
+                  required 
+                  value={editingOrder.customer.whatsapp} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, whatsapp: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label>
+                Email Address
+                <input 
+                  type="email" 
+                  value={editingOrder.customer.email || ''} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, email: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label>
+                City *
+                <input 
+                  type="text" 
+                  required 
+                  value={editingOrder.customer.city} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, city: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label>
+                Province
+                <input 
+                  type="text" 
+                  value={editingOrder.customer.province || ''} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, province: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label className="admin-wide-field">
+                Shipping Address Line *
+                <input 
+                  type="text" 
+                  required 
+                  value={editingOrder.customer.address} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, address: e.target.value }
+                  })}
+                />
+              </label>
+
+              <label className="admin-wide-field">
+                Delivery Notes / Special Instructions
+                <textarea 
+                  rows="2"
+                  value={editingOrder.customer.notes || ''} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    customer: { ...editingOrder.customer, notes: e.target.value }
+                  })}
+                />
+              </label>
+
+              {/* Section 2: Order Status & Shipping */}
+              <div className="admin-form-section-title">
+                <i className="fa-solid fa-truck-ramp-box"></i> ORDER STATUS & SHIPPING
+              </div>
+
+              <label>
+                Order Status
+                <select 
+                  value={editingOrder.orderStatus} 
+                  onChange={(e) => setEditingOrder({ ...editingOrder, orderStatus: e.target.value })}
+                >
+                  <option value="placed">🟡 Order Placed</option>
+                  <option value="confirmed">⚪ Confirmed</option>
+                  <option value="processing">🟠 Processing</option>
+                  <option value="dispatched">🔵 Dispatched</option>
+                  <option value="delivered">🟣 Delivered</option>
+                  <option value="cancelled">🔴 Cancelled</option>
+                </select>
+              </label>
+
+              <label>
+                Payment Status
+                <select 
+                  value={editingOrder.paymentStatus} 
+                  onChange={(e) => setEditingOrder({ ...editingOrder, paymentStatus: e.target.value })}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="awaiting_receipt">Awaiting Receipt</option>
+                  <option value="receipt_submitted">Receipt Submitted</option>
+                  <option value="verified">Verified</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="refunded">Refunded</option>
+                </select>
+              </label>
+
+              <label>
+                Courier Partner
+                <select 
+                  value={editingOrder.courier || ''} 
+                  onChange={(e) => setEditingOrder({ ...editingOrder, courier: e.target.value })}
+                >
+                  <option value="">Select courier</option>
+                  <option value="TCS Pakistan">TCS Pakistan</option>
+                  <option value="Leopards Courier">Leopards Courier</option>
+                  <option value="M&P Courier">M&P Courier</option>
+                  <option value="PostEx">PostEx</option>
+                  <option value="Trax">Trax</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+
+              <label>
+                Tracking Number
+                <input 
+                  type="text" 
+                  placeholder="e.g. TCS123456789"
+                  value={editingOrder.trackingNumber || ''} 
+                  onChange={(e) => setEditingOrder({ ...editingOrder, trackingNumber: e.target.value })}
+                />
+              </label>
+
+              {/* Section 3: Financials */}
+              <div className="admin-form-section-title">
+                <i className="fa-solid fa-coins"></i> ORDER FINANCIALS (PKR)
+              </div>
+
+              <label>
+                Subtotal (PKR)
+                <input 
+                  type="number" 
+                  min="0"
+                  value={editingOrder.subtotal} 
+                  onChange={(e) => {
+                    const sub = Number(e.target.value) || 0;
+                    setEditingOrder({
+                      ...editingOrder,
+                      subtotal: sub,
+                      total: sub + (Number(editingOrder.shipping) || 0)
+                    });
+                  }}
+                />
+              </label>
+
+              <label>
+                Shipping Fee (PKR)
+                <input 
+                  type="number" 
+                  min="0"
+                  value={editingOrder.shipping} 
+                  onChange={(e) => {
+                    const ship = Number(e.target.value) || 0;
+                    setEditingOrder({
+                      ...editingOrder,
+                      shipping: ship,
+                      total: (Number(editingOrder.subtotal) || 0) + ship
+                    });
+                  }}
+                />
+              </label>
+
+              <label className="admin-wide-field">
+                Total Amount (PKR)
+                <input 
+                  type="number" 
+                  min="0"
+                  value={editingOrder.total} 
+                  onChange={(e) => setEditingOrder({
+                    ...editingOrder,
+                    total: Number(e.target.value) || 0
+                  })}
+                />
+              </label>
+
+              {/* Section 4: Ordered Items Preview */}
+              <div className="admin-form-section-title">
+                <i className="fa-solid fa-boxes-stacked"></i> ORDERED ITEMS ({editingOrder.items?.length || 0})
+              </div>
+
+              <div className="order-items-preview-box">
+                {editingOrder.items?.map((it, idx) => (
+                  <div key={idx} className="order-items-preview-item">
+                    <span>
+                      <strong style={{ color: 'var(--admin-cyan)', marginRight: '8px' }}>{it.quantity}x</strong>
+                      {it.name}
+                    </span>
+                    <strong style={{ color: '#fff' }}>Rs. {(it.price * it.quantity).toLocaleString()}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="confirm-actions" style={{ marginTop: '24px' }}>
+              <button 
+                type="button" 
+                className="confirm-btn-cancel" 
+                disabled={savingEdit}
+                onClick={() => setEditingOrder(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="admin-btn admin-btn-primary"
+                disabled={savingEdit}
+                style={{ padding: '0 24px', height: '44px' }}
+              >
+                <i className="fa-solid fa-floppy-disk"></i> {savingEdit ? 'Saving Changes...' : 'Save Order Changes'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

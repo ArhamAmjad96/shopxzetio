@@ -704,12 +704,12 @@
   clip-path: var(--sx-button-cut-compact);
 }
 
-:is(.admin-btn, .btn-action-chat, .btn-action-delete, .confirm-btn-cancel, .confirm-btn-delete):focus-visible {
+:is(.admin-btn, .btn-action-chat, .btn-action-edit, .btn-action-delete, .confirm-btn-cancel, .confirm-btn-warning, .confirm-btn-delete):focus-visible {
   outline: 2px solid #67e8f9;
   outline-offset: 3px;
 }
 
-:is(.admin-btn, .btn-action-chat, .confirm-btn-cancel, .confirm-btn-delete):disabled {
+:is(.admin-btn, .btn-action-chat, .btn-action-edit, .confirm-btn-cancel, .confirm-btn-warning, .confirm-btn-delete):disabled {
   opacity: 0.48;
   cursor: not-allowed;
   box-shadow: none;
