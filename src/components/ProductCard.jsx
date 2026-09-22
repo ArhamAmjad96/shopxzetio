@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
                  `*Category:* ${product.category} (${product.subCategory || ''})\n` +
                  `--------------------------------------\n` +
                  `Hello! I would like to order this item. Please confirm stock availability and courier delivery to my city.`;
-    window.open(`https://wa.me/923265656336?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/923348590229?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const handlePreview = (e) => {

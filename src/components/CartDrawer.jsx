@@ -29,7 +29,7 @@ export default function CartDrawer() {
     text += `*Grand Total:* Rs. ${total.toLocaleString()}\n\n`;
     text += `Please confirm my order and share delivery details!`;
 
-    window.open(`https://wa.me/923265656336?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/923348590229?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (

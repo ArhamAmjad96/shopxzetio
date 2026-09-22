@@ -44,7 +44,7 @@ export default function Footer() {
               </a>
 
               <a 
-                href="https://wa.me/923265656336?text=Hello%20ShopXzetio!" 
+                href="https://wa.me/923348590229?text=Hello%20ShopXzetio!" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="footer-social-item item-whatsapp" 
@@ -55,7 +55,7 @@ export default function Footer() {
                 </div>
                 <div className="social-pill-meta">
                   <span className="social-pill-platform">WhatsApp</span>
-                  <span className="social-pill-username">0326-5656336</span>
+                  <span className="social-pill-username">0334-8590229</span>
                 </div>
               </a>
             </div>
@@ -92,8 +92,8 @@ export default function Footer() {
               <i className="fa-brands fa-whatsapp contact-icon"></i>
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Direct WhatsApp Helpline:</div>
-                <a href="https://wa.me/923265656336" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cyan)', fontWeight: 700, fontFamily: 'var(--font-digital)', fontSize: '1rem' }}>
-                  +92 326 5656336
+                <a href="https://wa.me/923348590229" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cyan)', fontWeight: 700, fontFamily: 'var(--font-digital)', fontSize: '1rem' }}>
+                  +92 334 8590229
                 </a>
               </div>
             </div>

@@ -68,7 +68,7 @@ export function buildWhatsAppUrl(order) {
     `*Payment Mode:* ${order.paymentMethod}`,
     '*Database order created successfully.*',
   ];
-  return `https://wa.me/923265656336?text=${encodeURIComponent(lines.join('\n'))}`;
+  return `https://wa.me/923348590229?text=${encodeURIComponent(lines.join('\n'))}`;
 }
 
 export async function fetchMyOrders() {

@@ -258,7 +258,7 @@ class ShopCheckout {
     waText += `Please dispatch my package as soon as possible! Thank you.`;
 
     const encodedWA = encodeURIComponent(waText);
-    const whatsappUrl = `https://wa.me/923265656336?text=${encodedWA}`;
+    const whatsappUrl = `https://wa.me/923348590229?text=${encodedWA}`;
 
     // Close checkout and clear cart
     this.closeCheckout();
@@ -310,7 +310,7 @@ class ShopCheckout {
     invoice += `ORDER REFERENCE:  #${order.orderRef}\n`;
     invoice += `ORDER DATE:       ${new Date().toLocaleString()}\n`;
     invoice += `PAYMENT METHOD:   ${order.paymentMethod}\n`;
-    invoice += `SUPPORT WHATSAPP: +92 326 5656336\n`;
+    invoice += `SUPPORT WHATSAPP: +92 334 8590229\n`;
     invoice += `INSTAGRAM:        @shopxzetio_\n\n`;
     invoice += `-----------------------------------------------------------------\n`;
     invoice += `CUSTOMER DISPATCH DETAILS\n`;
