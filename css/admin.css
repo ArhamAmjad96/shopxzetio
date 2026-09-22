@@ -640,6 +640,26 @@ body.admin-body {
   background: rgba(255, 184, 0, 0.06);
 }
 
+.orders-table th:last-child {
+  position: sticky;
+  right: 0;
+  background: rgba(20, 38, 72, 0.99);
+  box-shadow: -8px 0 16px rgba(0, 0, 0, 0.45);
+  z-index: 3;
+}
+
+.orders-table td:last-child {
+  position: sticky;
+  right: 0;
+  background: rgba(14, 24, 46, 0.98);
+  box-shadow: -8px 0 16px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.orders-table tr.order-row:hover td:last-child {
+  background: rgba(22, 38, 70, 0.98);
+}
+
 /* Cell 1: Order Ref & Date */
 .order-ref-badge {
   display: inline-flex;

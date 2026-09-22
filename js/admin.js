@@ -469,14 +469,20 @@ class ShopAdmin {
           <!-- 7. Actions -->
           <td>
             <div class="table-actions-cell">
+              <button class="btn-action-edit" 
+                onclick="window.shopAdmin.deleteOrder('${order.orderRef}')" title="Edit or Manage Order">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>Edit</span>
+              </button>
               <button class="btn-action-chat" 
                 onclick="window.shopAdmin.whatsappCustomer('${order.orderRef}')" title="Dispatch WhatsApp Notification">
                 <i class="fa-brands fa-whatsapp"></i>
                 <span>Chat</span>
               </button>
               <button class="btn-action-delete" 
-                onclick="window.shopAdmin.deleteOrder('${order.orderRef}')" title="Archive / Delete Order">
+                onclick="window.shopAdmin.deleteOrder('${order.orderRef}')" title="Remove or Cancel Order">
                 <i class="fa-solid fa-trash-can"></i>
+                <span>Remove</span>
               </button>
             </div>
           </td>
