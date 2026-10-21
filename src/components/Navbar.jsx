@@ -62,6 +62,14 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
     setMobileOpen(false);
   };
 
+  const handleBackToAdmin = () => {
+    let lastTab = 'products';
+    try {
+      lastTab = localStorage.getItem('shopxzetio_admin_tab') || 'products';
+    } catch {}
+    navigate(`/admin?tab=${lastTab}#${lastTab}`);
+  };
+
   return (
     <>
       <header className={`pro-navbar-sticky ${scrolled ? 'has-scrolled' : 'is-transparent'}`}>
@@ -122,7 +130,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
             <div className="pro-nav-actions">
               <div className="nav-account-actions">
                 {isAdmin
-                  ? <button className="nav-account-link" onClick={() => navigate('/admin')} title="Back to Menu"><i className="fa-solid fa-arrow-left"/><span>Back to Menu</span></button>
+                  ? <button className="nav-account-link" onClick={handleBackToAdmin} title="Back to Admin Command Center"><i className="fa-solid fa-arrow-left"/><span>Back to Menu</span></button>
                   : <AccountDropdown profile={profile} onLogout={logout} onTrackOrder={handleTrackOrder} isAuthenticated={isCustomer}/>
                 }
               </div>
@@ -175,7 +183,7 @@ export default function Navbar({ onOpenCompat, onOpenTracker }) {
               <div className="pro-mobile-account-group">
                 <span className="pro-mobile-group-label">Account &amp; Orders</span>
                 {isCustomer
-                  ? <button className="pro-mobile-link-btn" onClick={() => { navigate(isAdmin ? '/admin' : '/account'); setMobileOpen(false); }}><i className={`fa-solid ${isAdmin ? 'fa-arrow-left' : 'fa-user'}`}/> {isAdmin ? 'Back to Menu' : 'My Account'}</button>
+                  ? <button className="pro-mobile-link-btn" onClick={() => { if (isAdmin) { handleBackToAdmin(); } else { navigate('/account'); } setMobileOpen(false); }}><i className={`fa-solid ${isAdmin ? 'fa-arrow-left' : 'fa-user'}`}/> {isAdmin ? 'Back to Menu' : 'My Account'}</button>
                   : <button className="pro-mobile-link-btn" onClick={() => { navigate('/login'); setMobileOpen(false); }}><i className="fa-solid fa-user"/> Sign In / Account</button>}
                 <button className="pro-mobile-link-btn mobile-track-order" onClick={handleTrackOrder}><i className="fa-solid fa-box-location-dot"/> Track Order</button>
                 {isCustomer && <button className="pro-mobile-link-btn" onClick={() => { logout(); setMobileOpen(false); }}><i className="fa-solid fa-right-from-bracket"/> Logout</button>}

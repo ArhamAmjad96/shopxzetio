@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -6,6 +7,27 @@ import { PAYMENT_LABELS } from '../services/orders';
 import AdminProducts from './AdminProducts';
 import { AdminCustomers, AdminReviews } from './AdminManagement';
 import { ASSET_PATHS, handleImageError } from '../lib/assets';
+
+const VALID_ADMIN_TABS = ['orders', 'products', 'customers', 'reviews'];
+
+function resolveAdminTab(searchParams, hash) {
+  try {
+    const queryTab = searchParams?.get('tab')?.toLowerCase();
+    if (queryTab && VALID_ADMIN_TABS.includes(queryTab)) return queryTab;
+
+    const hashTab = (hash || window.location.hash || '').replace('#', '').toLowerCase();
+    if (hashTab && VALID_ADMIN_TABS.includes(hashTab)) return hashTab;
+
+    const sessionTab = sessionStorage.getItem('shopxzetio_admin_tab')?.toLowerCase();
+    if (sessionTab && VALID_ADMIN_TABS.includes(sessionTab)) return sessionTab;
+
+    const localTab = localStorage.getItem('shopxzetio_admin_tab')?.toLowerCase();
+    if (localTab && VALID_ADMIN_TABS.includes(localTab)) return localTab;
+  } catch (err) {
+    console.error('Failed to resolve admin tab', err);
+  }
+  return 'orders';
+}
 
 const ORDER_STATUS_LABELS = {
   placed: 'Order Placed', confirmed: 'Confirmed', processing: 'Processing',
@@ -15,22 +37,63 @@ const ORDER_STATUS_LABELS = {
 export default function AdminDashboard() {
   const { setCurrentView } = useCart();
   const { logout } = useAuth();
-  const [activeSection, setActiveSection] = useState(() => {
-    try {
-      return localStorage.getItem('shopxzetio_admin_tab') || 'orders';
-    } catch {
-      return 'orders';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [activeSection, setActiveSection] = useState(() => resolveAdminTab(searchParams, location.hash));
+
+  // Sync state if URL query param or hash changes
+  useEffect(() => {
+    const targetTab = resolveAdminTab(searchParams, location.hash);
+    if (targetTab && targetTab !== activeSection) {
+      setActiveSection(targetTab);
     }
-  });
+  }, [searchParams, location.hash]);
 
   const handleSelectSection = (sec) => {
+    if (!VALID_ADMIN_TABS.includes(sec)) return;
     setActiveSection(sec);
     try {
       localStorage.setItem('shopxzetio_admin_tab', sec);
+      sessionStorage.setItem('shopxzetio_admin_tab', sec);
     } catch (e) {
       console.error(e);
     }
+    // Update URL query param & hash without full page reload
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', sec);
+      return next;
+    }, { replace: true });
+    window.location.hash = sec;
   };
+
+  // Re-sync on tab switch / window focus / visibilitychange
+  useEffect(() => {
+    const syncOnFocus = () => {
+      const resolved = resolveAdminTab(new URLSearchParams(window.location.search), window.location.hash);
+      if (resolved && resolved !== activeSection) {
+        setActiveSection(resolved);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        syncOnFocus();
+      }
+    };
+
+    window.addEventListener('focus', syncOnFocus);
+    window.addEventListener('storage', syncOnFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', syncOnFocus);
+      window.removeEventListener('storage', syncOnFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [activeSection]);
 
   const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -303,8 +366,7 @@ export default function AdminDashboard() {
   }, [orders, activeFilter, searchQuery]);
 
   const handleGoToStorefront = () => {
-    window.location.hash = '';
-    window.location.href = '/';
+    navigate('/');
   };
 
   // Dashboard calculations
@@ -349,6 +411,13 @@ export default function AdminDashboard() {
               title="Return to Storefront"
             >
               <i className="fa-solid fa-store"></i> Storefront
+            </button>
+            <button 
+              onClick={() => window.open('/', '_blank')} 
+              className="admin-btn admin-btn-secondary" 
+              title="Open Live Store in New Tab"
+            >
+              <i className="fa-solid fa-arrow-up-right-from-square"></i> Live Store
             </button>
             <button 
               onClick={exportCSV} 
