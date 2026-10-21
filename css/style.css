@@ -7988,7 +7988,8 @@ body {
 .admin-product-editor .ss-lightbox-header button { border:0; background:transparent; color:#fff; font-size:1.2rem; cursor:pointer; }
 .admin-product-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:18px 0; }
 .admin-product-form-grid label { display:flex; flex-direction:column; gap:6px; color:var(--admin-text-soft); font-size:.76rem; text-transform:uppercase; letter-spacing:.06em; }
-.admin-product-form-grid input,.admin-product-form-grid textarea { width:100%; border:1px solid rgba(148,163,184,.25); background:#050811; color:#fff; border-radius:6px; padding:10px 12px; font:inherit; text-transform:none; letter-spacing:0; }
+.admin-product-form-grid input,.admin-product-form-grid select,.admin-product-form-grid textarea { width:100%; border:1px solid rgba(148,163,184,.25); background:#050811; color:#fff; border-radius:6px; padding:10px 12px; font:inherit; text-transform:none; letter-spacing:0; }
+.admin-product-form-grid select option { background:#090d1a; color:#fff; }
 .admin-product-form-grid textarea { min-height:96px; resize:vertical; }
 .admin-product-form-grid .admin-code-field { min-height:150px; font-family:var(--font-mono); font-size:.75rem; }
 .admin-wide-field { grid-column:1/-1; }

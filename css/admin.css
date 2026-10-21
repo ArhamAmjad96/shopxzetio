@@ -1989,3 +1989,210 @@ body.admin-body {
   max-width: 650px;
 }
 
+
+
+/* ==========================================================================
+   DARK CYBER DROPDOWN & FORM SELECT VISIBILITY FIX
+   ========================================================================== */
+.admin-product-editor select,
+.admin-product-form-grid select,
+.admin-review-editor select,
+.admin-review-editor select option,
+.admin-product-form-grid select option {
+  background-color: #050a14 !important;
+  color: #ffffff !important;
+}
+
+.admin-product-editor select,
+.admin-product-form-grid select,
+.admin-review-editor select {
+  width: 100%;
+  border: 1px solid rgba(0, 240, 255, 0.4) !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2300f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>') !important;
+ background-repeat: no-repeat !important;
+ background-position: right 14px center !important;
+ padding-right: 40px !important;
+ box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+ transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-product-editor select:focus,
+.admin-product-form-grid select:focus,
+.admin-review-editor select:focus {
+ border-color: #00f0ff !important;
+ box-shadow: 0 0 12px rgba(0, 240, 255, 0.4), inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.admin-product-editor select option,
+.admin-product-form-grid select option,
+.admin-review-editor select option {
+ background-color: #071224 !important;
+ color: #ffffff !important;
+ padding: 12px 14px !important;
+ font-size: 0.9rem !important;
+}
+
+/* ==========================================================================
+ REVIEW MEDIA (IMAGE / VIDEO) UPLOADER & PREVIEW
+ ========================================================================== */
+.review-media-manager {
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ margin-top: 4px;
+}
+
+.review-media-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+}
+
+.review-media-header label {
+ font-size: 0.76rem;
+ font-weight: 700;
+ color: var(--admin-text-soft, #94a3b8);
+ letter-spacing: 0.06em;
+ text-transform: uppercase;
+}
+
+.review-media-header span {
+ font-size: 0.72rem;
+ color: #64748b;
+}
+
+.review-media-dropzone {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ padding: 22px 20px;
+ border: 2px dashed rgba(0, 240, 255, 0.35);
+ border-radius: 8px;
+ background: rgba(0, 240, 255, 0.03);
+ cursor: pointer;
+ transition: all 0.2s ease;
+ text-align: center;
+ width: 100%;
+}
+
+.review-media-dropzone:hover {
+ border-color: #00f0ff;
+ background: rgba(0, 240, 255, 0.08);
+ box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}
+
+.review-media-dropzone i {
+ font-size: 1.8rem;
+ color: #00f0ff;
+}
+
+.review-media-dropzone strong {
+ font-size: 0.95rem;
+ color: #ffffff;
+}
+
+.review-media-dropzone span {
+ font-size: 0.78rem;
+ color: #94a3b8;
+}
+
+.review-media-preview-card {
+ display: flex;
+ align-items: center;
+ gap: 16px;
+ padding: 12px 16px;
+ background: #040914;
+ border: 1px solid rgba(0, 240, 255, 0.3);
+ border-radius: 8px;
+ box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.review-media-preview-img {
+ width: 84px;
+ height: 84px;
+ object-fit: cover;
+ border-radius: 6px;
+ border: 1px solid rgba(255, 255, 255, 0.1);
+ background: #000;
+}
+
+.review-media-preview-player {
+ width: 130px;
+ height: 84px;
+ object-fit: cover;
+ border-radius: 6px;
+ background: #000;
+ border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.review-media-preview-meta {
+ display: flex;
+ flex-direction: column;
+ gap: 4px;
+ flex: 1;
+}
+
+.review-media-preview-meta strong {
+ font-size: 0.88rem;
+ color: #ffffff;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ max-width: 320px;
+}
+
+.review-media-preview-meta span {
+ font-size: 0.72rem;
+ color: #00f0ff;
+ font-weight: 600;
+}
+
+.btn-remove-media {
+ margin-top: 6px;
+ align-self: flex-start;
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ padding: 4px 10px;
+ background: rgba(255, 59, 105, 0.15);
+ border: 1px solid rgba(255, 59, 105, 0.4);
+ color: #ff3b69;
+ border-radius: 4px;
+ font-size: 0.72rem;
+ font-weight: 700;
+ cursor: pointer;
+ transition: all 0.2s ease;
+}
+
+.btn-remove-media:hover {
+ background: #ff3b69;
+ color: #fff;
+ box-shadow: 0 0 10px rgba(255, 59, 105, 0.5);
+}
+
+.review-media-external {
+ margin-top: 4px;
+}
+
+.review-media-external summary {
+ font-size: 0.76rem;
+ color: #00f0ff;
+ cursor: pointer;
+ user-select: none;
+}
+
+.review-media-external-input {
+ margin-top: 8px;
+}
+

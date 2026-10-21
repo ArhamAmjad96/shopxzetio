@@ -84,11 +84,28 @@ const initialReviewState = {
   approval_status: 'approved',
 };
 
+const darkSelectStyle = {
+  backgroundColor: '#050a14',
+  background: '#050a14',
+  color: '#ffffff',
+  borderColor: 'rgba(0, 240, 255, 0.4)',
+};
+
+const darkOptionStyle = {
+  backgroundColor: '#071224',
+  background: '#071224',
+  color: '#ffffff',
+  padding: '10px 14px',
+};
+
 export function AdminReviews({ triggerToast }) {
   const [reviews, setReviews] = useState([]);
   const [productList, setProductList] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [reviewForm, setReviewForm] = useState(initialReviewState);
+  const [mediaFile, setMediaFile] = useState(null);
+  const [mediaPreview, setMediaPreview] = useState('');
+  const [mediaType, setMediaType] = useState('image');
   const [submitting, setSubmitting] = useState(false);
 
   const load = async () => {
@@ -103,6 +120,14 @@ export function AdminReviews({ triggerToast }) {
       if (data) setProductList(data);
     });
   }, []);
+
+  const closeModal = () => {
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaFile(null);
+    setMediaPreview('');
+    setReviewForm(initialReviewState);
+    setShowAddModal(false);
+  };
 
   const updateReview = async (review, patch) => {
     const { error } = await supabase.from('reviews').update(patch).eq('id', review.id);
@@ -119,6 +144,43 @@ export function AdminReviews({ triggerToast }) {
     triggerToast('Review permanently deleted.', 'fa-trash', 'info');
   };
 
+  const attachMediaFile = (file) => {
+    if (!file) return;
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+    if (!isVideo && !isImage) {
+      return triggerToast('Please upload an image (JPG, PNG, WebP) or video (MP4, WebM).', 'fa-triangle-exclamation', 'danger');
+    }
+    const maxBytes = isVideo ? 60 * 1024 * 1024 : 20 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      return triggerToast(`File is too large. Max size is ${isVideo ? '60MB' : '20MB'}.`, 'fa-triangle-exclamation', 'danger');
+    }
+
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaFile(file);
+    setMediaType(isVideo ? 'video' : 'image');
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const handleFileSelected = (e) => {
+    const file = e.target.files?.[0];
+    if (file) attachMediaFile(file);
+    e.target.value = '';
+  };
+
+  const handleDropMedia = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) attachMediaFile(file);
+  };
+
+  const removeMedia = () => {
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaFile(null);
+    setMediaPreview('');
+    setReviewForm((prev) => ({ ...prev, media_path: '' }));
+  };
+
   const handleCreateReview = async (e) => {
     e.preventDefault();
     if (!reviewForm.display_name.trim()) {
@@ -130,6 +192,38 @@ export function AdminReviews({ triggerToast }) {
 
     setSubmitting(true);
     try {
+      let finalMediaPath = reviewForm.media_path?.trim() || null;
+      let finalMediaType = mediaType;
+
+      // Handle direct file upload to Supabase Storage
+      if (mediaFile) {
+        const safeName = mediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+        const fileName = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+        let uploadBucket = 'product-images';
+        let storagePath = `reviews/${fileName}`;
+
+        let uploadRes = await supabase.storage.from(uploadBucket).upload(storagePath, mediaFile, {
+          cacheControl: '31536000',
+          contentType: mediaFile.type,
+          upsert: false,
+        });
+
+        if (uploadRes.error) {
+          uploadBucket = 'review-images';
+          storagePath = `${fileName}`;
+          const retryUpload = await supabase.storage.from(uploadBucket).upload(storagePath, mediaFile, {
+            cacheControl: '31536000',
+            contentType: mediaFile.type,
+            upsert: false,
+          });
+          if (retryUpload.error) throw new Error(`Media upload failed: ${uploadRes.error.message || retryUpload.error.message}`);
+        }
+
+        const { data: publicData } = supabase.storage.from(uploadBucket).getPublicUrl(storagePath);
+        finalMediaPath = publicData.publicUrl;
+        finalMediaType = mediaFile.type.startsWith('video/') ? 'video' : 'image';
+      }
+
       const userRes = await supabase.auth.getUser();
       const currentUserId = userRes?.data?.user?.id || null;
 
@@ -139,13 +233,13 @@ export function AdminReviews({ triggerToast }) {
         display_name: reviewForm.display_name.trim(),
         review_text: reviewForm.review_text.trim(),
         rating: Number(reviewForm.rating) || 5,
-        media_type: reviewForm.media_path ? 'image' : null,
-        media_path: reviewForm.media_path?.trim() || null,
+        media_type: finalMediaPath ? finalMediaType : null,
+        media_path: finalMediaPath,
         is_featured: Boolean(reviewForm.is_featured),
         approval_status: reviewForm.approval_status || 'approved',
       };
 
-      // Try direct insert
+      // Direct insert
       let res = await supabase.from('reviews').insert(payload).select().single();
       
       // If RLS blocked insert because approval_status is not 'pending', insert with pending and then update to approved
@@ -163,8 +257,7 @@ export function AdminReviews({ triggerToast }) {
         throw res.error;
       }
 
-      setShowAddModal(false);
-      setReviewForm(initialReviewState);
+      closeModal();
       await load();
       triggerToast('Review successfully added to ShopXzetio!', 'fa-circle-check');
     } catch (err) {
@@ -196,7 +289,7 @@ export function AdminReviews({ triggerToast }) {
               <th>Customer</th>
               <th>Product</th>
               <th>Rating</th>
-              <th>Review</th>
+              <th>Review & Media</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -214,7 +307,48 @@ export function AdminReviews({ triggerToast }) {
                 </td>
                 <td>
                   <div style={{ maxWidth: 320, whiteSpace: 'normal' }}>
-                    {review.review_text || 'Media review'}
+                    <div>{review.review_text || 'Media review'}</div>
+                    {review.media_path && (
+                      <div style={{ marginTop: 6 }}>
+                        {review.media_type === 'video' ? (
+                          <a
+                            href={review.media_path}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '3px 8px',
+                              background: 'rgba(0, 240, 255, 0.12)',
+                              border: '1px solid rgba(0, 240, 255, 0.35)',
+                              color: '#00f0ff',
+                              borderRadius: 4,
+                              fontSize: '0.74rem',
+                              textDecoration: 'none',
+                              fontWeight: 600,
+                            }}
+                          >
+                            <i className="fa-solid fa-video"/> View Attached Video
+                          </a>
+                        ) : (
+                          <a href={review.media_path} target="_blank" rel="noreferrer">
+                            <img
+                              src={review.media_path}
+                              alt="Review attachment"
+                              style={{
+                                width: 48,
+                                height: 48,
+                                objectFit: 'cover',
+                                borderRadius: 4,
+                                border: '1px solid rgba(0, 240, 255, 0.35)',
+                                display: 'block',
+                              }}
+                            />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td>
@@ -263,11 +397,11 @@ export function AdminReviews({ triggerToast }) {
       </div>
 
       {showAddModal && (
-        <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && setShowAddModal(false)}>
+        <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && closeModal()}>
           <form className="admin-product-editor admin-review-editor" onSubmit={handleCreateReview}>
             <div className="ss-lightbox-header">
               <h3><i className="fa-solid fa-star" style={{ color: '#ffd75e', marginRight: 8 }}/> ADD CUSTOMER REVIEW</h3>
-              <button type="button" className="admin-editor-close-btn" onClick={() => setShowAddModal(false)} aria-label="Close modal">
+              <button type="button" className="admin-editor-close-btn" onClick={closeModal} aria-label="Close modal">
                 <i className="fa-solid fa-xmark"/>
               </button>
             </div>
@@ -286,12 +420,13 @@ export function AdminReviews({ triggerToast }) {
               <label>
                 Product Reviewed
                 <select
+                  style={darkSelectStyle}
                   value={reviewForm.product_id}
                   onChange={(e) => setReviewForm({ ...reviewForm, product_id: e.target.value })}
                 >
-                  <option value="">General Store Review (ShopXzetio)</option>
+                  <option style={darkOptionStyle} value="">General Store Review (ShopXzetio)</option>
                   {productList.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
+                    <option style={darkOptionStyle} key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
               </label>
@@ -299,25 +434,27 @@ export function AdminReviews({ triggerToast }) {
               <label>
                 Rating (1 - 5 Stars)
                 <select
+                  style={darkSelectStyle}
                   value={reviewForm.rating}
                   onChange={(e) => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
                 >
-                  <option value={5}>★★★★★ (5 Stars - Excellent)</option>
-                  <option value={4}>★★★★☆ (4 Stars - Very Good)</option>
-                  <option value={3}>★★★☆☆ (3 Stars - Average)</option>
-                  <option value={2}>★★☆☆☆ (2 Stars - Below Average)</option>
-                  <option value={1}>★☆☆☆☆ (1 Star - Poor)</option>
+                  <option style={darkOptionStyle} value={5}>★★★★★ (5 Stars - Excellent)</option>
+                  <option style={darkOptionStyle} value={4}>★★★★☆ (4 Stars - Very Good)</option>
+                  <option style={darkOptionStyle} value={3}>★★★☆☆ (3 Stars - Average)</option>
+                  <option style={darkOptionStyle} value={2}>★★☆☆☆ (2 Stars - Below Average)</option>
+                  <option style={darkOptionStyle} value={1}>★☆☆☆☆ (1 Star - Poor)</option>
                 </select>
               </label>
 
               <label>
                 Moderation Status
                 <select
+                  style={darkSelectStyle}
                   value={reviewForm.approval_status}
                   onChange={(e) => setReviewForm({ ...reviewForm, approval_status: e.target.value })}
                 >
-                  <option value="approved">Approved & Live</option>
-                  <option value="pending">Pending Moderation</option>
+                  <option style={darkOptionStyle} value="approved">Approved & Live</option>
+                  <option style={darkOptionStyle} value="pending">Pending Moderation</option>
                 </select>
               </label>
 
@@ -332,15 +469,65 @@ export function AdminReviews({ triggerToast }) {
                 />
               </label>
 
-              <label className="admin-wide-field">
-                Review Image / Media URL <small>(optional)</small>
-                <input
-                  type="url"
-                  placeholder="https://example.com/customer-setup.webp"
-                  value={reviewForm.media_path}
-                  onChange={(e) => setReviewForm({ ...reviewForm, media_path: e.target.value })}
-                />
-              </label>
+              {/* Upload Image / Video Section */}
+              <div className="admin-wide-field review-media-manager">
+                <div className="review-media-header">
+                  <label>REVIEW MEDIA (PHOTO OR VIDEO)</label>
+                  <span>JPG, PNG, WebP, MP4, WebM · Up to 60 MB</span>
+                </div>
+
+                {!mediaPreview && !reviewForm.media_path && (
+                  <label className="review-media-dropzone" onDragOver={(e) => e.preventDefault()} onDrop={handleDropMedia}>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/quicktime"
+                      onChange={handleFileSelected}
+                      disabled={submitting}
+                      style={{ display: 'none' }}
+                    />
+                    <i className="fa-solid fa-cloud-arrow-up"/>
+                    <strong>Click to Upload Image or Video</strong>
+                    <span>Upload customer setup photo, unboxing video or gameplay reaction</span>
+                  </label>
+                )}
+
+                {(mediaPreview || reviewForm.media_path) && (
+                  <div className="review-media-preview-card">
+                    {mediaType === 'video' ? (
+                      <video src={mediaPreview || reviewForm.media_path} controls className="review-media-preview-player" />
+                    ) : (
+                      <img src={mediaPreview || reviewForm.media_path} alt="Review attachment preview" className="review-media-preview-img" />
+                    )}
+                    <div className="review-media-preview-meta">
+                      <strong>{mediaFile?.name || (reviewForm.media_path ? 'External Media Link' : 'Attached Media')}</strong>
+                      <span>{mediaType.toUpperCase()} {mediaFile ? `· ${(mediaFile.size / (1024 * 1024)).toFixed(2)} MB` : ''}</span>
+                      <button type="button" className="btn-remove-media" onClick={removeMedia}>
+                        <i className="fa-solid fa-trash"/> Remove Media
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <details className="review-media-external">
+                  <summary>Or paste an external Image / Video URL</summary>
+                  <div className="review-media-external-input">
+                    <input
+                      type="url"
+                      placeholder="https://example.com/customer-review-media.webp"
+                      value={reviewForm.media_path}
+                      onChange={(e) => {
+                        const url = e.target.value;
+                        setReviewForm({ ...reviewForm, media_path: url });
+                        if (url.match(/\.(mp4|webm|mov|mkv)$/i)) {
+                          setMediaType('video');
+                        } else {
+                          setMediaType('image');
+                        }
+                      }}
+                    />
+                  </div>
+                </details>
+              </div>
             </div>
 
             <div className="admin-editor-flags">
@@ -355,11 +542,11 @@ export function AdminReviews({ triggerToast }) {
             </div>
 
             <div className="confirm-actions">
-              <button type="button" className="confirm-btn-cancel" onClick={() => setShowAddModal(false)}>
+              <button type="button" className="confirm-btn-cancel" onClick={closeModal}>
                 CANCEL
               </button>
               <button disabled={submitting} className="admin-btn admin-btn-primary">
-                {submitting ? 'SAVING REVIEW…' : 'POST REVIEW'}
+                {submitting ? 'UPLOADING & SAVING…' : 'POST REVIEW'}
               </button>
             </div>
           </form>
