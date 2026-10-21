@@ -3,15 +3,8 @@ import { ASSET_PATHS, handleImageError } from '../lib/assets';
 
 const PARTNERS = [
   {
-    logo: ASSET_PATHS.pubg,
-    name: 'PMGO SOUTH ASIA',
-    role: 'Official Gear',
-    sub: 'SOUTH ASIA FINALS',
-    url: 'https://www.instagram.com/p/DYJ2x4Skd10/'
-  },
-  {
     logo: ASSET_PATHS.teamI8,
-    name: 'TEAM i8 ESPORTS',
+    name: 'TEAM I8 ESPORTS',
     role: 'Pro Verified',
     sub: 'CHAMPIONS 2026',
     url: 'https://www.instagram.com/p/DXtxGDGiFPU/'
@@ -25,9 +18,16 @@ const PARTNERS = [
   },
   {
     logo: ASSET_PATHS.pubg,
-    name: 'PUBG MOBILE ESPORTS',
+    name: 'PUBG MOBILE',
     role: 'Official Partner',
     sub: 'GLOBAL ESPORTS',
+    url: 'https://www.instagram.com/p/DYJ2x4Skd10/'
+  },
+  {
+    logo: ASSET_PATHS.pubg,
+    name: 'PMGO SOUTH ASIA',
+    role: 'Official Gear',
+    sub: 'SOUTH ASIA FINALS',
     url: 'https://www.instagram.com/p/DYJ2x4Skd10/'
   }
 ];
@@ -52,6 +52,7 @@ export default function PartnershipSlider() {
                 rel="noopener noreferrer"
                 className="broadcast-partner-item"
                 title={`Open ${partner.name} on Instagram`}
+                style={{ cursor: 'pointer', textDecoration: 'none' }}
               >
                 <img src={partner.logo} alt={partner.name} className="broadcast-logo-img" onError={handleImageError} />
                 <div className="broadcast-partner-meta">
