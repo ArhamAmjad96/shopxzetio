@@ -646,11 +646,47 @@ button, input, select, textarea {
   transition: all 0.3s ease;
   flex-shrink: 0;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .broadcast-partner-item:hover {
   opacity: 1;
   transform: translateY(-2px);
+}
+
+.broadcast-partner-ig {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 4px;
+  transition: all 0.25s ease;
+}
+
+.broadcast-partner-item:hover .broadcast-partner-ig {
+  color: #E1306C;
+  transform: scale(1.2) rotate(-5deg);
+  text-shadow: 0 0 10px rgba(225, 48, 108, 0.6);
+}
+
+.partner-ig-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(225, 48, 108, 0.12);
+  border: 1px solid rgba(225, 48, 108, 0.4);
+  color: #ff85a2;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.partner-ig-pill:hover {
+  background: #E1306C;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(225, 48, 108, 0.5);
+  transform: translateY(-1px);
 }
 
 .broadcast-logo-img {

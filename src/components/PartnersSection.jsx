@@ -25,6 +25,24 @@ export default function PartnersSection() {
               <p>
                 Supporting official tournament circuits including PMGO South Asia and PMNC Pakistan championships with competitive tournament accessories.
               </p>
+              <div className="partner-links" style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+                <a
+                  href="https://www.instagram.com/p/DYJ2x4Skd10/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="partner-ig-pill"
+                >
+                  <i className="fa-brands fa-instagram" /> PMGO South Asia
+                </a>
+                <a
+                  href="https://www.instagram.com/p/Dcf9PQWo0L2/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="partner-ig-pill"
+                >
+                  <i className="fa-brands fa-instagram" /> PMNC Pakistan
+                </a>
+              </div>
             </div>
           </div>
 
@@ -39,6 +57,16 @@ export default function PartnersSection() {
               <p>
                 Equipping Pakistan's premier international esports roster with tournament-grade audio peripherals, cooling gear, and low-latency audio splitters.
               </p>
+              <div className="partner-links" style={{ marginTop: 14 }}>
+                <a
+                  href="https://www.instagram.com/p/DXtxGDGiFPU/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="partner-ig-pill"
+                >
+                  <i className="fa-brands fa-instagram" /> Team i8 Esports Announcement
+                </a>
+              </div>
             </div>
           </div>
         </div>
