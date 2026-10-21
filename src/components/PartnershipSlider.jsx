@@ -36,9 +36,12 @@ export default function PartnershipSlider() {
   return (
     <section className="esports-broadcast-strip">
       <div className="container broadcast-container">
-        {/* Centered micro-typography label */}
+        {/* Centered micro-typography label with Click to Verify indicator */}
         <div className="broadcast-header-label">
           <span className="broadcast-subtext">OFFICIAL TOURNAMENT INFRASTRUCTURE & PARTNERS</span>
+          <span className="broadcast-verified-pulse">
+            <span className="pulse-dot" /> Click any partner to view proof ↗
+          </span>
         </div>
 
         {/* Borderless, Infinite Scrolling Logo Carousel */}
@@ -51,15 +54,18 @@ export default function PartnershipSlider() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="broadcast-partner-item"
-                title={`Open ${partner.name} on Instagram`}
-                style={{ cursor: 'pointer', textDecoration: 'none' }}
+                title={`Click to view ${partner.name} on Instagram`}
               >
-                <img src={partner.logo} alt={partner.name} className="broadcast-logo-img" onError={handleImageError} />
+                <div className="broadcast-logo-wrap">
+                  <img src={partner.logo} alt={partner.name} className="broadcast-logo-img" onError={handleImageError} />
+                </div>
                 <div className="broadcast-partner-meta">
                   <span className="broadcast-partner-name">{partner.name}</span>
                   <span className="broadcast-partner-sub">{partner.sub}</span>
+                  <span className="broadcast-click-hint">
+                    <i className="fa-brands fa-instagram" /> Click to see ↗
+                  </span>
                 </div>
-                <i className="fa-brands fa-instagram broadcast-partner-ig" aria-hidden="true" />
               </a>
             ))}
           </div>

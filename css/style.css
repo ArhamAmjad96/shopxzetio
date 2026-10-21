@@ -599,7 +599,11 @@ button, input, select, textarea {
 }
 
 .broadcast-header-label {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
@@ -608,9 +612,42 @@ button, input, select, textarea {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 3px;
-  color: #64748B;
+  color: #94a3b8;
   text-transform: uppercase;
 }
+
+.broadcast-verified-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #e9d5ff;
+  background: rgba(168, 85, 247, 0.14);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  padding: 3px 11px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.broadcast-verified-pulse .pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: #c084fc;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #c084fc;
+  animation: pulseBeacon 2s infinite ease-in-out;
+}
+
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 12px #d8b4fe; }
+  100% { transform: scale(0.9); opacity: 0.5; }
+}
+
 .marquee-wrapper {
   overflow: hidden;
   width: 100%;
@@ -625,8 +662,8 @@ button, input, select, textarea {
 .marquee-track {
   display: inline-flex;
   align-items: center;
-  gap: 40px;
-  animation: scroll-left 15s linear infinite;
+  gap: 32px;
+  animation: scroll-left 18s linear infinite;
 }
 
 .marquee-track:hover {
@@ -635,15 +672,19 @@ button, input, select, textarea {
 
 @keyframes scroll-left {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-50% - 20px)); } /* Half the track width minus half the gap */
+  100% { transform: translateX(calc(-50% - 16px)); }
 }
 
 .broadcast-partner-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  opacity: 0.85;
-  transition: all 0.3s ease;
+  gap: 14px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0.88;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
   text-decoration: none;
   cursor: pointer;
@@ -651,20 +692,28 @@ button, input, select, textarea {
 
 .broadcast-partner-item:hover {
   opacity: 1;
-  transform: translateY(-2px);
+  background: rgba(225, 48, 108, 0.08);
+  border-color: rgba(225, 48, 108, 0.4);
+  box-shadow: 0 4px 20px rgba(225, 48, 108, 0.25), inset 0 0 15px rgba(225, 48, 108, 0.08);
+  transform: translateY(-3px) scale(1.02);
 }
 
-.broadcast-partner-ig {
-  font-size: 0.92rem;
-  color: rgba(255, 255, 255, 0.35);
-  margin-left: 4px;
-  transition: all 0.25s ease;
+.broadcast-click-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #ff7597;
+  margin-top: 3px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
 }
 
-.broadcast-partner-item:hover .broadcast-partner-ig {
-  color: #E1306C;
-  transform: scale(1.2) rotate(-5deg);
-  text-shadow: 0 0 10px rgba(225, 48, 108, 0.6);
+.broadcast-partner-item:hover .broadcast-click-hint {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 117, 151, 0.8);
 }
 
 .partner-ig-pill {
