@@ -2271,3 +2271,177 @@ body.admin-body {
  margin-top: 8px;
 }
 
+/* ==========================================================================
+   PRODUCT & REVIEW EDIT MODALS (CYBER THEME FIX)
+   ========================================================================== */
+.admin-modal-backdrop,
+.cyber-confirm-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(3, 7, 16, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  animation: fadeInModal 0.2s ease !important;
+  box-sizing: border-box;
+}
+
+.admin-product-editor,
+.admin-product-modal {
+  width: min(940px, 95vw) !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(0, 240, 255, 0.4) !important;
+  border-radius: 14px !important;
+  background: #080d1a !important;
+  padding: 24px !important;
+  box-shadow: 0 25px 90px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 240, 255, 0.2) !important;
+  animation: popInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box;
+}
+
+.admin-modal-head,
+.ss-lightbox-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-bottom: 16px !important;
+  margin-bottom: 18px !important;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2) !important;
+}
+
+.admin-modal-head h3,
+.ss-lightbox-header h3 {
+  font-family: var(--admin-font-display, 'Orbitron', sans-serif) !important;
+  font-size: 1.15rem !important;
+  color: #FFFFFF !important;
+  letter-spacing: 1.2px !important;
+  margin: 0 !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4) !important;
+}
+
+.admin-editor-close-btn,
+.admin-modal-close,
+.admin-modal-close-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-editor-close-btn:hover,
+.admin-modal-close:hover,
+.admin-modal-close-btn:hover {
+  background: rgba(255, 59, 105, 0.25) !important;
+  border-color: #ff3b69 !important;
+  color: #ff3b69 !important;
+  box-shadow: 0 0 12px rgba(255, 59, 105, 0.5) !important;
+}
+
+.admin-product-form-grid,
+.admin-product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+.admin-product-form-grid label,
+.admin-product-grid label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  color: var(--admin-text-soft, #94a3b8) !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+.admin-product-form-grid input,
+.admin-product-grid input,
+.admin-product-form-grid textarea,
+.admin-product-grid textarea {
+  width: 100% !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  background: #050a14 !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
+  font: inherit !important;
+  font-size: 0.88rem !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.admin-product-form-grid input:focus,
+.admin-product-grid input:focus,
+.admin-product-form-grid textarea:focus,
+.admin-product-grid textarea:focus {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35) !important;
+  outline: none !important;
+}
+
+.admin-product-form-grid textarea,
+.admin-product-grid textarea {
+  min-height: 80px !important;
+  resize: vertical !important;
+}
+
+.admin-wide-field {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-code-field {
+  min-height: 120px !important;
+  font-family: monospace !important;
+  font-size: 0.8rem !important;
+}
+
+.admin-editor-flags {
+  display: flex !important;
+  gap: 24px !important;
+  color: var(--admin-text-soft, #94a3b8) !important;
+  margin-bottom: 20px !important;
+  padding: 10px 0 !important;
+}
+
+.admin-editor-flags label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  font-size: 0.84rem !important;
+  color: #f1f5f9 !important;
+}
+
+.admin-editor-flags input[type="checkbox"] {
+  accent-color: var(--admin-cyan, #00f0ff) !important;
+  width: 16px !important;
+  height: 16px !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 768px) {
+  .admin-product-form-grid,
+  .admin-product-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+

@@ -190,6 +190,7 @@ export default function AdminProducts({ triggerToast }) {
         images: orderedImages,
         features: (editor.features_text || '').split('\n').map((value) => value.trim()).filter(Boolean),
         specs, in_the_box: editor.in_the_box || [], active: Boolean(editor.active),
+        featured: Boolean(editor.featured),
       };
       const operation = editor.id
         ? supabase.from('products').update(payload).eq('id', editor.id)
@@ -474,15 +475,25 @@ export default function AdminProducts({ triggerToast }) {
       )}
 
       {editor && (
-        <div className="admin-modal-backdrop" onClick={closeEditor}>
-          <form className="admin-product-modal" onClick={(e) => e.stopPropagation()} onSubmit={saveProduct}>
-            <div className="admin-modal-head">
-              <h3>{editor.id ? `EDIT // ${editor.name}` : 'NEW PRODUCT'}</h3>
-              <button type="button" className="admin-modal-close" onClick={closeEditor}>
+        <div
+          className="cyber-confirm-backdrop admin-modal-backdrop"
+          onClick={(e) => {
+            if (e.target.classList.contains('cyber-confirm-backdrop') || e.target.classList.contains('admin-modal-backdrop')) {
+              closeEditor();
+            }
+          }}
+        >
+          <form className="admin-product-editor admin-product-modal" onSubmit={saveProduct} onClick={(e) => e.stopPropagation()}>
+            <div className="ss-lightbox-header admin-modal-head">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                <i className="fa-solid fa-pen-to-square" style={{ color: 'var(--admin-cyan)' }}></i>
+                {editor.id ? `EDIT // ${editor.name}` : 'NEW PRODUCT'}
+              </h3>
+              <button type="button" className="admin-editor-close-btn admin-modal-close" onClick={closeEditor} aria-label="Close modal">
                 <i className="fa-solid fa-xmark"/>
               </button>
             </div>
-            <div className="admin-product-grid">
+            <div className="admin-product-form-grid admin-product-grid">
               <label>ID<input required value={editor.legacy_id} onChange={(e) => setEditor({...editor, legacy_id:e.target.value})}/></label>
               <label>Slug<input value={editor.slug || ''} onChange={(e) => setEditor({...editor, slug:e.target.value})}/></label>
               <label className="admin-wide-field">Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
@@ -545,6 +556,9 @@ export default function AdminProducts({ triggerToast }) {
             <div className="admin-editor-flags">
               <label>
                 <input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront
+              </label>
+              <label>
+                <input type="checkbox" checked={Boolean(editor.featured)} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> 🔥 Top / Featured Product
               </label>
             </div>
             <div className="confirm-actions">
