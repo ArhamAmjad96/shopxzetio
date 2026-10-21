@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useCatalog } from '../context/CatalogContext';
 import { handleImageError, normalizeAssetUrl } from '../lib/assets';
@@ -21,28 +21,76 @@ export default function Hero() {
   const { addToCart, openDetail } = useCart();
   const { products } = useCatalog();
   const [activeIdx, setActiveIdx] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Compute showcase products dynamically:
-  // 1. Hero flagship product (marked isHero)
-  // 2. Featured / Top products
+  // Compute the exact Top 3 spotlight products:
+  // 1. Check specs.top_order (1, 2, 3) configured in Admin Panel
+  // 2. Check localStorage saved top 3 product IDs
+  // 3. Fallback to active hero & top products
   const showcaseProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
 
-    const heroItem = products.find(p => p.isHero);
-    const featuredItems = products.filter(p => p.featured && p.id !== heroItem?.id);
-    const otherItems = products.filter(p => !p.featured && p.id !== heroItem?.id);
+    const byOrder = [null, null, null];
+    products.forEach((p) => {
+      const order = Number(p.specs?.top_order);
+      if (order >= 1 && order <= 3) {
+        byOrder[order - 1] = p;
+      }
+    });
+
+    let localSaved = [];
+    try {
+      localSaved = JSON.parse(localStorage.getItem('shopxzetio_top_3_products') || '[]');
+    } catch {}
 
     const list = [];
-    if (heroItem) list.push(heroItem);
-    list.push(...featuredItems);
-    if (list.length < 3) list.push(...otherItems);
+    for (let i = 0; i < 3; i++) {
+      if (byOrder[i]) {
+        list.push(byOrder[i]);
+      } else if (localSaved[i]) {
+        const found = products.find(
+          (p) => String(p.id) === String(localSaved[i]) || String(p.databaseId) === String(localSaved[i])
+        );
+        if (found && !list.some((x) => x.id === found.id)) {
+          list.push(found);
+        }
+      }
+    }
 
-    return list.slice(0, 4);
+    if (list.length < 3) {
+      const heroItem = products.find((p) => p.isHero && !list.some((x) => x.id === p.id));
+      if (heroItem) list.push(heroItem);
+    }
+    if (list.length < 3) {
+      const featuredItems = products.filter((p) => p.featured && !list.some((x) => x.id === p.id));
+      list.push(...featuredItems);
+    }
+    if (list.length < 3) {
+      const remaining = products.filter((p) => !list.some((x) => x.id === p.id));
+      list.push(...remaining);
+    }
+
+    return list.slice(0, 3);
   }, [products]);
 
-  // Safe boundary check
-  const activeProduct = showcaseProducts[activeIdx] || showcaseProducts[0] || products[0];
+  // Smooth automatic rotation every 5 seconds
+  useEffect(() => {
+    if (showcaseProducts.length <= 1 || isPaused) return;
 
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % showcaseProducts.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [showcaseProducts.length, isPaused]);
+
+  useEffect(() => {
+    if (activeIdx >= showcaseProducts.length && showcaseProducts.length > 0) {
+      setActiveIdx(0);
+    }
+  }, [showcaseProducts.length, activeIdx]);
+
+  const activeProduct = showcaseProducts[activeIdx] || showcaseProducts[0] || products?.[0];
   if (!activeProduct) return null;
 
   const meta = getCategoryMeta(activeProduct.category);
@@ -100,24 +148,38 @@ export default function Hero() {
           </div>
 
           {/* Right Column: Clean Floating Spotlight Showcase */}
-          <div className="hero-right-showcase">
-            <div className="showcase-card glass-card">
+          <div
+            className="hero-right-showcase"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div key={activeProduct.id || activeIdx} className="showcase-card glass-card basic-card-transition">
+              {/* Top Tag */}
+              <div className="showcase-top-tag">
+                <span className="showcase-badge-pill" style={{ color: meta.accent, borderColor: `${meta.accent}55` }}>
+                  <i className={`fa-solid ${meta.icon}`} style={{ marginRight: '6px' }} />
+                  {activeProduct.badge || 'TOP SPOTLIGHT'}
+                </span>
+                <span className="showcase-stat-pill">
+                  {`0${activeIdx + 1} / 0${showcaseProducts.length}`}
+                </span>
+              </div>
 
               {/* Center Floating High-Res Product Visual */}
-              <div 
-                className="showcase-visual-wrap" 
+              <div
+                className="showcase-visual-wrap"
                 onClick={() => openDetail(activeProduct)}
                 title="Click to inspect full specs"
               >
-                <div 
-                  className="showcase-glow-halo" 
-                  style={{ background: `radial-gradient(circle, ${meta.accent}33 0%, transparent 70%)` }} 
+                <div
+                  className="showcase-glow-halo"
+                  style={{ background: `radial-gradient(circle, ${meta.accent}44 0%, transparent 70%)` }}
                 />
-                <img 
-                  key={activeProduct.id}
-                  src={mainImage} 
-                  alt={activeProduct.name} 
-                  className="showcase-product-img fit-contain animate-float-clean"
+                <img
+                  key={mainImage}
+                  src={mainImage}
+                  alt={activeProduct.name}
+                  className="showcase-product-img fit-contain"
                   onError={handleImageError}
                 />
               </div>
@@ -126,7 +188,10 @@ export default function Hero() {
               <div className="showcase-info-bar">
                 <div className="showcase-title-price">
                   <span className="showcase-category">{activeProduct.category?.toUpperCase()}</span>
-                  <h3 className="showcase-name" onClick={() => openDetail(activeProduct)}>
+                  <h3
+                    className="showcase-name"
+                    onClick={() => openDetail(activeProduct)}
+                  >
                     {activeProduct.name}
                   </h3>
                   <div className="showcase-price-box">
@@ -137,7 +202,7 @@ export default function Hero() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => addToCart(activeProduct, 1)}
                   className="btn-showcase-equip cyber-cut-sm"
                   title="Add to Armory Cart"
@@ -146,28 +211,23 @@ export default function Hero() {
                   <span>EQUIP</span>
                 </button>
               </div>
-
-              {/* Loadout Switcher Pills */}
-              {showcaseProducts.length > 1 && (
-                <div className="showcase-switcher-tabs">
-                  {showcaseProducts.map((item, idx) => {
-                    const itemMeta = getCategoryMeta(item.category);
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setActiveIdx(idx)}
-                        className={`switcher-tab-btn ${idx === activeIdx ? 'active' : ''}`}
-                        style={idx === activeIdx ? { borderColor: itemMeta.accent, color: '#FFF' } : {}}
-                        title={item.name}
-                      >
-                        <i className={`fa-solid ${itemMeta.icon}`} style={{ color: itemMeta.accent }}></i>
-                        <span>{`0${idx + 1}`}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
             </div>
+
+            {/* Clean Indicator Dots */}
+            {showcaseProducts.length > 1 && (
+              <div className="showcase-auto-indicator" aria-label="Rotating spotlight products">
+                {showcaseProducts.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveIdx(idx)}
+                    className={`indicator-dot ${idx === activeIdx ? 'active' : ''}`}
+                    title={`Spotlight Product 0${idx + 1}`}
+                    aria-label={`View spotlight product ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -15,7 +15,22 @@ const ORDER_STATUS_LABELS = {
 export default function AdminDashboard() {
   const { setCurrentView } = useCart();
   const { logout } = useAuth();
-  const [activeSection, setActiveSection] = useState('orders');
+  const [activeSection, setActiveSection] = useState(() => {
+    try {
+      return localStorage.getItem('shopxzetio_admin_tab') || 'orders';
+    } catch {
+      return 'orders';
+    }
+  });
+
+  const handleSelectSection = (sec) => {
+    setActiveSection(sec);
+    try {
+      localStorage.setItem('shopxzetio_admin_tab', sec);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -312,16 +327,16 @@ export default function AdminDashboard() {
 
           <span className="admin-sidebar-label">Management</span>
           <div className="admin-top-actions admin-primary-actions">
-            <button onClick={() => setActiveSection('orders')} className={`admin-btn ${activeSection === 'orders' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
+            <button onClick={() => handleSelectSection('orders')} className={`admin-btn ${activeSection === 'orders' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-box-archive"></i> Orders
             </button>
-            <button onClick={() => setActiveSection('products')} className={`admin-btn ${activeSection === 'products' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
+            <button onClick={() => handleSelectSection('products')} className={`admin-btn ${activeSection === 'products' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-gamepad"></i> Products
             </button>
-            <button onClick={() => setActiveSection('customers')} className={`admin-btn ${activeSection === 'customers' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
+            <button onClick={() => handleSelectSection('customers')} className={`admin-btn ${activeSection === 'customers' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-users"></i> Customers
             </button>
-            <button onClick={() => setActiveSection('reviews')} className={`admin-btn ${activeSection === 'reviews' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
+            <button onClick={() => handleSelectSection('reviews')} className={`admin-btn ${activeSection === 'reviews' ? 'admin-btn-primary' : 'admin-btn-secondary'}`}>
               <i className="fa-solid fa-star"></i> Reviews
             </button>
           </div>

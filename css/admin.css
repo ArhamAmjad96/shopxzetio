@@ -1786,9 +1786,84 @@ body.admin-body {
   background: linear-gradient(135deg, rgba(6, 15, 26, 0.95), rgba(11, 23, 40, 0.9));
   border: 1px solid rgba(0, 240, 255, 0.25);
   border-radius: 8px;
-  padding: 18px 24px;
+  padding: 20px 24px;
   margin-bottom: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 240, 255, 0.05);
+}
+
+.admin-showcase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  padding-bottom: 14px;
+}
+
+.admin-top3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.admin-top3-card {
+  background: rgba(2, 7, 13, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-top3-slot-pill {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffd75e;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-top3-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.admin-top3-preview img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-top3-preview-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-top3-preview-info strong {
+  font-size: 0.85rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-top3-preview-info span {
+  font-size: 0.75rem;
+  color: #9cb1ce;
 }
 
 .admin-showcase-hero {

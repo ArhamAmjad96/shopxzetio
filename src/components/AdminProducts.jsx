@@ -60,9 +60,7 @@ export default function AdminProducts({ triggerToast }) {
   const [busy, setBusy] = useState(false);
   const [optimizingImages, setOptimizingImages] = useState(false);
   const [editor, setEditor] = useState(null);
-
-  const currentHero = useMemo(() => products.find(isProductHero), [products]);
-  const featuredCount = useMemo(() => products.filter((p) => p.featured).length, [products]);
+  const [top3Selection, setTop3Selection] = useState(['', '', '']);
 
   const closeEditor = () => {
     (editor?.pending_images || []).forEach((item) => URL.revokeObjectURL(item.preview));
@@ -77,6 +75,76 @@ export default function AdminProducts({ triggerToast }) {
 
   useEffect(() => { loadProducts(); }, []);
 
+  // Initialize Top 3 selections based on database specs.top_order or localStorage
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+
+    const ordered = [null, null, null];
+    products.forEach((p) => {
+      const order = Number(p.specs?.top_order);
+      if (order >= 1 && order <= 3) {
+        ordered[order - 1] = String(p.id);
+      }
+    });
+
+    let localSaved = [];
+    try {
+      localSaved = JSON.parse(localStorage.getItem('shopxzetio_top_3_products') || '[]');
+    } catch {}
+
+    const slot1 = ordered[0] || (localSaved[0] && products.some(p => String(p.id) === String(localSaved[0])) ? String(localSaved[0]) : (products.find(isProductHero)?.id ? String(products.find(isProductHero).id) : String(products[0]?.id || '')));
+    const slot2 = ordered[1] || (localSaved[1] && products.some(p => String(p.id) === String(localSaved[1])) ? String(localSaved[1]) : String(products.find(p => String(p.id) !== slot1)?.id || ''));
+    const slot3 = ordered[2] || (localSaved[2] && products.some(p => String(p.id) === String(localSaved[2])) ? String(localSaved[2]) : String(products.find(p => String(p.id) !== slot1 && String(p.id) !== slot2)?.id || ''));
+
+    setTop3Selection([slot1, slot2, slot3]);
+  }, [products]);
+
+  const saveTop3Products = async () => {
+    const [id1, id2, id3] = top3Selection;
+    if (!id1 || !id2 || !id3) {
+      return triggerToast('Please select all 3 spotlight products.', 'fa-triangle-exclamation', 'danger');
+    }
+    setBusy(true);
+    try {
+      // 1. Clear previous top_order and hero markers from products
+      for (const p of products) {
+        if (p.specs?.top_order || p.specs?.is_hero || p.is_hero) {
+          const cleaned = { ...(p.specs || {}) };
+          delete cleaned.top_order;
+          delete cleaned.is_hero;
+          await supabase.from('products').update({ specs: cleaned, is_hero: false }).eq('id', p.id);
+        }
+      }
+
+      // 2. Assign top_order: 1, 2, 3
+      const selIds = [id1, id2, id3];
+      for (let i = 0; i < selIds.length; i++) {
+        const prod = products.find(p => String(p.id) === String(selIds[i]));
+        if (prod) {
+          const nextSpecs = { ...(prod.specs || {}), top_order: i + 1, ...(i === 0 ? { is_hero: true } : {}) };
+          await supabase.from('products').update({
+            specs: nextSpecs,
+            is_hero: i === 0,
+            active: true
+          }).eq('id', prod.id);
+        }
+      }
+
+      // 3. Save to localStorage for instant client rendering
+      try {
+        localStorage.setItem('shopxzetio_top_3_products', JSON.stringify([id1, id2, id3]));
+      } catch {}
+
+      await loadProducts();
+      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
+      triggerToast('★ Top 3 Frontpage products updated successfully!', 'fa-circle-check', 'success');
+    } catch (err) {
+      triggerToast(err.message || 'Could not save Top 3 products.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const syncCatalog = async () => {
     setBusy(true);
     const { error } = await supabase.from('products')
@@ -88,75 +156,13 @@ export default function AdminProducts({ triggerToast }) {
     triggerToast(`${PRODUCTS.length} storefront products synchronized.`, 'fa-arrows-rotate');
   };
 
-  const setHeroProduct = async (targetProduct) => {
-    if (!targetProduct) return;
-    setBusy(true);
-    try {
-      // 1. Remove hero flag from all current heroes
-      const currentHeroes = products.filter(isProductHero);
-      for (const h of currentHeroes) {
-        if (h.id !== targetProduct.id) {
-          const cleanedSpecs = { ...(h.specs || {}) };
-          delete cleanedSpecs.is_hero;
-          await supabase.from('products').update({ specs: cleanedSpecs }).eq('id', h.id);
-        }
-      }
-      // 2. Set hero flag on target product specs and activate it
-      const targetSpecs = { ...(targetProduct.specs || {}), is_hero: true };
-      const { error } = await supabase.from('products').update({
-        specs: targetSpecs,
-        active: true,
-      }).eq('id', targetProduct.id);
-      if (error) throw error;
-
-      await loadProducts();
-      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
-      triggerToast(`★ "${targetProduct.name}" is now the Frontpage Hero Product!`, 'fa-crown');
-    } catch (err) {
-      triggerToast(err.message || 'Could not set hero product.', 'fa-triangle-exclamation', 'danger');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const toggleFeatured = async (product) => {
-    const nextFeatured = !product.featured;
-    setBusy(true);
-    try {
-      const { error } = await supabase.from('products').update({ featured: nextFeatured }).eq('id', product.id);
-      if (error) throw error;
-      await loadProducts();
-      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
-      triggerToast(nextFeatured ? `🔥 "${product.name}" added to Top Products.` : `"${product.name}" unfeatured.`, 'fa-fire');
-    } catch (err) {
-      triggerToast(err.message || 'Could not toggle featured state.', 'fa-triangle-exclamation', 'danger');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const saveProduct = async (event) => {
     event.preventDefault();
     let specs;
     try { specs = JSON.parse(editor.specs_text || '{}'); } catch { return triggerToast('Specifications must be valid JSON.', 'fa-triangle-exclamation', 'danger'); }
 
-    if (editor.is_hero) {
-      specs.is_hero = true;
-    } else if (specs.is_hero) {
-      delete specs.is_hero;
-    }
-
     setBusy(true);
     try {
-      if (editor.is_hero) {
-        const otherHeroes = products.filter((p) => p.id !== editor.id && isProductHero(p));
-        for (const oh of otherHeroes) {
-          const cs = { ...(oh.specs || {}) };
-          delete cs.is_hero;
-          await supabase.from('products').update({ specs: cs }).eq('id', oh.id);
-        }
-      }
-
       const uploaded = [];
       const folder = editor.legacy_id.trim().replace(/[^a-zA-Z0-9_-]/g, '-');
       for (const item of editor.pending_images || []) {
@@ -183,7 +189,7 @@ export default function AdminProducts({ triggerToast }) {
         description: editor.description?.trim() || null, main_image: mainImage,
         images: orderedImages,
         features: (editor.features_text || '').split('\n').map((value) => value.trim()).filter(Boolean),
-        specs, in_the_box: editor.in_the_box || [], featured: Boolean(editor.featured), active: Boolean(editor.active),
+        specs, in_the_box: editor.in_the_box || [], active: Boolean(editor.active),
       };
       const operation = editor.id
         ? supabase.from('products').update(payload).eq('id', editor.id)
@@ -231,23 +237,30 @@ export default function AdminProducts({ triggerToast }) {
           main_choice: current.main_choice || `local:${newItems[0].id}`,
         };
       });
-      const savedBytes = prepared.reduce((total, item) => total + item.saved, 0);
-      triggerToast(`${prepared.length} image${prepared.length === 1 ? '' : 's'} prepared for web${savedBytes ? ` · saved ${(savedBytes / 1024 / 1024).toFixed(1)} MB` : ''}.`, 'fa-wand-magic-sparkles');
     } finally {
       setOptimizingImages(false);
     }
   };
 
-  const removeImage = (kind, value) => {
+  const removeImage = (type, target) => {
     setEditor((current) => {
-      const existingImages = kind === 'existing' ? current.existing_images.filter((url) => url !== value) : current.existing_images;
-      const removedLocal = kind === 'pending' ? current.pending_images.find((item) => item.id === value) : null;
-      if (removedLocal) URL.revokeObjectURL(removedLocal.preview);
-      const pendingImages = kind === 'pending' ? current.pending_images.filter((item) => item.id !== value) : current.pending_images;
-      const removedChoice = kind === 'pending' ? `local:${value}` : value;
-      const nextChoice = current.main_choice === removedChoice
-        ? existingImages[0] || (pendingImages[0] ? `local:${pendingImages[0].id}` : '')
-        : current.main_choice;
+      if (!current) return current;
+      const existingImages = type === 'existing'
+        ? current.existing_images.filter((url) => url !== target)
+        : current.existing_images;
+      const pendingImages = type === 'pending'
+        ? current.pending_images.filter((item) => {
+          if (item.id === target) {
+            URL.revokeObjectURL(item.preview);
+            return false;
+          }
+          return true;
+        })
+        : current.pending_images;
+      const remainingChoices = [...existingImages, ...pendingImages.map((item) => `local:${item.id}`)];
+      const nextChoice = remainingChoices.includes(current.main_choice)
+        ? current.main_choice
+        : remainingChoices[0] || '';
       return { ...current, existing_images: existingImages, pending_images: pendingImages, main_choice: nextChoice };
     });
   };
@@ -275,7 +288,6 @@ export default function AdminProducts({ triggerToast }) {
 
   const edit = (product) => setEditor({
     ...product,
-    is_hero: isProductHero(product),
     existing_images: Array.from(new Set([product.main_image, ...(product.images || [])].filter(Boolean))),
     pending_images: [],
     main_choice: product.main_image || product.images?.[0] || '',
@@ -290,7 +302,7 @@ export default function AdminProducts({ triggerToast }) {
         <div>
           <p className="auth-kicker">// CATALOG CONTROL</p>
           <h2>PRODUCT MANAGEMENT</h2>
-          <span>{products.length} database products · {products.filter((p) => p.active).length} visible · {featuredCount} featured</span>
+          <span>{products.length} database products · {products.filter((p) => p.active).length} visible on store</span>
         </div>
         <div className="admin-products-actions">
           <button className="admin-btn admin-btn-secondary" onClick={syncCatalog} disabled={busy}>
@@ -302,55 +314,75 @@ export default function AdminProducts({ triggerToast }) {
         </div>
       </div>
 
-      {/* Featured & Hero Showcase Control Bar */}
+      {/* Clean Dedicated Top 3 Spotlight Products Control */}
       {products.length > 0 && (
         <div className="admin-showcase-bar">
-          <div className="admin-showcase-hero">
-            <div className="admin-showcase-meta">
-              <span className="admin-showcase-badge"><i className="fa-solid fa-crown"/> HERO SPOTLIGHT</span>
-              <h3>Storefront Frontpage Flagship</h3>
-              <p>The product selected here is displayed front & center on the homepage hero section when customers visit your store.</p>
+          <div className="admin-showcase-header">
+            <div>
+              <span className="admin-showcase-badge"><i className="fa-solid fa-crown"/> FRONTPAGE TOP 3 SPOTLIGHT</span>
+              <h3 style={{ margin: '6px 0 2px', fontSize: '18px', color: '#fff' }}>Homepage Rotating Products</h3>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>
+                Select the 3 products to display on the storefront hero section. They will automatically cycle every 6 seconds.
+              </p>
             </div>
-            <div className="admin-showcase-controls">
-              <div className="admin-hero-select-wrap">
-                <label htmlFor="hero-select">Select Frontpage Hero Product:</label>
-                <select
-                  id="hero-select"
-                  className="admin-hero-select"
-                  value={currentHero?.id || ''}
-                  onChange={(e) => {
-                    const target = products.find((p) => String(p.id) === e.target.value);
-                    if (target) setHeroProduct(target);
-                  }}
-                  disabled={busy}
-                >
-                  <option value="" disabled>-- Choose Hero Spotlight Product --</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.category}) — Rs. {Number(p.price).toLocaleString()}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <button
+              type="button"
+              className="admin-btn admin-btn-primary"
+              onClick={saveTop3Products}
+              disabled={busy}
+              style={{ alignSelf: 'flex-start' }}
+            >
+              <i className="fa-solid fa-floppy-disk"/> Save Top 3 Products
+            </button>
+          </div>
 
-              {currentHero ? (
-                <div className="admin-hero-preview-badge">
-                  <img src={normalizeAssetUrl(currentHero.main_image)} alt="" onError={handleImageError} />
-                  <div>
-                    <strong>{currentHero.name}</strong>
-                    <span>Rs. {Number(currentHero.price).toLocaleString()} · Active Storefront Hero</span>
+          <div className="admin-top3-grid">
+            {[0, 1, 2].map((slotIdx) => {
+              const selectedId = top3Selection[slotIdx];
+              const selectedProduct = products.find((p) => String(p.id) === String(selectedId));
+              return (
+                <div key={slotIdx} className="admin-top3-card">
+                  <div className="admin-top3-card-header">
+                    <span className="admin-top3-slot-pill">
+                      {slotIdx === 0 ? '👑 Product #1 (Primary Hero)' : `⚡ Product #${slotIdx + 1}`}
+                    </span>
                   </div>
+
+                  <select
+                    className="admin-hero-select"
+                    value={selectedId || ''}
+                    onChange={(e) => {
+                      const next = [...top3Selection];
+                      next[slotIdx] = e.target.value;
+                      setTop3Selection(next);
+                    }}
+                    disabled={busy}
+                  >
+                    <option value="" disabled>-- Select Product --</option>
+                    {products.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} (Rs. {Number(p.price).toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedProduct ? (
+                    <div className="admin-top3-preview">
+                      <img src={normalizeAssetUrl(selectedProduct.main_image)} alt="" onError={handleImageError}/>
+                      <div className="admin-top3-preview-info">
+                        <strong>{selectedProduct.name}</strong>
+                        <span>Rs. {Number(selectedProduct.price).toLocaleString()} · {selectedProduct.category}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="admin-top3-preview fallback">
+                      <i className="fa-solid fa-box-open" style={{ color: '#64748b' }}/>
+                      <span style={{ color: '#64748b' }}>No product chosen</span>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="admin-hero-preview-badge fallback">
-                  <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffd75e' }}/>
-                  <div>
-                    <strong>No Hero Spotlight Selected</strong>
-                    <span>Defaulting to top featured product on homepage</span>
-                  </div>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -382,13 +414,12 @@ export default function AdminProducts({ triggerToast }) {
                 <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
-                <th>Flags</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((product) => {
-                const isHero = isProductHero(product);
                 return (
                   <tr key={product.id}>
                     <td>
@@ -417,32 +448,10 @@ export default function AdminProducts({ triggerToast }) {
                       <span className={`visibility-pill ${product.active ? 'live' : ''}`}>
                         {product.active ? 'Live' : 'Archived'}
                       </span>
-                      {isHero && <span className="visibility-pill hero-badge">★ HERO</span>}
-                      {product.featured && <span className="visibility-pill featured">🔥 TOP</span>}
                     </td>
                     <td>
                       <div className="table-actions-cell">
-                        <button
-                          type="button"
-                          className={`btn-action-hero ${isHero ? 'active' : ''}`}
-                          title={isHero ? 'Currently active storefront Hero' : 'Set as storefront Hero Product'}
-                          onClick={() => setHeroProduct(product)}
-                          disabled={busy || isHero}
-                        >
-                          <i className="fa-solid fa-crown"/>
-                          <span>{isHero ? 'Hero Active' : 'Set Hero'}</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={`btn-action-featured ${product.featured ? 'active' : ''}`}
-                          title={product.featured ? 'Remove from Top / Featured Products' : 'Add to Top / Featured Products'}
-                          onClick={() => toggleFeatured(product)}
-                          disabled={busy}
-                        >
-                          <i className="fa-solid fa-fire"/>
-                          <span>{product.featured ? 'Top' : '+ Top'}</span>
-                        </button>
-                        <button type="button" className="btn-action-chat" onClick={() => edit(product)}>
+                        <button type="button" className="btn-action-chat" onClick={() => edit(product)} title="Edit product details">
                           <i className="fa-solid fa-pen"/>
                           <span>Edit</span>
                         </button>
@@ -465,17 +474,19 @@ export default function AdminProducts({ triggerToast }) {
       )}
 
       {editor && (
-        <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && closeEditor()}>
-          <form className="admin-product-editor" onSubmit={saveProduct}>
-            <div className="ss-lightbox-header">
-              <h3>{editor.id ? 'EDIT PRODUCT' : 'ADD PRODUCT'}</h3>
-              <button type="button" className="admin-editor-close-btn" onClick={closeEditor} aria-label="Close product editor">
+        <div className="admin-modal-backdrop" onClick={closeEditor}>
+          <form className="admin-product-modal" onClick={(e) => e.stopPropagation()} onSubmit={saveProduct}>
+            <div className="admin-modal-head">
+              <h3>{editor.id ? `EDIT // ${editor.name}` : 'NEW PRODUCT'}</h3>
+              <button type="button" className="admin-modal-close" onClick={closeEditor}>
                 <i className="fa-solid fa-xmark"/>
               </button>
             </div>
-            <div className="admin-product-form-grid">
-              <label>Product Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
-              <label>Product ID<input required disabled={Boolean(editor.id)} value={editor.legacy_id} onChange={(e) => setEditor({...editor, legacy_id:e.target.value, slug:e.target.value})}/></label>
+            <div className="admin-product-grid">
+              <label>ID<input required value={editor.legacy_id} onChange={(e) => setEditor({...editor, legacy_id:e.target.value})}/></label>
+              <label>Slug<input value={editor.slug || ''} onChange={(e) => setEditor({...editor, slug:e.target.value})}/></label>
+              <label className="admin-wide-field">Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
+              <label>Short Name<input value={editor.short_name || ''} onChange={(e) => setEditor({...editor, short_name:e.target.value})}/></label>
               <label>Category<input required value={editor.category} onChange={(e) => setEditor({...editor, category:e.target.value})}/></label>
               <label>Subcategory<input value={editor.sub_category || ''} onChange={(e) => setEditor({...editor, sub_category:e.target.value})}/></label>
               <label>Price (PKR)<input required min="0" type="number" value={editor.price} onChange={(e) => setEditor({...editor, price:e.target.value})}/></label>
@@ -534,12 +545,6 @@ export default function AdminProducts({ triggerToast }) {
             <div className="admin-editor-flags">
               <label>
                 <input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront
-              </label>
-              <label>
-                <input type="checkbox" checked={editor.featured} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> 🔥 Top / Featured Product
-              </label>
-              <label>
-                <input type="checkbox" checked={editor.is_hero || false} onChange={(e) => setEditor({...editor, is_hero:e.target.checked})}/> ★ Frontpage Hero Spotlight
               </label>
             </div>
             <div className="confirm-actions">

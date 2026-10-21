@@ -17,11 +17,19 @@ export function normalizeAssetUrl(value, fallback = ASSET_PATHS.logo) {
   if (!url.startsWith('/')) {
     url = `/${url.replace(/^\.\//, '')}`;
   }
-  // Safe URI encoding for filenames with spaces or special characters
   try {
-    return encodeURI(decodeURI(url));
+    // Decode first to avoid double encoding, then encode each path segment
+    const decoded = decodeURIComponent(url);
+    return decoded
+      .split('/')
+      .map(part => (part ? encodeURIComponent(part) : ''))
+      .join('/');
   } catch {
-    return url;
+    try {
+      return encodeURI(decodeURI(url));
+    } catch {
+      return url;
+    }
   }
 }
 
@@ -34,4 +42,3 @@ export function handleImageError(event, fallback = ASSET_PATHS.logo) {
   image.dataset.fallbackApplied = 'true';
   image.src = fallback;
 }
-
