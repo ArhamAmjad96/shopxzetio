@@ -6,7 +6,7 @@ import { handleImageError, normalizeAssetUrl } from '../lib/assets';
 const blankProduct = {
   id: null, legacy_id: '', slug: '', name: '', short_name: '', price: '', original_price: '',
   category: '', sub_category: '', badge: '', stock_quantity: '', description: '', main_image: '',
-  featured: false, active: true, images: [], features: [], specs: {}, in_the_box: [],
+  featured: false, is_hero: false, active: true, images: [], features: [], specs: {}, in_the_box: [],
 };
 
 const PRODUCT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
@@ -52,12 +52,17 @@ function staticProductPayload(product) {
   };
 }
 
+export const isProductHero = (p) => Boolean(p.is_hero || p.specs?.is_hero || p.badge === 'HERO_SPOTLIGHT');
+
 export default function AdminProducts({ triggerToast }) {
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
   const [optimizingImages, setOptimizingImages] = useState(false);
   const [editor, setEditor] = useState(null);
+
+  const currentHero = useMemo(() => products.find(isProductHero), [products]);
+  const featuredCount = useMemo(() => products.filter((p) => p.featured).length, [products]);
 
   const closeEditor = () => {
     (editor?.pending_images || []).forEach((item) => URL.revokeObjectURL(item.preview));
@@ -79,15 +84,79 @@ export default function AdminProducts({ triggerToast }) {
     setBusy(false);
     if (error) return triggerToast(error.message, 'fa-triangle-exclamation', 'danger');
     await loadProducts();
+    window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
     triggerToast(`${PRODUCTS.length} storefront products synchronized.`, 'fa-arrows-rotate');
+  };
+
+  const setHeroProduct = async (targetProduct) => {
+    if (!targetProduct) return;
+    setBusy(true);
+    try {
+      // 1. Remove hero flag from all current heroes
+      const currentHeroes = products.filter(isProductHero);
+      for (const h of currentHeroes) {
+        if (h.id !== targetProduct.id) {
+          const cleanedSpecs = { ...(h.specs || {}) };
+          delete cleanedSpecs.is_hero;
+          await supabase.from('products').update({ specs: cleanedSpecs }).eq('id', h.id);
+        }
+      }
+      // 2. Set hero flag on target product specs and activate it
+      const targetSpecs = { ...(targetProduct.specs || {}), is_hero: true };
+      const { error } = await supabase.from('products').update({
+        specs: targetSpecs,
+        active: true,
+      }).eq('id', targetProduct.id);
+      if (error) throw error;
+
+      await loadProducts();
+      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
+      triggerToast(`★ "${targetProduct.name}" is now the Frontpage Hero Product!`, 'fa-crown');
+    } catch (err) {
+      triggerToast(err.message || 'Could not set hero product.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleFeatured = async (product) => {
+    const nextFeatured = !product.featured;
+    setBusy(true);
+    try {
+      const { error } = await supabase.from('products').update({ featured: nextFeatured }).eq('id', product.id);
+      if (error) throw error;
+      await loadProducts();
+      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
+      triggerToast(nextFeatured ? `🔥 "${product.name}" added to Top Products.` : `"${product.name}" unfeatured.`, 'fa-fire');
+    } catch (err) {
+      triggerToast(err.message || 'Could not toggle featured state.', 'fa-triangle-exclamation', 'danger');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const saveProduct = async (event) => {
     event.preventDefault();
     let specs;
     try { specs = JSON.parse(editor.specs_text || '{}'); } catch { return triggerToast('Specifications must be valid JSON.', 'fa-triangle-exclamation', 'danger'); }
+
+    if (editor.is_hero) {
+      specs.is_hero = true;
+    } else if (specs.is_hero) {
+      delete specs.is_hero;
+    }
+
     setBusy(true);
     try {
+      if (editor.is_hero) {
+        const otherHeroes = products.filter((p) => p.id !== editor.id && isProductHero(p));
+        for (const oh of otherHeroes) {
+          const cs = { ...(oh.specs || {}) };
+          delete cs.is_hero;
+          await supabase.from('products').update({ specs: cs }).eq('id', oh.id);
+        }
+      }
+
       const uploaded = [];
       const folder = editor.legacy_id.trim().replace(/[^a-zA-Z0-9_-]/g, '-');
       for (const item of editor.pending_images || []) {
@@ -124,6 +193,7 @@ export default function AdminProducts({ triggerToast }) {
       const wasEditing = Boolean(editor.id);
       closeEditor();
       await loadProducts();
+      window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
       triggerToast(wasEditing ? 'Product updated.' : 'Product added.');
     } catch (error) {
       triggerToast(error.message || 'Product could not be saved.', 'fa-triangle-exclamation', 'danger');
@@ -193,6 +263,7 @@ export default function AdminProducts({ triggerToast }) {
     const { error } = await supabase.from('products').update({ active: !product.active }).eq('id', product.id);
     if (error) return triggerToast(error.message, 'fa-triangle-exclamation', 'danger');
     await loadProducts();
+    window.dispatchEvent(new CustomEvent('shopxzetio:catalog-updated'));
     triggerToast(product.active ? 'Product archived.' : 'Product restored.', 'fa-box-archive', 'info');
   };
 
@@ -204,6 +275,7 @@ export default function AdminProducts({ triggerToast }) {
 
   const edit = (product) => setEditor({
     ...product,
+    is_hero: isProductHero(product),
     existing_images: Array.from(new Set([product.main_image, ...(product.images || [])].filter(Boolean))),
     pending_images: [],
     main_choice: product.main_image || product.images?.[0] || '',
@@ -212,42 +284,273 @@ export default function AdminProducts({ triggerToast }) {
     specs_text: JSON.stringify(product.specs || {}, null, 2),
   });
 
-  return <section className="admin-products-panel">
-    <div className="admin-products-head">
-      <div><p className="auth-kicker">// CATALOG CONTROL</p><h2>PRODUCT MANAGEMENT</h2><span>{products.length} database products · {products.filter((p) => p.active).length} visible</span></div>
-      <div className="admin-products-actions">
-        <button className="admin-btn admin-btn-secondary" onClick={syncCatalog} disabled={busy}><i className="fa-solid fa-rotate"/> Sync Existing Catalog</button>
-        <button className="admin-btn admin-btn-primary" onClick={() => edit(blankProduct)}><i className="fa-solid fa-plus"/> Add Product</button>
+  return (
+    <section className="admin-products-panel">
+      <div className="admin-products-head">
+        <div>
+          <p className="auth-kicker">// CATALOG CONTROL</p>
+          <h2>PRODUCT MANAGEMENT</h2>
+          <span>{products.length} database products · {products.filter((p) => p.active).length} visible · {featuredCount} featured</span>
+        </div>
+        <div className="admin-products-actions">
+          <button className="admin-btn admin-btn-secondary" onClick={syncCatalog} disabled={busy}>
+            <i className="fa-solid fa-rotate"/> Sync Existing Catalog
+          </button>
+          <button className="admin-btn admin-btn-primary" onClick={() => edit(blankProduct)}>
+            <i className="fa-solid fa-plus"/> Add Product
+          </button>
+        </div>
       </div>
-    </div>
-    <div className="admin-search-wrapper admin-products-search"><i className="fa-solid fa-magnifying-glass"/><input className="admin-search-input" placeholder="Search products, categories or IDs…" value={query} onChange={(e) => setQuery(e.target.value)}/></div>
-    {products.length === 0 && <div className="admin-catalog-empty"><i className="fa-solid fa-database"/><h3>THE DATABASE CATALOG IS EMPTY</h3><p>Use “Sync Existing Catalog” to copy the current 22 ShopXzetio products without changing the storefront.</p></div>}
-    {products.length > 0 && <div className="orders-table-wrapper"><table className="orders-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Flags</th><th>Actions</th></tr></thead><tbody>{filtered.map((product) => <tr key={product.id}><td><div className="admin-product-cell"><img src={normalizeAssetUrl(product.main_image)} alt="" onError={handleImageError}/><div><strong>{product.name}</strong><small>{product.legacy_id}</small></div></div></td><td>{product.category}<small className="admin-block-small">{product.sub_category}</small></td><td><strong>Rs. {Number(product.price).toLocaleString()}</strong>{product.original_price && <small className="admin-block-small">Was Rs. {Number(product.original_price).toLocaleString()}</small>}</td><td><span className={`stock-pill ${product.stock_quantity !== null && product.stock_quantity <= 5 ? 'low' : ''}`}>{product.stock_quantity === null ? 'Unlimited' : product.stock_quantity}</span></td><td><span className={`visibility-pill ${product.active ? 'live' : ''}`}>{product.active ? 'Live' : 'Archived'}</span>{product.featured && <span className="visibility-pill featured">Featured</span>}</td><td><div className="table-actions-cell"><button className="btn-action-chat" onClick={() => edit(product)}><i className="fa-solid fa-pen"/><span>Edit</span></button><button className="btn-action-delete" title={product.active ? 'Archive product' : 'Restore product'} onClick={() => toggleActive(product)}><i className={`fa-solid ${product.active ? 'fa-box-archive' : 'fa-rotate-left'}`}/></button></div></td></tr>)}</tbody></table></div>}
 
-    {editor && <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && closeEditor()}><form className="admin-product-editor" onSubmit={saveProduct}><div className="ss-lightbox-header"><h3>{editor.id ? 'EDIT PRODUCT' : 'ADD PRODUCT'}</h3><button type="button" className="admin-editor-close-btn" onClick={closeEditor} aria-label="Close product editor"><i className="fa-solid fa-xmark"/></button></div><div className="admin-product-form-grid">
-      <label>Product Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
-      <label>Product ID<input required disabled={Boolean(editor.id)} value={editor.legacy_id} onChange={(e) => setEditor({...editor, legacy_id:e.target.value, slug:e.target.value})}/></label>
-      <label>Category<input required value={editor.category} onChange={(e) => setEditor({...editor, category:e.target.value})}/></label>
-      <label>Subcategory<input value={editor.sub_category || ''} onChange={(e) => setEditor({...editor, sub_category:e.target.value})}/></label>
-      <label>Price (PKR)<input required min="0" type="number" value={editor.price} onChange={(e) => setEditor({...editor, price:e.target.value})}/></label>
-      <label>Original Price<input min="0" type="number" value={editor.original_price || ''} onChange={(e) => setEditor({...editor, original_price:e.target.value})}/></label>
-      <label>Stock <small>(blank = unlimited)</small><input min="0" type="number" value={editor.stock_quantity ?? ''} onChange={(e) => setEditor({...editor, stock_quantity:e.target.value})}/></label>
-      <label>Badge<input value={editor.badge || ''} onChange={(e) => setEditor({...editor, badge:e.target.value})}/></label>
-      <div className="admin-wide-field product-image-manager">
-        <div className="product-image-manager-head"><div><strong>PRODUCT IMAGES</strong><small>Upload up to {MAX_PRODUCT_IMAGES} images. Click a preview to make it the cover.</small></div><span>{editor.existing_images.length + editor.pending_images.length}/{MAX_PRODUCT_IMAGES}</span></div>
-        <label className="product-image-dropzone" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); queueImages(e.dataTransfer.files); }}>
-          <input disabled={optimizingImages} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => { queueImages(e.target.files); e.target.value = ''; }}/>
-          <i className={`fa-solid ${optimizingImages ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}`}/><strong>{optimizingImages ? 'Optimizing images…' : 'Drop product images here'}</strong><span>JPG, PNG, WebP or AVIF · auto-resized to 1600px and compressed to WebP · max 15 MB source</span>
-        </label>
-        {(editor.existing_images.length > 0 || editor.pending_images.length > 0) && <div className="product-image-grid">
-          {editor.existing_images.map((url) => <div key={url} className={`product-image-tile ${editor.main_choice === url ? 'cover' : ''}`}><button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:url})}><img src={normalizeAssetUrl(url)} alt="Product" onError={handleImageError}/><span>{editor.main_choice === url ? 'COVER IMAGE' : 'SET AS COVER'}</span></button><button type="button" className="product-image-remove" onClick={() => removeImage('existing', url)} aria-label="Remove image"><i className="fa-solid fa-xmark"/></button></div>)}
-          {editor.pending_images.map((item) => <div key={item.id} className={`product-image-tile ${editor.main_choice === `local:${item.id}` ? 'cover' : ''}`}><button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:`local:${item.id}`})}><img src={item.preview} alt={item.file.name}/><span>{editor.main_choice === `local:${item.id}` ? 'COVER IMAGE' : 'SET AS COVER'}</span></button><button type="button" className="product-image-remove" onClick={() => removeImage('pending', item.id)} aria-label="Remove image"><i className="fa-solid fa-xmark"/></button></div>)}
-        </div>}
-        <details className="product-image-advanced"><summary>Advanced: add an external image URL</summary><div><input type="url" placeholder="https://example.com/product.webp" value={editor.external_url || ''} onChange={(e) => setEditor({...editor, external_url:e.target.value})}/><button type="button" className="admin-btn admin-btn-secondary" onClick={addExternalUrl}>Add URL</button></div></details>
+      {/* Featured & Hero Showcase Control Bar */}
+      {products.length > 0 && (
+        <div className="admin-showcase-bar">
+          <div className="admin-showcase-hero">
+            <div className="admin-showcase-meta">
+              <span className="admin-showcase-badge"><i className="fa-solid fa-crown"/> HERO SPOTLIGHT</span>
+              <h3>Storefront Frontpage Flagship</h3>
+              <p>The product selected here is displayed front & center on the homepage hero section when customers visit your store.</p>
+            </div>
+            <div className="admin-showcase-controls">
+              <div className="admin-hero-select-wrap">
+                <label htmlFor="hero-select">Select Frontpage Hero Product:</label>
+                <select
+                  id="hero-select"
+                  className="admin-hero-select"
+                  value={currentHero?.id || ''}
+                  onChange={(e) => {
+                    const target = products.find((p) => String(p.id) === e.target.value);
+                    if (target) setHeroProduct(target);
+                  }}
+                  disabled={busy}
+                >
+                  <option value="" disabled>-- Choose Hero Spotlight Product --</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.category}) — Rs. {Number(p.price).toLocaleString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {currentHero ? (
+                <div className="admin-hero-preview-badge">
+                  <img src={normalizeAssetUrl(currentHero.main_image)} alt="" onError={handleImageError} />
+                  <div>
+                    <strong>{currentHero.name}</strong>
+                    <span>Rs. {Number(currentHero.price).toLocaleString()} · Active Storefront Hero</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="admin-hero-preview-badge fallback">
+                  <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffd75e' }}/>
+                  <div>
+                    <strong>No Hero Spotlight Selected</strong>
+                    <span>Defaulting to top featured product on homepage</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="admin-search-wrapper admin-products-search">
+        <i className="fa-solid fa-magnifying-glass"/>
+        <input
+          className="admin-search-input"
+          placeholder="Search products, categories or IDs…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
-      <label className="admin-wide-field">Description<textarea value={editor.description || ''} onChange={(e) => setEditor({...editor, description:e.target.value})}/></label>
-      <label>Features <small>(one per line)</small><textarea value={editor.features_text || ''} onChange={(e) => setEditor({...editor, features_text:e.target.value})}/></label>
-      <label className="admin-wide-field">Specifications JSON<textarea className="admin-code-field" value={editor.specs_text || '{}'} onChange={(e) => setEditor({...editor, specs_text:e.target.value})}/></label>
-    </div><div className="admin-editor-flags"><label><input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront</label><label><input type="checkbox" checked={editor.featured} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> Featured product</label></div><div className="confirm-actions"><button type="button" className="confirm-btn-cancel" onClick={closeEditor}>CANCEL</button><button disabled={busy || optimizingImages} className="admin-btn admin-btn-primary">{optimizingImages ? 'OPTIMIZING IMAGES…' : busy ? 'UPLOADING & SAVING…' : 'SAVE PRODUCT'}</button></div></form></div>}
-  </section>;
+
+      {products.length === 0 && (
+        <div className="admin-catalog-empty">
+          <i className="fa-solid fa-database"/>
+          <h3>THE DATABASE CATALOG IS EMPTY</h3>
+          <p>Use “Sync Existing Catalog” to copy the current ShopXzetio products without changing the storefront.</p>
+        </div>
+      )}
+
+      {products.length > 0 && (
+        <div className="orders-table-wrapper">
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Flags</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((product) => {
+                const isHero = isProductHero(product);
+                return (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="admin-product-cell">
+                        <img src={normalizeAssetUrl(product.main_image)} alt="" onError={handleImageError}/>
+                        <div>
+                          <strong>{product.name}</strong>
+                          <small>{product.legacy_id}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {product.category}
+                      <small className="admin-block-small">{product.sub_category}</small>
+                    </td>
+                    <td>
+                      <strong>Rs. {Number(product.price).toLocaleString()}</strong>
+                      {product.original_price && <small className="admin-block-small">Was Rs. {Number(product.original_price).toLocaleString()}</small>}
+                    </td>
+                    <td>
+                      <span className={`stock-pill ${product.stock_quantity !== null && product.stock_quantity <= 5 ? 'low' : ''}`}>
+                        {product.stock_quantity === null ? 'Unlimited' : product.stock_quantity}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`visibility-pill ${product.active ? 'live' : ''}`}>
+                        {product.active ? 'Live' : 'Archived'}
+                      </span>
+                      {isHero && <span className="visibility-pill hero-badge">★ HERO</span>}
+                      {product.featured && <span className="visibility-pill featured">🔥 TOP</span>}
+                    </td>
+                    <td>
+                      <div className="table-actions-cell">
+                        <button
+                          type="button"
+                          className={`btn-action-hero ${isHero ? 'active' : ''}`}
+                          title={isHero ? 'Currently active storefront Hero' : 'Set as storefront Hero Product'}
+                          onClick={() => setHeroProduct(product)}
+                          disabled={busy || isHero}
+                        >
+                          <i className="fa-solid fa-crown"/>
+                          <span>{isHero ? 'Hero Active' : 'Set Hero'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn-action-featured ${product.featured ? 'active' : ''}`}
+                          title={product.featured ? 'Remove from Top / Featured Products' : 'Add to Top / Featured Products'}
+                          onClick={() => toggleFeatured(product)}
+                          disabled={busy}
+                        >
+                          <i className="fa-solid fa-fire"/>
+                          <span>{product.featured ? 'Top' : '+ Top'}</span>
+                        </button>
+                        <button type="button" className="btn-action-chat" onClick={() => edit(product)}>
+                          <i className="fa-solid fa-pen"/>
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-action-delete"
+                          title={product.active ? 'Archive product' : 'Restore product'}
+                          onClick={() => toggleActive(product)}
+                        >
+                          <i className={`fa-solid ${product.active ? 'fa-box-archive' : 'fa-rotate-left'}`}/>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {editor && (
+        <div className="cyber-confirm-backdrop" onClick={(e) => e.target.classList.contains('cyber-confirm-backdrop') && closeEditor()}>
+          <form className="admin-product-editor" onSubmit={saveProduct}>
+            <div className="ss-lightbox-header">
+              <h3>{editor.id ? 'EDIT PRODUCT' : 'ADD PRODUCT'}</h3>
+              <button type="button" className="admin-editor-close-btn" onClick={closeEditor} aria-label="Close product editor">
+                <i className="fa-solid fa-xmark"/>
+              </button>
+            </div>
+            <div className="admin-product-form-grid">
+              <label>Product Name<input required value={editor.name} onChange={(e) => setEditor({...editor, name:e.target.value})}/></label>
+              <label>Product ID<input required disabled={Boolean(editor.id)} value={editor.legacy_id} onChange={(e) => setEditor({...editor, legacy_id:e.target.value, slug:e.target.value})}/></label>
+              <label>Category<input required value={editor.category} onChange={(e) => setEditor({...editor, category:e.target.value})}/></label>
+              <label>Subcategory<input value={editor.sub_category || ''} onChange={(e) => setEditor({...editor, sub_category:e.target.value})}/></label>
+              <label>Price (PKR)<input required min="0" type="number" value={editor.price} onChange={(e) => setEditor({...editor, price:e.target.value})}/></label>
+              <label>Original Price<input min="0" type="number" value={editor.original_price || ''} onChange={(e) => setEditor({...editor, original_price:e.target.value})}/></label>
+              <label>Stock <small>(blank = unlimited)</small><input min="0" type="number" value={editor.stock_quantity ?? ''} onChange={(e) => setEditor({...editor, stock_quantity:e.target.value})}/></label>
+              <label>Badge<input value={editor.badge || ''} onChange={(e) => setEditor({...editor, badge:e.target.value})}/></label>
+              <div className="admin-wide-field product-image-manager">
+                <div className="product-image-manager-head">
+                  <div><strong>PRODUCT IMAGES</strong><small>Upload up to {MAX_PRODUCT_IMAGES} images. Click a preview to make it the cover.</small></div>
+                  <span>{editor.existing_images.length + editor.pending_images.length}/{MAX_PRODUCT_IMAGES}</span>
+                </div>
+                <label className="product-image-dropzone" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); queueImages(e.dataTransfer.files); }}>
+                  <input disabled={optimizingImages} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => { queueImages(e.target.files); e.target.value = ''; }}/>
+                  <i className={`fa-solid ${optimizingImages ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}`}/>
+                  <strong>{optimizingImages ? 'Optimizing images…' : 'Drop product images here'}</strong>
+                  <span>JPG, PNG, WebP or AVIF · auto-resized to 1600px and compressed to WebP · max 15 MB source</span>
+                </label>
+                {(editor.existing_images.length > 0 || editor.pending_images.length > 0) && (
+                  <div className="product-image-grid">
+                    {editor.existing_images.map((url) => (
+                      <div key={url} className={`product-image-tile ${editor.main_choice === url ? 'cover' : ''}`}>
+                        <button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:url})}>
+                          <img src={normalizeAssetUrl(url)} alt="Product" onError={handleImageError}/>
+                          <span>{editor.main_choice === url ? 'COVER IMAGE' : 'SET AS COVER'}</span>
+                        </button>
+                        <button type="button" className="product-image-remove" onClick={() => removeImage('existing', url)} aria-label="Remove image">
+                          <i className="fa-solid fa-xmark"/>
+                        </button>
+                      </div>
+                    ))}
+                    {editor.pending_images.map((item) => (
+                      <div key={item.id} className={`product-image-tile ${editor.main_choice === `local:${item.id}` ? 'cover' : ''}`}>
+                        <button type="button" className="product-image-preview" onClick={() => setEditor({...editor, main_choice:`local:${item.id}`})}>
+                          <img src={item.preview} alt={item.file.name}/>
+                          <span>{editor.main_choice === `local:${item.id}` ? 'COVER IMAGE' : 'SET AS COVER'}</span>
+                        </button>
+                        <button type="button" className="product-image-remove" onClick={() => removeImage('pending', item.id)} aria-label="Remove image">
+                          <i className="fa-solid fa-xmark"/>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <details className="product-image-advanced">
+                  <summary>Advanced: add an external image URL</summary>
+                  <div>
+                    <input type="url" placeholder="https://example.com/product.webp" value={editor.external_url || ''} onChange={(e) => setEditor({...editor, external_url:e.target.value})}/>
+                    <button type="button" className="admin-btn admin-btn-secondary" onClick={addExternalUrl}>Add URL</button>
+                  </div>
+                </details>
+              </div>
+              <label className="admin-wide-field">Description<textarea value={editor.description || ''} onChange={(e) => setEditor({...editor, description:e.target.value})}/></label>
+              <label>Features <small>(one per line)</small><textarea value={editor.features_text || ''} onChange={(e) => setEditor({...editor, features_text:e.target.value})}/></label>
+              <label className="admin-wide-field">Specifications JSON<textarea className="admin-code-field" value={editor.specs_text || '{}'} onChange={(e) => setEditor({...editor, specs_text:e.target.value})}/></label>
+            </div>
+            <div className="admin-editor-flags">
+              <label>
+                <input type="checkbox" checked={editor.active} onChange={(e) => setEditor({...editor, active:e.target.checked})}/> Visible on storefront
+              </label>
+              <label>
+                <input type="checkbox" checked={editor.featured} onChange={(e) => setEditor({...editor, featured:e.target.checked})}/> 🔥 Top / Featured Product
+              </label>
+              <label>
+                <input type="checkbox" checked={editor.is_hero || false} onChange={(e) => setEditor({...editor, is_hero:e.target.checked})}/> ★ Frontpage Hero Spotlight
+              </label>
+            </div>
+            <div className="confirm-actions">
+              <button type="button" className="confirm-btn-cancel" onClick={closeEditor}>CANCEL</button>
+              <button disabled={busy || optimizingImages} className="admin-btn admin-btn-primary">
+                {optimizingImages ? 'OPTIMIZING IMAGES…' : busy ? 'UPLOADING & SAVING…' : 'SAVE PRODUCT'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </section>
+  );
 }
